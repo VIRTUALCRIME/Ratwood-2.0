@@ -86,6 +86,7 @@
 	layer_object.alpha = 0
 	layer_object.color = null
 	layer_object.maptext = null
+	layer_object.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer_object.transform = null
 
 /atom/movable/screen/hud_component
@@ -263,6 +264,7 @@
 	hover_preview_layer.appearance_flags = APPEARANCE_UI | KEEP_TOGETHER
 	hover_preview_layer.layer = layer + 0.01
 	hover_preview_layer.plane = plane
+	hover_preview_layer.mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	hover_preview_layer.alpha = 92
 	hover_preview_layer.color = can_equip ? "#c5c5c5" : "#fd0279"
 
