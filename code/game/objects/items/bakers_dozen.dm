@@ -161,9 +161,7 @@
 
 		game_bag.visible_message(span_notice("--- [active]'s turn | [get_score_display()] ---"))
 		if(mandatory_rolls[active] < 2)
-			to_chat(active, span_notice("Opening phase: rolling your two mandatory d6 automatically."))
-			can_take_turn_action = FALSE
-			do_opening_rolls(active)
+			to_chat(active, span_notice("Opening phase: choose Roll Opening Dice from the dice bag menu."))
 		else
 			to_chat(active, span_notice("Choose Hit or Stay from the dice bag menu. Target: [target_score]."))
 		return
@@ -198,7 +196,11 @@
 		return
 
 	if(mandatory_rolls[user] < 2)
-		to_chat(user, span_notice("Opening rolls are automatic. Wait for your opening turn to resolve."))
+		if(action != "Roll Opening Dice")
+			to_chat(user, span_notice("Choose Roll Opening Dice from the menu."))
+			return
+		can_take_turn_action = FALSE
+		do_opening_rolls(user)
 		return
 
 	if(action == "Stay")
@@ -336,12 +338,16 @@
 	desc = "A set of dice for Baker's Dozen. Activate in hand (Z) to start or join a game."
 	var/datum/bakers_dozen_game/active_game
 	var/static/bakers_dozen_rules_text = {"<div style='padding:8px;font-family:Verdana,sans-serif;'>
-- Each player rolls a d6 dice twice.<br>
-- After every player has rolled twice, players may only roll a single d6 or stay until the next round.<br>
-- The goal is to get as close to, or exactly 13 which is a baker's dozen. Going over means you lose immediately.<br>
-- The round does not end until all players stay or hit 13, or bust.<br>
-- If two players end up with a tie, they do a final round to tie break with one more dice roll.<br>
-- Whoever gets the highest total wins. If it ties again, they repeat until a winner is found.
+ <b>BAKER'S DOZEN</b>
+ A blackjack-style d6 game for 1-4 players where the target is 13.
+
+<b>Rules:
+- Each player must roll 2d6 (one die at a time).
+- After the two mandatory rolls, players may either roll one d6 (hit) or stay.
+- Going over 13 is an immediate bust.
+- The round ends when every player has stayed, hits exactly 13, or busted.
+- Highest non-bust total wins.
+-If top totals tie, tied players repeatedly roll one extra d6 each until whoever gets the highest.
 </div>"}
 
 /obj/item/storage/pill_bottle/dice/bakers_dozen/proc/show_rules(mob/living/user)
@@ -362,8 +368,11 @@
 	var/gap2 = "  "
 	var/gap3 = "   "
 	var/gap4 = "    "
+	var/can_show_opening_roll = FALSE
 	var/can_show_actions = FALSE
 	if(active_game && !active_game.joining)
+		if(user == active_game.current_player && active_game.can_take_turn_action && !active_game.player_is_done(user) && active_game.mandatory_rolls[user] < 2)
+			can_show_opening_roll = TRUE
 		if(user == active_game.current_player && active_game.can_take_turn_action && !active_game.player_is_done(user) && active_game.mandatory_rolls[user] >= 2)
 			can_show_actions = TRUE
 
@@ -372,6 +381,8 @@
 	else if(active_game.joining)
 		if(!(user in active_game.players))
 			menu += "Start Game"
+	else if(can_show_opening_roll)
+		menu += "Roll Opening Dice"
 	else if(can_show_actions)
 		menu += "Hit - roll 1d6"
 		menu += gap1
@@ -407,6 +418,16 @@
 			active_game.leave_game(user)
 		else
 			to_chat(user, span_notice("No Baker's Dozen game is currently running."))
+		return
+
+	if(choice == "Roll Opening Dice")
+		if(!active_game)
+			to_chat(user, span_notice("No Baker's Dozen game is currently running."))
+			return
+		if(!(user == active_game.current_player && active_game.can_take_turn_action && !active_game.joining && active_game.mandatory_rolls[user] < 2))
+			to_chat(user, span_notice("You cannot roll opening dice right now."))
+			return
+		active_game.player_action(user, "Roll Opening Dice")
 		return
 
 	if(choice == "Hit - roll 1d6")

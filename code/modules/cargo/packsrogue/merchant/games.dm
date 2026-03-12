@@ -15,16 +15,16 @@
 	contains = list(/obj/item/storage/pill_bottle/dice = 1)
 
 /datum/supply_pack/rogue/games/bakers_dozen
-	name = "Baker's Dozen Dice"
+	name = "Baker's Dozen Dice Bag"
 	cost = 20
 	contains = list(/obj/item/storage/pill_bottle/dice/bakers_dozen)
 
 /datum/supply_pack/rogue/games/dwarven_dice
-	name = "Dwarven Dice"
+	name = "Dwarven Dice Bag"
 	cost = 20
 	contains = list(/obj/item/storage/pill_bottle/dice/dwarven)
 
 /datum/supply_pack/rogue/games/farkle
-	name = "Farkle Game Dice"
+	name = "Farkle Game Dice Bag"
 	cost = 20
 	contains = list(/obj/item/storage/pill_bottle/dice/farkle)

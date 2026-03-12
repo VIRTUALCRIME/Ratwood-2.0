@@ -359,13 +359,13 @@
 	desc = "A bag used to play Dwarven Dice. Activate in hand (Z) to start or join a game."
 	var/datum/dwarven_dice_game/active_game
 	var/static/dwarven_rules_text = {"<div style='padding:8px;font-family:Verdana,sans-serif;'>
-+- One at a time, all players roll a d6 three times.<br>
-+- Whoever has the highest total wins.<br>
-+- Two of the same number doubles your total result.<br>
-+- Triple of the same number, you triple the total.<br>
-+- To instantly WIN, you must get either a sequential 4-5-6 or a triple roll such as 4-4-4.<br>
-+- You instantly LOSE if you get either a sequential 1-2-3 or a pair with a snake eye such as 4-4-1.
-+</div>"}
+<b>Rules:
+- One at a time, each player rolls a d6 three times.
+- Highest total wins after everyone has rolled.
+- One pair doubles your total.
+- Instant WIN: 4-5-6 sequence OR any triple same number.
+- Instant LOSE: 1-2-3 sequence OR any paired same number combined with a (1).
+</div>"}
 
 /obj/item/storage/pill_bottle/dice/dwarven/proc/show_rules(mob/living/user)
 	if(!user)
