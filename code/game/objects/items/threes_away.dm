@@ -26,6 +26,31 @@
 	var/max_players = 4
 	var/can_initiate_turn_roll = FALSE
 
+/datum/threes_away_game/proc/format_big_die_value(v, color = null)
+	if(!color)
+		color = (v == 3) ? "#bb2c29" : "#4FC3F7"
+	return "<span style='color:[color];font-size:larger;font-weight:bold;'>[v]</span>"
+
+/datum/threes_away_game/proc/get_roll_color_for(mob/living/M)
+	var/i = players.Find(M)
+	switch(i)
+		if(1)
+			return "#4FC3F7"
+		if(2)
+			return "#FF3B3B"
+		if(3)
+			return "#C9A0DC"
+		if(4)
+			return "#FF00FF"
+		else
+			return "#E0E0E0"
+
+/datum/threes_away_game/proc/format_big_roll(list/dice_values, color = null)
+	var/list/parts = list()
+	for(var/v in dice_values)
+		parts += format_big_die_value(v, color)
+	return jointext(parts, " - ")
+
 /datum/threes_away_game/proc/try_join(mob/living/joiner)
 	if(!joiner || !joiner.client)
 		return
@@ -209,14 +234,12 @@
 			current_roll += rand(1, 6)
 
 		var/count_threes_this_roll = 0
-		var/list/roll_str = list()
 		for(var/v in current_roll)
-			roll_str += "[v]"
 			if(v == 3)
 				count_threes_this_roll++
 		total_threes_rolled += count_threes_this_roll
 
-		game_bag.visible_message(span_notice("[active] rolls ([remaining_dice]d6): [jointext(roll_str, " - ")]."))
+		game_bag.visible_message(span_notice("[active] rolls ([remaining_dice]d6): [format_big_roll(current_roll, get_roll_color_for(active))]."))
 
 		if(count_threes_this_roll >= 4)
 			busted[active] = TRUE
@@ -242,15 +265,12 @@
 		remaining_dice--
 		if(remaining_dice < 0)
 			remaining_dice = 0
-		to_chat(active, span_notice("You keep [kept_now]. [remaining_dice] roll(s) left."))
+		to_chat(active, span_notice("You keep [format_big_die_value(kept_now, get_roll_color_for(active))]. [remaining_dice] roll(s) left."))
 
 	scores[active] = score_total
 	rolled[active] = TRUE
 
-	var/list/kept_str = list()
-	for(var/v in kept_values)
-		kept_str += "[v]"
-	game_bag.visible_message(span_notice("[active] sets aside: [jointext(kept_str, " - ")]. Final score: [score_total]."))
+	game_bag.visible_message(span_notice("[active] sets aside: [format_big_roll(kept_values, get_roll_color_for(active))]. Final score: [score_total]."))
 
 	busy = FALSE
 	if(all_players_done())
@@ -300,7 +320,7 @@
 		else if(total == best_score)
 			contenders += M
 
-	game_bag.visible_message(span_notice("--- THREE'S AWAY ROUND OVER --- Totals: [get_score_display()]"))
+	game_bag.visible_message(span_notice("--- THREE'S AWAY ROUND OVER ---<br>Totals: [get_score_display()]"))
 
 	if(!contenders.len)
 		game_bag.visible_message(span_warning("No winner. Everyone busted."))
@@ -311,7 +331,7 @@
 
 	if(contenders.len == 1)
 		var/mob/living/champion = contenders[1]
-		game_bag.visible_message(span_notice("[champion] wins with the lowest score: [scores[champion]]!"))
+		game_bag.visible_message(span_green("<b>[champion] wins with the lowest score: [scores[champion]]!</b>"))
 		announce_ante_doubles()
 		game_bag.active_game = null
 		qdel(src)
@@ -345,7 +365,7 @@
 			var/roll_total = 0
 			for(var/v in rolls)
 				roll_total += v
-			game_bag.visible_message(span_notice("[M] tie-break rolls: [jointext(rolls, " - ")] (total [roll_total])."))
+			game_bag.visible_message(span_notice("[M] tie-break rolls: [format_big_roll(rolls, get_roll_color_for(M))] (total [roll_total])."))
 
 			if(roll_total < best_total)
 				best_total = roll_total
@@ -358,7 +378,7 @@
 			game_bag.visible_message(span_notice("Tie-break is still tied at [best_total]. Rolling again."))
 
 	var/mob/living/champion = current_contenders[1]
-	game_bag.visible_message(span_notice("[champion] wins the tie-break with the lowest total!"))
+	game_bag.visible_message(span_green("<b>[champion] wins the tie-break with the lowest total!</b>"))
 	announce_ante_doubles()
 	game_bag.active_game = null
 	qdel(src)

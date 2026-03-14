@@ -41,7 +41,7 @@
 
 /datum/supply_pack/rogue/games/gambling_kit_bundle
 	name = "Gambling Kit Bundle"
-	cost = 120
+	cost = 150
 	contains = list(/obj/item/storage/roguebag/gambling_kit_bundle)
 
 /datum/supply_pack/rogue/games/liars_dice

@@ -90,6 +90,29 @@
 	var/max_players = 4
 	var/can_initiate_turn_roll = FALSE
 
+/datum/dwarven_dice_game/proc/format_big_die_value(v, color = "#4FC3F7")
+	return "<span style='color:[color];font-size:larger;font-weight:bold;'>[v]</span>"
+
+/datum/dwarven_dice_game/proc/get_roll_color_for(mob/living/M)
+	var/i = players.Find(M)
+	switch(i)
+		if(1)
+			return "#4FC3F7"
+		if(2)
+			return "#FF3B3B"
+		if(3)
+			return "#C9A0DC"
+		if(4)
+			return "#FF00FF"
+		else
+			return "#E0E0E0"
+
+/datum/dwarven_dice_game/proc/format_big_roll(list/dice_values, color = "#4FC3F7")
+	var/list/parts = list()
+	for(var/v in dice_values)
+		parts += format_big_die_value(v, color)
+	return jointext(parts, " - ")
+
 /datum/dwarven_dice_game/proc/try_join(mob/living/joiner)
 	if(!joiner || !joiner.client)
 		return
@@ -265,14 +288,11 @@
 	playsound(game_bag, 'sound/items/cup_dice_roll.ogg', 75, TRUE)
 
 	var/list/rolled_values = list(rand(1, 6), rand(1, 6), rand(1, 6))
-	var/list/roll_str = list()
-	for(var/v in rolled_values)
-		roll_str += "[v]"
 
 	var/list/eval = dwarven_dice_eval(rolled_values)
 	var/score = eval["score"]
 
-	game_bag.visible_message(span_notice("[active] rolls: [jointext(roll_str, " - ")]."))
+	game_bag.visible_message(span_notice("[active] rolls: [format_big_roll(rolled_values, get_roll_color_for(active))]."))
 
 	if(eval["instant_win"])
 		scores[active] = score
@@ -299,7 +319,7 @@
 
 /datum/dwarven_dice_game/proc/end_game_with_winner(mob/living/winner)
 	if(winner)
-		game_bag.visible_message(span_notice("--- DWARVEN DICE OVER --- [winner] wins instantly!"))
+		game_bag.visible_message(span_green("<b>--- DWARVEN DICE OVER --- [winner] wins instantly!</b>"))
 	else
 		game_bag.visible_message(span_notice("--- DWARVEN DICE OVER ---"))
 	game_bag.active_game = null
@@ -321,7 +341,7 @@
 		else if(total == best_total)
 			contenders += M
 
-	game_bag.visible_message(span_notice("--- DWARVEN DICE ROUND OVER --- Totals: [get_score_display()]"))
+	game_bag.visible_message(span_notice("--- DWARVEN DICE ROUND OVER ---<br>Totals: [get_score_display()]"))
 
 	if(!contenders.len)
 		game_bag.visible_message(span_warning("No winner. Everyone lost."))
@@ -331,7 +351,7 @@
 
 	if(contenders.len == 1)
 		var/mob/living/champion = contenders[1]
-		game_bag.visible_message(span_notice("[champion] wins with [scores[champion]]!"))
+		game_bag.visible_message(span_green("<b>[champion] wins with [scores[champion]]!</b>"))
 		game_bag.active_game = null
 		qdel(src)
 		return
@@ -360,7 +380,7 @@
 		for(var/mob/living/M in current_contenders)
 			var/roll = rand(1, 20)
 			scores[M] += roll
-			game_bag.visible_message(span_notice("[M] tie-break rolls [roll] -> [scores[M]] total."))
+			game_bag.visible_message(span_notice("[M] tie-break rolls [format_big_die_value(roll, get_roll_color_for(M))] -> [scores[M]] total."))
 			if(scores[M] > best_total)
 				best_total = scores[M]
 				new_contenders = list(M)
@@ -372,7 +392,7 @@
 			game_bag.visible_message(span_notice("Tie-break is still tied at [best_total]. Rolling again."))
 
 	var/mob/living/champion = current_contenders[1]
-	game_bag.visible_message(span_notice("[champion] wins the tie-break with [scores[champion]]!"))
+	game_bag.visible_message(span_green("<b>[champion] wins the tie-break with [scores[champion]]!</b>"))
 	game_bag.active_game = null
 	qdel(src)
 

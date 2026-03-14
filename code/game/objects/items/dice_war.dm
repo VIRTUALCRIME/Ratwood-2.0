@@ -26,6 +26,20 @@
 	var/mob/living/pending_roller = null
 	var/pending_roll = 0
 
+/datum/dice_war_game/proc/format_big_die_value(v, color = "#4FC3F7")
+	return "<span style='color:[color];font-size:larger;font-weight:bold;'>[v]</span>"
+
+/datum/dice_war_game/proc/get_roll_color_for(mob/living/M)
+	if(players.Find(M) == 2)
+		return "#26882c"
+	return "#4FC3F7"
+
+/datum/dice_war_game/proc/format_player_roll_value(mob/living/M, v)
+	return format_big_die_value(v, get_roll_color_for(M))
+
+/datum/dice_war_game/proc/format_hp_value(v)
+	return "<span style='color:#EF5350;font-size:larger;font-weight:bold;'>HP: [v]</span>"
+
 /datum/dice_war_game/proc/get_opponent(mob/living/M)
 	for(var/mob/living/P in players)
 		if(P != M)
@@ -158,7 +172,7 @@
 
 	var/roll = rand(1, 20)
 	var/got_natural_twenty = (roll == 20)
-	game_bag.visible_message(span_notice("[active] rolls a d20: [roll]!"))
+	game_bag.visible_message(span_notice("[active] rolls a d20: [format_player_roll_value(active, roll)]!"))
 
 	if(roll == 1)
 		var/old_hp = hp[active]
@@ -169,8 +183,9 @@
 		var/mob/living/target = get_opponent(active)
 		if(target)
 			var/crit = rand(1, 20)
+			var/crit_color = "#EF5350"
 			hp[target] -= crit
-			game_bag.visible_message(span_danger("Critical Strike! [active] rolls [crit] direct damage on [target]!"))
+			game_bag.visible_message(span_danger("Critical Strike! [active] rolls [format_big_die_value(crit, crit_color)] direct damage on [target]!"))
 			if(hp[target] <= 0)
 				busy = FALSE
 				end_game_with_winner(active, "critical strike")
@@ -217,7 +232,7 @@
 		high_roll = roll2
 		low_roll = roll1
 	else if(roll2 == roll1)
-		game_bag.visible_message(span_notice("Clash tied at [roll1]! No base damage dealt."))
+		game_bag.visible_message(span_notice("Clash tied at [format_player_roll_value(p1, roll1)] vs [format_player_roll_value(p2, roll2)]! No base damage dealt."))
 		return
 
 	var/base_damage = high_roll - low_roll
@@ -229,15 +244,15 @@
 	if(high_even == low_even)
 		// Even/Even or Odd/Odd: full damage
 		damage = base_damage
-		game_bag.visible_message(span_notice("In sync clash ([high_roll] vs [low_roll])! [high_mob] deals [damage] damage to [low_mob]."))
+		game_bag.visible_message(span_notice("In sync clash ([format_player_roll_value(high_mob, high_roll)] vs [format_player_roll_value(low_mob, low_roll)])! [high_mob] deals [damage] damage to [low_mob]."))
 	else if(!high_even && low_even)
 		// High odd vs low even: halved damage
 		damage = (base_damage - (base_damage % 2)) / 2
-		game_bag.visible_message(span_notice("Weak overcomes Strong ([high_roll] odd vs [low_roll] even)! Damage halved to [damage]."))
+		game_bag.visible_message(span_notice("Weak overcomes Strong ([format_player_roll_value(high_mob, high_roll)] odd vs [format_player_roll_value(low_mob, low_roll)] even)! Damage halved to [damage]."))
 	else
 		// High even vs low odd: full damage
 		damage = base_damage
-		game_bag.visible_message(span_notice("Power Stroke ([high_roll] even vs [low_roll] odd)! [high_mob] deals [damage] damage."))
+		game_bag.visible_message(span_notice("Power Stroke ([format_player_roll_value(high_mob, high_roll)] even vs [format_player_roll_value(low_mob, low_roll)] odd)! [high_mob] deals [damage] damage."))
 
 	if(damage > 0)
 		hp[low_mob] -= damage
@@ -245,7 +260,7 @@
 		game_bag.visible_message(span_notice("No damage gets through."))
 
 	damage = max(damage, 0)
-	game_bag.visible_message(span_notice("[low_mob] HP: [hp[low_mob]] | [high_mob] HP: [hp[high_mob]]"))
+	game_bag.visible_message(span_notice("[low_mob] [format_hp_value(hp[low_mob])] | [high_mob] [format_hp_value(hp[high_mob])]"))
 
 /datum/dice_war_game/proc/check_end()
 	for(var/mob/living/P in players)
@@ -259,7 +274,7 @@
 
 /datum/dice_war_game/proc/end_game_with_winner(mob/living/winner, reason)
 	if(winner)
-		game_bag.visible_message(span_notice("--- DICE WAR OVER --- [winner] wins by [reason]!"))
+		game_bag.visible_message(span_green("<b>--- DICE WAR OVER --- [winner] wins by [reason]!</b>"))
 	else
 		game_bag.visible_message(span_notice("--- DICE WAR OVER ---"))
 	game_bag.active_game = null
@@ -268,7 +283,7 @@
 /datum/dice_war_game/proc/get_hp_display()
 	var/list/parts = list()
 	for(var/mob/living/P in players)
-		parts += "[P]: [hp[P]] HP"
+		parts += "[P] [format_hp_value(hp[P])]"
 	return jointext(parts, " | ")
 
 /obj/item/storage/pill_bottle/dice/dice_war

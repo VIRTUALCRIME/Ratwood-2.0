@@ -1,6 +1,6 @@
 /*
  * DICE POKER (Simplified)
- * A 2-player, best-of-three d6 game.
+ * A 2-4 player, best-of-three d6 game.
  *
  * Round flow:
  * 1) Initial Bet
@@ -190,12 +190,16 @@
 
 /datum/dice_poker_game
 	var/list/mob/living/players = list()
+	var/list/round_active = list()     // players still contesting the current hand
 	var/list/round_wins = list()       // assoc: mob -> int
 	var/list/hands = list()            // assoc: mob -> list of five ints
 	var/list/rolls_used = list()       // assoc: mob -> int (base round rolls, max 2)
+	var/list/reroll_done = list()      // assoc: mob -> TRUE/FALSE for reroll phase
 	var/list/selected_reroll = list()  // assoc: mob -> list of indexes (1..5)
 	var/list/reroll_mask = list()      // assoc: mob -> bitmask of selected indexes (bit 1 = die 1)
 	var/list/bet_caps = list()         // assoc: mob -> int (experience-scaled cap)
+	var/list/raise_spent = list()      // assoc: mob -> total raised this round
+	var/list/raised_this_round = list() // assoc: mob -> TRUE/FALSE (one raise max per round)
 
 	var/current_player_index = 0
 	var/mob/living/current_player = null
@@ -206,11 +210,12 @@
 	var/min_bet = 10
 	var/round_number = 0
 
-	var/phase = "joining" // joining, initial_bet, initial_roll, betting, reroll_select, showdown, game_over
+	var/phase = "joining" // joining, initial_roll, reroll_select, showdown, game_over
 	var/busy = FALSE
 	var/joining = TRUE
-	var/max_players = 2
+	var/max_players = 4
 	var/can_take_action = FALSE
+	var/max_sudden_death_cycles = 12
 
 	var/obj/item/storage/pill_bottle/dice/dice_poker/game_bag
 
@@ -228,6 +233,75 @@
 		if(P != M)
 			return P
 	return null
+
+/datum/dice_poker_game/proc/get_next_player_in(list/pool, mob/living/current)
+	if(!pool || !pool.len)
+		return null
+	var/start_idx = pool.Find(current)
+	if(!start_idx)
+		start_idx = 0
+	for(var/step in 1 to pool.len)
+		var/i = ((start_idx + step - 1) % pool.len) + 1
+		var/mob/living/candidate = pool[i]
+		if(candidate)
+			return candidate
+	return null
+
+/datum/dice_poker_game/proc/get_hand_color_for(mob/living/M)
+	var/i = players.Find(M)
+	switch(i)
+		if(1)
+			return "#4FC3F7"
+		if(2)
+			return "#ee4040"
+		if(3)
+			return "#b759e2"
+		if(4)
+			return "#f53ff5"
+		else
+			return "#E0E0E0"
+
+/datum/dice_poker_game/proc/format_player_colored_text(mob/living/M, text)
+	var/color = get_hand_color_for(M)
+	return "<span style='color:[color];font-size:larger;font-weight:bold;'>[text]</span>"
+
+/datum/dice_poker_game/proc/format_colored_hand(mob/living/M)
+	var/hand_text = dice_poker_hand_to_text(hands[M])
+	return format_player_colored_text(M, hand_text)
+
+/datum/dice_poker_game/proc/show_private_hand(mob/living/M)
+	if(!M || !(M in players))
+		return
+	if(joining)
+		to_chat(M, span_notice("The game has not started yet."))
+		return
+	var/list/hand = hands[M]
+	if(!hand || hand.len != 5)
+		to_chat(M, span_notice("You do not have a rolled hand yet."))
+		return
+	to_chat(M, span_notice("Your hidden hand: [format_colored_hand(M)]"))
+
+/datum/dice_poker_game/proc/get_next_unresponded(list/pool, mob/living/current, list/responded)
+	if(!pool || !pool.len)
+		return null
+	var/start_idx = pool.Find(current)
+	if(!start_idx)
+		start_idx = 0
+	for(var/step in 1 to pool.len)
+		var/i = ((start_idx + step - 1) % pool.len) + 1
+		var/mob/living/candidate = pool[i]
+		if(candidate && !responded[candidate])
+			return candidate
+	return null
+
+/datum/dice_poker_game/proc/get_remaining_raise_cap(mob/living/M)
+	var/cap = bet_caps[M]
+	var/spent = raise_spent[M]
+	if(!isnum(cap))
+		cap = 0
+	if(!isnum(spent))
+		spent = 0
+	return max(cap - spent, 0)
 
 /datum/dice_poker_game/proc/try_join(mob/living/joiner)
 	if(!joiner || !joiner.client)
@@ -261,14 +335,18 @@
 
 	players += joiner
 	round_wins[joiner] = 0
+	round_active[joiner] = TRUE
 	hands[joiner] = list()
 	rolls_used[joiner] = 0
+	reroll_done[joiner] = FALSE
 	selected_reroll[joiner] = list()
 	reroll_mask[joiner] = 0
 	bet_caps[joiner] = get_exp_cap(joiner)
+	raise_spent[joiner] = 0
+	raised_this_round[joiner] = FALSE
 
 	game_bag.visible_message(span_notice("[joiner] joined Dice Poker! ([players.len]/[max_players] players)"))
-	if(players.len >= max_players)
+	if(players.len == max_players)
 		start_game()
 
 /datum/dice_poker_game/proc/leave_game(mob/living/leaver)
@@ -277,12 +355,16 @@
 		return
 
 	players -= leaver
+	round_active -= leaver
 	round_wins -= leaver
 	hands -= leaver
 	rolls_used -= leaver
+	reroll_done -= leaver
 	selected_reroll -= leaver
 	reroll_mask -= leaver
 	bet_caps -= leaver
+	raise_spent -= leaver
+	raised_this_round -= leaver
 
 	game_bag.visible_message(span_notice("[leaver] leaves Dice Poker."))
 
@@ -295,8 +377,22 @@
 			cancel_game(leaver)
 		return
 
-	var/mob/living/winner = players[1]
-	end_game_with_winner(winner, "forfeit")
+	if(players.len < 2)
+		end_game_with_winner(players.len ? players[1] : null, "forfeit")
+		return
+
+	if(phase == "showdown" || phase == "reroll_select" || phase == "initial_roll")
+		if(round_active && round_active.len)
+			round_active -= leaver
+			if(round_active.len == 1)
+				award_round_win(round_active[1], null, "forfeit")
+				return
+
+	if(current_player == leaver)
+		current_player = get_next_player_in(players, leaver)
+		current_player_index = players.Find(current_player)
+		if(current_player_index < 1)
+			current_player_index = 1
 
 /datum/dice_poker_game/proc/cancel_game(mob/living/canceller)
 	game_bag.visible_message(span_warning("[canceller] has cancelled Dice Poker!"))
@@ -319,13 +415,17 @@
 
 	for(var/mob/living/P in players)
 		round_wins[P] = 0
+		round_active[P] = TRUE
 		rolls_used[P] = 0
+		reroll_done[P] = FALSE
 		selected_reroll[P] = list()
 		reroll_mask[P] = 0
 		bet_caps[P] = get_exp_cap(P)
+		raise_spent[P] = 0
+		raised_this_round[P] = FALSE
 		hands[P] = list()
 
-	game_bag.visible_message(span_notice("Dice Poker begins! Best of three rounds. Starting bet: [current_bet]."))
+	game_bag.visible_message(span_notice("Dice Poker begins! Best of three rounds."))
 	start_round()
 
 /datum/dice_poker_game/proc/start_round()
@@ -333,16 +433,23 @@
 		return
 
 	round_number++
-	phase = "initial_bet"
+	phase = "initial_roll"
+	round_active = list()
 	for(var/mob/living/P in players)
+		round_active += P
 		rolls_used[P] = 0
+		reroll_done[P] = FALSE
 		selected_reroll[P] = list()
 		reroll_mask[P] = 0
 		hands[P] = list()
 		bet_caps[P] = get_exp_cap(P)
+		raise_spent[P] = 0
+		raised_this_round[P] = FALSE
 
-	if(last_round_loser && (last_round_loser in players))
+	if(last_round_loser && (last_round_loser in round_active))
 		current_player_index = players.Find(last_round_loser)
+	else if(round_starter && (round_starter in round_active))
+		current_player_index = players.Find(get_next_player_in(round_active, round_starter))
 	else
 		current_player_index = 1
 
@@ -353,9 +460,9 @@
 	round_starter = current_player
 	can_take_action = TRUE
 
-	game_bag.visible_message(span_notice("--- DICE POKER ROUND [round_number] --- Bet: [current_bet] | Score: [get_round_score_display()]"))
-	game_bag.visible_message(span_notice("[current_player] starts this round and opens the initial bet."))
-	to_chat(current_player, span_notice("Use the dice bag and choose Bet / Respond to open betting."))
+	game_bag.visible_message(span_notice("--- DICE POKER ROUND [round_number] --- Score: [get_round_score_display()]"))
+	game_bag.visible_message(span_notice("[current_player] starts this round."))
+	to_chat(current_player, span_notice("Use the dice bag and choose Roll Dice."))
 
 /datum/dice_poker_game/proc/player_action(mob/living/user, action)
 	if(!(user in players))
@@ -378,13 +485,6 @@
 		do_initial_roll(user)
 		return
 
-	if(action == "Bet / Respond")
-		if(phase != "initial_bet" && phase != "betting")
-			to_chat(user, span_notice("Betting actions are not active right now."))
-			return
-		do_betting_phase(user)
-		return
-
 	if(action == "Select Re-roll")
 		if(phase != "reroll_select")
 			to_chat(user, span_notice("Re-roll selection is not active right now."))
@@ -396,6 +496,8 @@
 
 /datum/dice_poker_game/proc/do_initial_roll(mob/living/roller)
 	if(roller != current_player)
+		return
+	if(!(roller in round_active))
 		return
 	if(rolls_used[roller] >= 1)
 		to_chat(roller, span_notice("You already made your first roll this round."))
@@ -412,51 +514,54 @@
 	rolls_used[roller] = 1
 	selected_reroll[roller] = list()
 
-	to_chat(roller, span_notice("Your first hand: [dice_poker_hand_to_text(hand)]"))
+	to_chat(roller, span_notice("Your first hand: [format_colored_hand(roller)]"))
 	game_bag.visible_message(span_notice("[roller] has rolled their first hand."))
 
 	busy = FALSE
 
-	var/mob/living/other = get_opponent(roller)
-	if(!other)
-		return
+	var/mob/living/next_unrolled = null
+	for(var/mob/living/P in round_active)
+		if(rolls_used[P] < 1)
+			next_unrolled = P
+			break
 
-	if(rolls_used[other] < 1)
-		current_player = other
-		current_player_index = players.Find(other)
+	if(next_unrolled)
+		current_player = get_next_player_in(round_active, roller)
+		while(current_player && rolls_used[current_player] >= 1)
+			current_player = get_next_player_in(round_active, current_player)
+		if(!current_player)
+			current_player = next_unrolled
+		current_player_index = players.Find(current_player)
 		can_take_action = TRUE
-		to_chat(other, span_notice("Your turn: choose Roll Dice."))
+		to_chat(current_player, span_notice("Your turn: choose Roll Dice."))
 		return
 
-	phase = "betting"
-	current_player = roller
-	// round starter opens betting; if roller was second, switch to starter
-	if(last_round_loser && (last_round_loser in players))
-		current_player = last_round_loser
-	else
-		current_player = players[1]
+	phase = "reroll_select"
+	current_player = round_starter
+	if(!(current_player in round_active))
+		current_player = round_active[1]
 	current_player_index = players.Find(current_player)
 	can_take_action = TRUE
 
-	game_bag.visible_message(span_notice("Both first rolls are in. Betting phase begins at bet [current_bet]."))
-	to_chat(current_player, span_notice("Open betting: choose Bet / Respond."))
+	game_bag.visible_message(span_notice("Both first rolls are in. Re-roll selection phase begins."))
+	to_chat(current_player, span_notice("Choose Select Re-roll."))
 
 /datum/dice_poker_game/proc/do_betting_phase(mob/living/opener)
 	if(opener != current_player)
 		return
-	var/mob/living/responder = get_opponent(opener)
-	if(!responder)
+	if(!round_active || round_active.len < 2)
+		if(round_active && round_active.len == 1)
+			award_round_win(round_active[1], null, "all others folded")
 		return
 
 	busy = TRUE
 	can_take_action = FALSE
 
 	var/context = (phase == "initial_bet") ? "Initial Bet" : "Betting"
-	var/mob/living/surrender_winner = perform_raise_chain(opener, responder, context)
+	var/mob/living/surrender_winner = perform_raise_chain(round_active.Copy(), opener, context)
 	if(surrender_winner)
-		var/mob/living/surrender_loser = (surrender_winner == opener) ? responder : opener
 		busy = FALSE
-		award_round_win(surrender_winner, surrender_loser, "surrender")
+		award_round_win(surrender_winner, null, "surrender")
 		return
 
 	busy = FALSE
@@ -464,9 +569,10 @@
 	if(phase == "initial_bet")
 		phase = "initial_roll"
 		current_player = round_starter
-		current_player_index = players.Find(round_starter)
+		if(!(current_player in round_active))
+			current_player = round_active[1]
+		current_player_index = players.Find(current_player)
 		if(current_player_index < 1)
-			current_player = players[1]
 			current_player_index = 1
 		can_take_action = TRUE
 		game_bag.visible_message(span_notice("Initial bet locked at [current_bet]. First roll phase begins."))
@@ -475,55 +581,79 @@
 
 	phase = "reroll_select"
 	current_player = round_starter
-	current_player_index = players.Find(round_starter)
+	if(!(current_player in round_active))
+		current_player = round_active[1]
+	current_player_index = players.Find(current_player)
 	if(current_player_index < 1)
-		current_player = players[1]
 		current_player_index = 1
 	can_take_action = TRUE
 	game_bag.visible_message(span_notice("Bet accepted at [current_bet]. Re-roll selection phase begins."))
 	to_chat(current_player, span_notice("Choose Select Re-roll."))
 
-/datum/dice_poker_game/proc/perform_raise_chain(mob/living/opener, mob/living/responder, context = "Betting")
-	var/mob/living/acting = opener
-	var/mob/living/other = responder
-	var/first_prompt = TRUE
+/datum/dice_poker_game/proc/perform_raise_chain(list/participants, mob/living/starter, context = "Betting")
+	if(!participants || participants.len < 2)
+		return null
+
+	var/list/responded = list()
+	for(var/mob/living/P in participants)
+		responded[P] = FALSE
+
+	var/mob/living/acting = starter
+	if(!(acting in participants))
+		acting = participants[1]
 
 	while(TRUE)
-		if(!acting || !other)
+		if(participants.len <= 1)
+			return participants[1]
+
+		var/mob/living/pending = null
+		for(var/mob/living/P2 in participants)
+			if(!responded[P2])
+				pending = P2
+				break
+		if(!pending)
 			return null
 
-		var/cap = bet_caps[acting]
-		var/list/options
-		if(first_prompt)
-			options = list("Keep Bet")
-			if(cap >= 1)
-				options += "Raise"
-		else
-			options = list("Accept", "Surrender")
-			if(cap >= 1)
-				options += "Raise"
+		if(!(acting in participants) || responded[acting])
+			acting = get_next_unresponded(participants, acting, responded)
+		if(!acting)
+			return null
+
+		var/cap_remaining = get_remaining_raise_cap(acting)
+		var/list/options = list("Accept", "Surrender")
+		if(!raised_this_round[acting] && cap_remaining >= 1)
+			options += "Raise"
 
 		var/prompt = "[context]. Current bet: [current_bet]."
 		var/choice = input(acting, prompt, "Dice Poker") as null|anything in options
 		if(!choice)
-			choice = first_prompt ? "Keep Bet" : "Accept"
+			choice = "Accept"
 
 		if(choice == "Surrender")
-			return other
-
-		if(choice == "Accept")
-			return null
+			game_bag.visible_message(span_warning("[acting] surrenders this hand."))
+			participants -= acting
+			round_active -= acting
+			responded -= acting
+			if(participants.len <= 1)
+				return participants.len ? participants[1] : null
+			acting = get_next_player_in(participants, acting)
+			continue
 
 		if(choice == "Raise")
-			var/raise_amt = prompt_raise_amount(acting, cap)
+			var/raise_amt = prompt_raise_amount(acting, cap_remaining)
 			if(raise_amt > 0)
 				current_bet += raise_amt
+				raise_spent[acting] = raise_spent[acting] + raise_amt
+				raised_this_round[acting] = TRUE
 				game_bag.visible_message(span_notice("[acting] raises by [raise_amt]. New bet: [current_bet]."))
+				for(var/mob/living/P3 in participants)
+					responded[P3] = FALSE
+				responded[acting] = TRUE
+				acting = get_next_player_in(participants, acting)
+				continue
 
-		var/mob/living/tmp = acting
-		acting = other
-		other = tmp
-		first_prompt = FALSE
+		responded[acting] = TRUE
+		acting = get_next_player_in(participants, acting)
 
 /datum/dice_poker_game/proc/prompt_raise_amount(mob/living/actor, raise_cap)
 	if(raise_cap < 1)
@@ -546,6 +676,8 @@
 /datum/dice_poker_game/proc/do_select_and_reroll(mob/living/actor)
 	if(actor != current_player)
 		return
+	if(!(actor in round_active))
+		return
 
 	busy = TRUE
 	can_take_action = FALSE
@@ -555,19 +687,28 @@
 		busy = FALSE
 		return
 
+	to_chat(actor, span_notice("Current hand: [format_colored_hand(actor)]"))
+
 	var/list/sel = list()
 	while(TRUE)
 		var/list/menu = list()
 		var/list/choice_to_index = list()
 		for(var/i in 1 to 5)
-			var/mark = (i in sel) ? "[X]" : "[ ]"
+			var/mark = "( )"
+			if(i in sel)
+				mark = "(X)"
 			var/line = "[mark] Die [i]: [hand[i]]"
 			menu += line
 			choice_to_index[line] = i
+		menu += "Reroll All"
 		menu += "Done"
 
 		var/choice = input(actor, "Select dice to re-roll. Toggle entries, then Done.", "Dice Poker") as null|anything in menu
 		if(!choice || choice == "Done")
+			break
+
+		if(choice == "Reroll All")
+			sel = list(1, 2, 3, 4, 5)
 			break
 
 		var/chosen_index = choice_to_index[choice]
@@ -591,85 +732,135 @@
 
 	hands[actor] = hand
 	rolls_used[actor] = max(rolls_used[actor], 2)
-	to_chat(actor, span_notice("Your final hand: [dice_poker_hand_to_text(hand)]"))
+	reroll_done[actor] = TRUE
+	to_chat(actor, span_notice("Your final hand: [format_colored_hand(actor)]"))
 
 	busy = FALSE
 
-	var/mob/living/other = get_opponent(actor)
-	if(!other)
-		return
+	var/mob/living/next_pending = null
+	for(var/mob/living/P in round_active)
+		if(!reroll_done[P])
+			next_pending = P
+			break
 
-	if(rolls_used[other] < 2)
-		current_player = other
-		current_player_index = players.Find(other)
+	if(next_pending)
+		current_player = get_next_player_in(round_active, actor)
+		while(current_player && reroll_done[current_player])
+			current_player = get_next_player_in(round_active, current_player)
+		if(!current_player)
+			current_player = next_pending
+		current_player_index = players.Find(current_player)
 		can_take_action = TRUE
-		to_chat(other, span_notice("Your turn: choose Select Re-roll."))
+		to_chat(current_player, span_notice("Your turn: choose Select Re-roll."))
 		return
 
 	phase = "showdown"
 	resolve_showdown_chain()
 
 /datum/dice_poker_game/proc/resolve_showdown_chain()
-	var/mob/living/A = players[1]
-	var/mob/living/B = players[2]
-	if(!A || !B)
+	if(!round_active || round_active.len < 1)
+		return
+	if(round_active.len == 1)
+		award_round_win(round_active[1], null, "all others folded")
 		return
 
+	var/sd_cycles = 0
+
 	while(TRUE)
-		var/list/eval_a = dice_poker_eval(hands[A])
-		var/list/eval_b = dice_poker_eval(hands[B])
-		var/cmp = dice_poker_compare(eval_a, eval_b)
+		var/list/reveal_parts = list()
+		var/list/leaders = list()
+		var/list/best_eval = null
 
-		game_bag.visible_message(span_notice("Reveal: [A] has [dice_poker_hand_to_text(hands[A])] ([eval_a["name"]]) | [B] has [dice_poker_hand_to_text(hands[B])] ([eval_b["name"]])."))
+		for(var/mob/living/P in round_active)
+			var/list/eval_p = dice_poker_eval(hands[P])
+			var/eval_rank = eval_p["rank"]
+			var/eval_name = dice_poker_rank_name(eval_rank)
+			var/colored_eval_name = format_player_colored_text(P, eval_name)
+			reveal_parts += "[P] has [format_colored_hand(P)] ([colored_eval_name])"
 
-		if(cmp > 0)
-			award_round_win(A, B, "better hand")
+			if(!best_eval)
+				best_eval = eval_p
+				leaders = list(P)
+				continue
+
+			var/cmp_p = dice_poker_compare(eval_p, best_eval)
+			if(cmp_p > 0)
+				best_eval = eval_p
+				leaders = list(P)
+			else if(cmp_p == 0)
+				leaders += P
+
+		var/reveal_text = jointext(reveal_parts, " | ")
+		game_bag.visible_message(span_notice("Reveal: [reveal_text]."))
+
+		if(leaders.len == 1)
+			award_round_win(leaders[1], null, "better hand")
 			return
-		if(cmp < 0)
-			award_round_win(B, A, "better hand")
+
+		sd_cycles++
+		if(sd_cycles > max_sudden_death_cycles)
+			var/mob/living/forced_winner = pick(leaders)
+			game_bag.visible_message(span_warning("Sudden Death exceeded [max_sudden_death_cycles] cycles. [forced_winner] is awarded the hand to prevent a stall."))
+			award_round_win(forced_winner, null, "sudden death limit")
 			return
 
-		game_bag.visible_message(span_warning("Perfect draw. Sudden Death triggers: extra betting + re-roll."))
+		game_bag.visible_message(span_warning("Perfect draw among [leaders.len] player(s). Sudden Death triggers: forced re-roll."))
+		round_active = leaders.Copy()
 
-		var/sd = sudden_death_cycle(A, B)
-		if(sd == 1)
-			award_round_win(A, B, "sudden death")
+		var/mob/living/sd_winner = sudden_death_cycle(round_active.Copy())
+		if(sd_winner)
+			award_round_win(sd_winner, null, "sudden death")
 			return
-		if(sd == -1)
-			award_round_win(B, A, "sudden death")
-			return
-		// sd == 0 means tied again; loop continues
 
-/datum/dice_poker_game/proc/sudden_death_cycle(mob/living/A, mob/living/B)
-	var/mob/living/surrender_winner = perform_raise_chain(A, B, "Sudden Death")
-	if(surrender_winner == A)
-		return 1
-	if(surrender_winner == B)
-		return -1
+/datum/dice_poker_game/proc/sudden_death_cycle(list/contenders)
+	if(!contenders || contenders.len < 2)
+		return contenders && contenders.len ? contenders[1] : null
 
-	var/list/sel_a = choose_reroll_indexes(A)
-	apply_reroll(A, sel_a)
-	var/list/sel_b = choose_reroll_indexes(B)
-	apply_reroll(B, sel_b)
+	for(var/mob/living/P in contenders)
+		var/list/sel = choose_reroll_indexes(P, TRUE)
+		apply_reroll(P, sel)
 
-	var/list/eval_a = dice_poker_eval(hands[A])
-	var/list/eval_b = dice_poker_eval(hands[B])
-	return dice_poker_compare(eval_a, eval_b)
+	var/list/leaders = list()
+	var/list/best_eval = null
+	for(var/mob/living/P2 in contenders)
+		var/list/eval_p2 = dice_poker_eval(hands[P2])
+		if(!best_eval)
+			best_eval = eval_p2
+			leaders = list(P2)
+			continue
+		var/cmp2 = dice_poker_compare(eval_p2, best_eval)
+		if(cmp2 > 0)
+			best_eval = eval_p2
+			leaders = list(P2)
+		else if(cmp2 == 0)
+			leaders += P2
 
-/datum/dice_poker_game/proc/choose_reroll_indexes(mob/living/M)
+	round_active = leaders.Copy()
+	if(leaders.len == 1)
+		return leaders[1]
+	return null
+
+/datum/dice_poker_game/proc/choose_reroll_indexes(mob/living/M, force_one = FALSE)
 	var/list/hand = hands[M]
 	var/list/sel = list()
+	to_chat(M, span_notice("Current Sudden Death hand: [format_colored_hand(M)]"))
 	while(TRUE)
 		var/list/menu = list()
 		var/list/choice_to_index = list()
 		for(var/i in 1 to 5)
-			var/mark = (i in sel) ? "[X]" : "[ ]"
+			var/mark = "( )"
+			if(i in sel)
+				mark = "(X)"
 			var/line = "[mark] Die [i]: [hand[i]]"
 			menu += line
 			choice_to_index[line] = i
+		menu += "Reroll All"
 		menu += "Done"
 		var/choice = input(M, "Sudden Death re-roll selection.", "Dice Poker") as null|anything in menu
 		if(!choice || choice == "Done")
+			break
+		if(choice == "Reroll All")
+			sel = list(1, 2, 3, 4, 5)
 			break
 		var/j = choice_to_index[choice]
 		if(j)
@@ -677,6 +868,12 @@
 				sel -= j
 			else
 				sel += j
+
+	if(force_one && !sel.len)
+		var/forced_idx = rand(1, 5)
+		sel += forced_idx
+		to_chat(M, span_warning("Sudden Death requires at least one re-roll. Die [forced_idx] will be re-rolled."))
+
 	return sel
 
 /datum/dice_poker_game/proc/selection_to_mask(list/sel)
@@ -692,12 +889,14 @@
 	var/list/hand = hands[M]
 	if(!hand || hand.len != 5)
 		return
+	selected_reroll[M] = indexes ? indexes.Copy() : list()
+	reroll_mask[M] = selection_to_mask(indexes)
 	if(indexes && indexes.len)
 		playsound(game_bag, 'sound/items/cup_dice_roll.ogg', 65, TRUE)
 		for(var/i in indexes)
 			hand[i] = rand(1, 6)
 		hands[M] = hand
-		to_chat(M, span_notice("Sudden Death hand: [dice_poker_hand_to_text(hand)]"))
+		to_chat(M, span_notice("Sudden Death hand: [format_colored_hand(M)]"))
 		game_bag.visible_message(span_notice("[M] re-rolls [indexes.len] die/dice in Sudden Death."))
 	else
 		game_bag.visible_message(span_notice("[M] keeps all dice in Sudden Death."))
@@ -707,9 +906,12 @@
 		return
 
 	round_wins[winner]++
-	last_round_loser = loser
+	if(loser && (loser in players))
+		last_round_loser = loser
+	else
+		last_round_loser = get_next_player_in(players, winner)
 
-	game_bag.visible_message(span_notice("[winner] wins the round ([reason]) at bet [current_bet]! Score: [get_round_score_display()]."))
+	game_bag.visible_message(span_green("<b>[winner] wins the round ([reason])! Score: [get_round_score_display()].</b>"))
 
 	if(round_wins[winner] >= 2)
 		end_game_with_winner(winner, "best of three")
@@ -729,7 +931,7 @@
 	phase = "game_over"
 	can_take_action = FALSE
 	if(winner)
-		game_bag.visible_message(span_notice("--- DICE POKER OVER --- [winner] wins by [reason]! Final score: [get_round_score_display()]."))
+		game_bag.visible_message(span_green("<b>--- DICE POKER OVER --- [winner] wins by [reason]! Final score: [get_round_score_display()].</b>"))
 	else
 		game_bag.visible_message(span_warning("--- DICE POKER OVER ---"))
 	game_bag.active_game = null
@@ -747,19 +949,25 @@
 <br>
 <b>Round Flow:</b><br>
 1) First roll (5d6 each).<br>
-2) Betting: raise / accept / re-raise / surrender.<br>
-3) Select dice to re-roll once.<br>
-4) Reveal and compare hands.<br>
+2) Select dice to re-roll once.<br>
+3) Reveal and compare hands.<br>
 <br>
-<b>Ranking (low -> high):</b><br>
-Nothing, Pair, Two Pairs, Three-of-a-Kind, Five High Straight,
-Six High Straight, Full House, Four-of-a-Kind, Five-of-a-Kind.<br>
+<b>Hand Rankings (Low to High):</b><br>
+Nothing: Five mismatched dice.<br>
+Pair: Two dice of the same value.<br>
+Two Pairs: Two separate pairs.<br>
+Three-of-a-Kind: Three dice of the same value.<br>
+Five High Straight: Values 1, 2, 3, 4, 5.<br>
+Six High Straight: Values 2, 3, 4, 5, 6.<br>
+Full House: Three-of-a-kind plus a pair.<br>
+Four-of-a-Kind: Four dice of the same value.<br>
+Five-of-a-Kind: All five dice show the same value.<br>
+<br>
+<b>Nothing:</b> Any non-pair hand that is not a 5-die straight; compared by highest dice (kickers).<br>
 <br>
 <b>Tie Rule:</b><br>
 If hands are perfectly equal (including kickers), Sudden Death starts:
-extra betting + re-roll, repeating until someone wins.<br>
-<br>
-<b>Note:</b> Betting caps scale with player luck/experience stats.<br>
+forced re-roll, repeating until someone wins.<br>
 </div>"}
 
 /obj/item/storage/pill_bottle/dice/dice_poker/proc/show_rules(mob/living/user)
@@ -776,17 +984,20 @@ extra betting + re-roll, repeating until someone wins.<br>
 		active_game.start_game()
 
 	var/list/menu = list()
+	var/list/spacers = list(" ", "  ", "   ", "    ", "     ")
+	var/spacer_index = 1
 	var/can_roll = FALSE
-	var/can_bet = FALSE
 	var/can_reroll = FALSE
+	var/can_check_hand = FALSE
 
 	if(active_game && !active_game.joining && user == active_game.current_player && active_game.can_take_action)
 		if(active_game.phase == "initial_roll")
 			can_roll = TRUE
-		else if(active_game.phase == "initial_bet" || active_game.phase == "betting")
-			can_bet = TRUE
 		else if(active_game.phase == "reroll_select")
 			can_reroll = TRUE
+
+	if(active_game && !active_game.joining && (user in active_game.players))
+		can_check_hand = TRUE
 
 	if(!active_game)
 		menu += "Start Game"
@@ -796,18 +1007,24 @@ extra betting + re-roll, repeating until someone wins.<br>
 	else
 		if(can_roll)
 			menu += "Roll Dice"
-		if(can_bet)
-			menu += "Bet / Respond"
 		if(can_reroll)
 			menu += "Select Re-roll"
+		if(can_check_hand)
+			if(menu.len)
+				menu += spacers[spacer_index]
+				spacer_index++
+			menu += "Check My Hand"
 
 	if(menu.len)
-		menu += " "
+		menu += spacers[spacer_index]
+		spacer_index++
 	menu += "Rules"
-	menu += "  "
+	menu += spacers[spacer_index]
+	spacer_index++
 	if(active_game && (user in active_game.players))
 		menu += "Leave Game"
-		menu += "   "
+		menu += spacers[spacer_index]
+		spacer_index++
 	menu += "End Game"
 
 	var/choice = input(user, "Select an option.", "Dice Poker") as null|anything in menu
@@ -837,14 +1054,16 @@ extra betting + re-roll, repeating until someone wins.<br>
 			active_game.player_action(user, "Roll Dice")
 		return
 
-	if(choice == "Bet / Respond")
-		if(active_game)
-			active_game.player_action(user, "Bet / Respond")
-		return
-
 	if(choice == "Select Re-roll")
 		if(active_game)
 			active_game.player_action(user, "Select Re-roll")
+		return
+
+	if(choice == "Check My Hand")
+		if(active_game && !active_game.joining && (user in active_game.players))
+			active_game.show_private_hand(user)
+		else
+			to_chat(user, span_notice("You are not in an active Dice Poker game."))
 		return
 
 	if(choice == "Join Game")
@@ -856,7 +1075,7 @@ extra betting + re-roll, repeating until someone wins.<br>
 		return
 
 	if(!active_game)
-		var/count = input(user, "How many players?\n(2 players)", "Dice Poker") as null|anything in list(2)
+		var/count = input(user, "How many players?\n(2 to 4 players)", "Dice Poker") as null|anything in list(2, 3, 4)
 		if(!count)
 			return
 

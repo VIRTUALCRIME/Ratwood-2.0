@@ -19,6 +19,7 @@
 	var/list/mob/living/players = list()
 	var/list/die_counts = list()    // assoc: mob -> int (dice remaining, starts at 5)
 	var/list/cups = list()          // assoc: mob -> list of int (current hidden roll)
+	var/list/round_rolled = list()  // assoc: mob -> TRUE/FALSE (has rolled secret dice this round)
 	var/list/eliminated = list()    // assoc: mob -> TRUE/FALSE
 	var/current_player_index = 0
 	var/mob/living/current_player = null
@@ -31,6 +32,92 @@
 	var/joining = TRUE
 	var/max_players = 6
 	var/can_take_action = FALSE
+
+/datum/liars_dice_game/proc/recompute_current_index()
+	if(!current_player)
+		current_player_index = 0
+		return
+	var/i = players.Find(current_player)
+	current_player_index = i ? i : 0
+
+/datum/liars_dice_game/proc/get_next_active_player_after(mob/living/after_player)
+	if(!players.len)
+		return null
+
+	var/start_idx = players.Find(after_player)
+	if(!start_idx)
+		start_idx = 0
+
+	for(var/step in 1 to players.len)
+		var/check_idx = ((start_idx + step - 1) % players.len) + 1
+		var/mob/living/candidate = players[check_idx]
+		if(candidate && !eliminated[candidate])
+			return candidate
+
+	return null
+
+/datum/liars_dice_game/proc/get_previous_active_player_before(mob/living/before_player)
+	if(!players.len)
+		return null
+
+	var/start_idx = players.Find(before_player)
+	if(!start_idx)
+		start_idx = 1
+
+	for(var/step in 1 to players.len)
+		var/check_idx = start_idx - step
+		if(check_idx < 1)
+			check_idx += players.len
+
+		var/mob/living/candidate = players[check_idx]
+		if(candidate && !eliminated[candidate])
+			return candidate
+
+	return null
+
+/datum/liars_dice_game/proc/all_active_players_rolled()
+	for(var/mob/living/M in players)
+		if(eliminated[M])
+			continue
+		if(!round_rolled[M])
+			return FALSE
+	return TRUE
+
+/datum/liars_dice_game/proc/get_unrolled_players_text()
+	var/list/pending = list()
+	for(var/mob/living/M in players)
+		if(eliminated[M])
+			continue
+		if(!round_rolled[M])
+			pending += "[M]"
+	return pending.len ? jointext(pending, ", ") : "none"
+
+/datum/liars_dice_game/proc/roll_secret_dice(mob/living/M)
+	if(!M || !(M in players))
+		return
+	if(joining)
+		to_chat(M, span_notice("The game has not started yet."))
+		return
+	if(eliminated[M])
+		to_chat(M, span_warning("You are eliminated and cannot roll."))
+		return
+	if(round_rolled[M])
+		show_private_cup(M)
+		return
+
+	var/count = die_counts[M]
+	var/list/roll = list()
+	for(var/i in 1 to count)
+		roll += rand(1, 6)
+	cups[M] = roll
+	round_rolled[M] = TRUE
+
+	playsound(game_bag, 'sound/items/cup_dice_roll.ogg', 60, TRUE)
+	game_bag.visible_message(span_notice("[M] rolls their secret dice."))
+	show_private_cup(M)
+
+	if(all_active_players_rolled())
+		game_bag.visible_message("<span style='color:#EF5350;font-size:larger;font-weight:bold;'>All players have rolled their secret dice. Bidding is now open.</span>")
 
 /datum/liars_dice_game/proc/try_join(mob/living/joiner)
 	if(!joiner || !joiner.client)
@@ -60,9 +147,10 @@
 	players += joiner
 	die_counts[joiner] = 5
 	cups[joiner] = list()
+	round_rolled[joiner] = FALSE
 	eliminated[joiner] = FALSE
 	game_bag.visible_message(span_notice("[joiner] joined Liar's Dice! ([players.len]/[max_players] players)"))
-	if(players.len >= max_players)
+	if(players.len == max_players)
 		start_game()
 
 /datum/liars_dice_game/proc/cancel_game(mob/living/canceller)
@@ -75,12 +163,15 @@
 		to_chat(leaver, span_warning("You are not in this Liar's Dice game."))
 		return
 
-	var/leaver_index = players.Find(leaver)
-	var/was_current = (leaver_index == current_player_index)
+	var/was_current = (leaver == current_player)
+	var/mob/living/next_after_current = null
+	if(!joining && was_current)
+		next_after_current = get_next_active_player_after(leaver)
 
 	players -= leaver
 	die_counts -= leaver
 	cups -= leaver
+	round_rolled -= leaver
 	eliminated -= leaver
 
 	if(last_loser == leaver)
@@ -92,8 +183,8 @@
 		cancel_game(leaver)
 		return
 
-	if(current_player_index > players.len)
-		current_player_index = players.len
+	if(current_player == leaver)
+		current_player = null
 
 	if(!joining)
 		var/list/remaining = list()
@@ -105,22 +196,16 @@
 			return
 
 		if(was_current)
-			current_player_index--
-			if(current_player_index < 0)
-				current_player_index = 0
-			current_player = null
+			if(next_after_current && (next_after_current in players) && !eliminated[next_after_current])
+				current_player = get_previous_active_player_before(next_after_current)
+			else
+				current_player = players[players.len]
+			recompute_current_index()
+			can_take_action = FALSE
 			next_turn()
 			return
 
-		if(leaver_index < current_player_index)
-			current_player_index--
-			if(current_player_index < 0)
-				current_player_index = 0
-
-		if(current_player_index >= 1 && current_player_index <= players.len)
-			current_player = players[current_player_index]
-		else
-			current_player = null
+		recompute_current_index()
 
 /datum/liars_dice_game/proc/start_game()
 	if(!joining)
@@ -136,6 +221,7 @@
 	for(var/mob/living/M in players)
 		die_counts[M] = 5
 		cups[M] = list()
+		round_rolled[M] = FALSE
 		eliminated[M] = FALSE
 
 	var/list/names = list()
@@ -150,38 +236,31 @@
 	current_bidder = null
 
 	for(var/mob/living/M in players)
-		if(eliminated[M])
-			continue
-		var/count = die_counts[M]
-		var/list/roll = list()
-		for(var/i in 1 to count)
-			roll += rand(1, 6)
-		cups[M] = roll
-		show_private_cup(M)
+		cups[M] = list()
+		round_rolled[M] = FALSE
 
-	var/list/active_players = list()
-	for(var/mob/living/M in players)
-		if(!eliminated[M])
-			active_players += M
+	game_bag.visible_message(span_notice("--- NEW ROUND --- Dice counts: [get_dice_display()]."))
+	game_bag.visible_message(span_notice("Each active player must roll their secret dice first (use Roll My Secret Dice)."))
 
-	playsound(game_bag, 'sound/items/cup_dice_roll.ogg', 75, TRUE)
-	game_bag.visible_message(span_notice("--- NEW ROUND --- All players have rolled their dice secretly. Dice counts: [get_dice_display()]."))
-	game_bag.visible_message(span_notice("No bid yet. The opening bidder must start."))
-
-	// Loser of previous round goes first; fall back to player-list order
+	// Loser of previous round goes first; next_turn() advances from current_player.
 	if(last_loser && (last_loser in players) && !eliminated[last_loser])
-		current_player_index = players.Find(last_loser) - 1
+		current_player = get_previous_active_player_before(last_loser)
 	else
-		current_player_index = 0
+		current_player = players[players.len]
+
+	recompute_current_index()
 
 	next_turn()
 
 /datum/liars_dice_game/proc/show_private_cup(mob/living/M)
 	if(!M)
 		return
+	if(!round_rolled[M])
+		to_chat(M, span_notice("You have not rolled your secret dice yet. Use Roll My Secret Dice."))
+		return
 	var/list/cup_str = list()
 	for(var/v in cups[M])
-		cup_str += "[v]"
+		cup_str += "<span style='color:#4FC3F7;font-size:larger;font-weight:bold;'>[v]</span>"
 	to_chat(M, span_notice("Your hidden dice ([die_counts[M]] dice): [jointext(cup_str, " - ")]"))
 
 /datum/liars_dice_game/proc/count_on_table(face)
@@ -214,22 +293,21 @@
 		check_win_condition()
 		return
 
-	var/attempts = 0
-	while(attempts < players.len)
-		current_player_index++
-		if(current_player_index > players.len)
-			current_player_index = 1
-
-		var/mob/living/next = players[current_player_index]
-		if(!next)
-			attempts++
-			continue
-		if(eliminated[next])
-			attempts++
-			continue
-
+	var/mob/living/next = get_next_active_player_after(current_player)
+	if(next)
 		current_player = next
+		recompute_current_index()
+
 		can_take_action = TRUE
+
+		if(!all_active_players_rolled())
+			var/pending = get_unrolled_players_text()
+			game_bag.visible_message(span_notice("--- [next]'s turn | Waiting for secret rolls: [pending] | [get_dice_display()] ---"))
+			if(!round_rolled[next])
+				to_chat(next, span_notice("Roll your secret dice first. Activate the dice bag and choose Roll My Secret Dice."))
+			else
+				to_chat(next, span_notice("You already rolled. Waiting on: [pending]."))
+			return
 
 		if(bid_quantity == 0)
 			game_bag.visible_message(span_notice("--- [next]'s turn to open the bidding. [get_dice_display()] ---"))
@@ -258,8 +336,11 @@
 	if(current_player_index < 1 || current_player_index > players.len)
 		to_chat(user, span_warning("Turn order is resyncing. Try again in a moment."))
 		return
-	if(user != players[current_player_index])
+	if(user != current_player)
 		to_chat(user, span_warning("It is not your turn yet."))
+		return
+	if(!all_active_players_rolled())
+		to_chat(user, span_notice("Bidding is locked until all active players roll their secret dice. Pending: [get_unrolled_players_text()]."))
 		return
 	if(!can_take_action)
 		to_chat(user, span_notice("You have already acted this turn."))
@@ -320,7 +401,8 @@
 	if(bid_quantity > 0)
 		if(chosen_face == bid_face)
 			min_qty = bid_quantity + 1
-		// chosen_face > bid_face → min_qty stays 1
+		else if(chosen_face > bid_face)
+			min_qty = bid_quantity
 
 	var/max_qty = total_dice_on_table()
 
@@ -359,11 +441,11 @@
 			continue
 		var/list/cup_str = list()
 		for(var/v in cups[M])
-			cup_str += "[v]"
+			cup_str += "<span style='color:#4CAF50;font-size:larger;font-weight:bold;'>[v]</span>"
 		reveal_parts += "[M] ([die_counts[M]] dice): [jointext(cup_str, " - ")]"
 
-	game_bag.visible_message(span_notice("[challenger] calls LIAR on [current_bidder]'s bid of [bid_quantity] x [bid_face]s!"))
-	game_bag.visible_message(span_notice("All dice revealed! [jointext(reveal_parts, " | ")]"))
+	game_bag.visible_message(span_notice("[challenger] calls [span_red("<b>LIAR</b>")] on [current_bidder]'s bid of [bid_quantity] x [bid_face]s!"))
+	game_bag.visible_message(span_notice("All dice revealed!<br>[jointext(reveal_parts, "<br>")]"))
 
 	var/actual_count = count_on_table(bid_face)
 	var/wild_note = (bid_face != 1) ? " (1s counted as wild)" : ""
@@ -372,10 +454,10 @@
 	var/mob/living/loser
 	if(actual_count >= bid_quantity)
 		loser = challenger
-		game_bag.visible_message(span_notice("The bid was TRUE ([actual_count] >= [bid_quantity])! [challenger] loses one die."))
+		game_bag.visible_message(span_notice("The bid was [span_green("<b>TRUE</b>")] ([actual_count] >= [bid_quantity])! [challenger] loses one die."))
 	else
 		loser = current_bidder
-		game_bag.visible_message(span_notice("The bid was FALSE ([actual_count] < [bid_quantity])! [current_bidder] loses one die."))
+		game_bag.visible_message(span_notice("The bid was [span_red("<b>FALSE</b>")] ([actual_count] < [bid_quantity])! [current_bidder] loses one die."))
 
 	last_loser = loser
 	apply_penalty(loser)
@@ -422,7 +504,7 @@
 
 	if(remaining.len == 1)
 		var/mob/living/winner = remaining[1]
-		game_bag.visible_message(span_notice("--- LIAR'S DICE OVER --- [winner] wins with [die_counts[winner]] dice remaining!"))
+		game_bag.visible_message(span_green("<b>--- LIAR'S DICE OVER --- [winner] wins with [die_counts[winner]] dice remaining!</b>"))
 		game_bag.active_game = null
 		qdel(src)
 		return
@@ -457,13 +539,13 @@
 Each player starts with 5 dice, rolled in secret. You see only your own dice.<br>
 <br>
 <b>Bidding:</b><br>
-- The opening player bids a quantity and a face value (e.g., <i>Three 4s</i>).<br>
+- The opening player bids a dice quantity and a face value (e.g., <i>Three 4s</i>).<br>
 - Their bid claims that many dice showing that face exist across all cups combined.<br>
 - Each player in turn must: <b>Raise the Bid</b> or <b>Call Liar!</b><br>
 <br>
 <b>Valid Raises:</b><br>
 - Increase the quantity (same face), OR<br>
-- Name a higher face value (any quantity ≥ 1).<br>
+- Name a higher face value (quantity must stay the same or increase).<br>
 <br>
 <b>Wild 1s:</b> When resolving a challenge, 1s count toward any non-1 face bid.<br>
 (e.g., a bid of <i>Three 4s</i> counts all 4s and all 1s on the table)<br>
@@ -492,11 +574,16 @@ Each player starts with 5 dice, rolled in secret. You see only your own dice.<br
 		active_game.start_game()
 
 	var/list/menu = list()
-	var/gap1 = " "
-	var/gap2 = "  "
-	var/gap3 = "   "
+	var/list/spacers = list(" ", "  ", "   ", "    ", "     ")
+	var/spacer_index = 1
 	var/can_show_action = FALSE
+	var/can_roll_secret = FALSE
+	var/can_check_dice = FALSE
 	if(active_game && !active_game.joining)
+		if((user in active_game.players) && !active_game.eliminated[user])
+			if(!active_game.round_rolled[user])
+				can_roll_secret = TRUE
+			can_check_dice = TRUE
 		if(user == active_game.current_player && active_game.can_take_action && !active_game.eliminated[user])
 			can_show_action = TRUE
 
@@ -505,16 +592,32 @@ Each player starts with 5 dice, rolled in secret. You see only your own dice.<br
 	else if(active_game.joining)
 		if(!(user in active_game.players))
 			menu += "Join Game"
-	else if(can_show_action)
-		menu += "Place Bid / Call"
+	else
+		if(can_show_action)
+			menu += "Place Bid / Call"
+		if(can_roll_secret)
+			if(menu.len)
+				menu += spacers[spacer_index]
+				spacer_index++
+			menu += "Roll My Secret Dice"
+
+	if(can_check_dice)
+		if(menu.len)
+			menu += spacers[spacer_index]
+			spacer_index++
+		menu += "Check My Dice"
 
 	if(menu.len)
-		menu += gap1
+		menu += spacers[spacer_index]
+		spacer_index++
 	menu += "Rules"
-	menu += gap2
+
 	if(active_game && (user in active_game.players))
+		menu += spacers[spacer_index]
+		spacer_index++
 		menu += "Leave Game"
-		menu += gap3
+
+	menu += spacers[spacer_index]
 	menu += "End Game"
 
 	var/choice = input(user, "Select an option.", "Liar's Dice") as null|anything in menu
@@ -537,6 +640,16 @@ Each player starts with 5 dice, rolled in secret. You see only your own dice.<br
 			active_game.leave_game(user)
 		else
 			to_chat(user, span_notice("No Liar's Dice game is currently running."))
+		return
+
+	if(choice == "Check My Dice")
+		if(active_game && !active_game.joining && (user in active_game.players) && !active_game.eliminated[user])
+			active_game.show_private_cup(user)
+		return
+
+	if(choice == "Roll My Secret Dice")
+		if(active_game && !active_game.joining && (user in active_game.players) && !active_game.eliminated[user])
+			active_game.roll_secret_dice(user)
 		return
 
 	if(choice == "Place Bid / Call")

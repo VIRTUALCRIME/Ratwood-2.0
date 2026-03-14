@@ -26,6 +26,23 @@
 	var/max_players = 4
 	var/can_take_turn_action = FALSE
 
+/datum/bakers_dozen_game/proc/format_big_die_value(v, color = "#4FC3F7")
+	return "<span style='color:[color];font-size:larger;font-weight:bold;'>[v]</span>"
+
+/datum/bakers_dozen_game/proc/get_roll_color_for(mob/living/M)
+	var/i = players.Find(M)
+	switch(i)
+		if(1)
+			return "#4FC3F7"
+		if(2)
+			return "#FF3B3B"
+		if(3)
+			return "#C9A0DC"
+		if(4)
+			return "#FF00FF"
+		else
+			return "#E0E0E0"
+
 /datum/bakers_dozen_game/proc/try_join(mob/living/joiner)
 	if(!joiner || !joiner.client)
 		return
@@ -239,13 +256,13 @@
 	if(mandatory)
 		mandatory_rolls[active]++
 
-	game_bag.visible_message(span_notice("[active] rolls [roll]! Total: [scores[active]] / [target_score]."))
+	game_bag.visible_message(span_notice("[active] rolls [format_big_die_value(roll, get_roll_color_for(active))]! Total: [scores[active]] / [target_score]."))
 
 	if(scores[active] > target_score)
 		busted[active] = TRUE
 		game_bag.visible_message(span_danger("[active] busts at [scores[active]]!"))
 	else if(scores[active] == target_score)
-		game_bag.visible_message(span_notice("[active] hit BAKER'S DOZEN exactly!"))
+		game_bag.visible_message(span_green("<b>[active] hit BAKER'S DOZEN exactly!</b>"))
 
 	busy = FALSE
 
@@ -271,7 +288,7 @@
 		else if(total == best_total)
 			contenders += M
 
-	game_bag.visible_message(span_notice("--- BAKER'S DOZEN ROUND OVER --- Totals: [get_score_display()]"))
+	game_bag.visible_message(span_notice("--- BAKER'S DOZEN ROUND OVER ---<br>Totals: [get_score_display()]"))
 
 	if(!contenders.len)
 		game_bag.visible_message(span_warning("Everyone busted. No winner this round."))
@@ -281,7 +298,7 @@
 
 	if(contenders.len == 1)
 		var/mob/living/champion = contenders[1]
-		game_bag.visible_message(span_notice("[champion] wins with [scores[champion]]!"))
+		game_bag.visible_message(span_green("<b>[champion] wins with [scores[champion]]!</b>"))
 		game_bag.active_game = null
 		qdel(src)
 		return
@@ -300,7 +317,7 @@
 		for(var/mob/living/M in contenders)
 			var/roll = rand(1, 6)
 			scores[M] += roll
-			game_bag.visible_message(span_notice("[M] tie-break rolls [roll] -> [scores[M]] total."))
+			game_bag.visible_message(span_notice("[M] tie-break rolls [format_big_die_value(roll, get_roll_color_for(M))] -> [scores[M]] total."))
 			if(scores[M] > best_total)
 				best_total = scores[M]
 				new_contenders = list(M)
@@ -316,7 +333,7 @@
 		contenders = new_contenders
 
 	var/mob/living/champion = contenders[1]
-	game_bag.visible_message(span_notice("[champion] wins Baker's Dozen with [scores[champion]]!"))
+	game_bag.visible_message(span_green("<b>[champion] wins Baker's Dozen with [scores[champion]]!</b>"))
 	game_bag.active_game = null
 	qdel(src)
 

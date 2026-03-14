@@ -98,6 +98,29 @@
 	var/turn_token = 0                // incremented every new turn to invalidate stale roll requests
 	var/can_initiate_turn_roll = FALSE // only the queued player may trigger one menu roll per turn
 
+/datum/farkle_game/proc/format_big_die_value(v, color = "#4FC3F7")
+	return "<span style='color:[color];font-size:larger;font-weight:bold;'>[v]</span>"
+
+/datum/farkle_game/proc/get_roll_color_for(mob/living/M)
+	var/i = players.Find(M)
+	switch(i)
+		if(1)
+			return "#4FC3F7"
+		if(2)
+			return "#FF3B3B"
+		if(3)
+			return "#C9A0DC"
+		if(4)
+			return "#FF00FF"
+		else
+			return "#E0E0E0"
+
+/datum/farkle_game/proc/format_big_roll(list/dice_values, color = "#4FC3F7")
+	var/list/parts = list()
+	for(var/v in dice_values)
+		parts += format_big_die_value(v, color)
+	return jointext(parts, " - ")
+
 
 // --- Joining Phase ---
 
@@ -284,14 +307,11 @@
 	var/list/rolled = list()
 	for(var/i in 1 to dice_to_roll)
 		rolled += rand(1, 6)
-	var/list/roll_strings = list()
-	for(var/v in rolled)
-		roll_strings += "[v]"
-	game_bag.visible_message(span_notice("[active] dumps the dice! ([dice_to_roll]d6): [jointext(roll_strings, " - ")]"))
+	game_bag.visible_message(span_notice("[active] dumps the dice! ([dice_to_roll]d6): [format_big_roll(rolled, get_roll_color_for(active))]"))
 
 	// Check for Farkle: no scoring dice at all
 	if(!farkle_get_plays(rolled).len)
-		game_bag.visible_message(span_danger("FARKLE! [active] has no scoring dice and loses [turn_score] accumulated points!"))
+		game_bag.visible_message(span_danger("<b>FARKLE!</b> [active] has no scoring dice and loses [turn_score] accumulated points!"))
 		busy = FALSE
 		if(expected_turn_token != turn_token)
 			return
@@ -416,9 +436,9 @@
 			top = scores[M]
 			champion = M
 
-	game_bag.visible_message(span_notice("--- FARKLE GAME OVER --- Final scores: [get_score_display()]"))
+	game_bag.visible_message(span_notice("--- FARKLE GAME OVER ---<br>Final scores: [get_score_display()]"))
 	if(champion)
-		game_bag.visible_message(span_notice("[champion] wins with [top] points! Congratulations!"))
+		game_bag.visible_message(span_green("<b>[champion] wins with [top] points! Congratulations!</b>"))
 	else
 		game_bag.visible_message(span_notice("It's a tie!"))
 
