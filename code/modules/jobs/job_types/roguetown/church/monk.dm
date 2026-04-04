@@ -87,7 +87,17 @@
 	if(!H || !H.client || !H.mind)
 		return
 
-	var/choice = alert(H, "Choose your path.", "Acolyte Doctrine", "Old Path", "Radical")
+	var/choice = alert(H, "Choose your path.", "Acolyte Doctrine", "Loyalist", "Radical")
+
+	spawn(10)
+		if(!H)
+			return
+		H.change_stat(STATKEY_STR, -2)
+		H.change_stat(STATKEY_CON, -2)
+		H.change_stat(STATKEY_WIL, -3)
+		H.change_stat(STATKEY_SPD, 1)
+		H.change_stat(STATKEY_PER, 2)
+		H.change_stat(STATKEY_LCK, 2)
 
 	if(choice == "Radical")
 		grant_radical_path(H)

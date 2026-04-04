@@ -515,6 +515,23 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 	if(!istype(H, /mob/living/carbon/human))
 		to_chat(user, span_warning("Target must be a person."))
 		return FALSE
+	var/mob/living/carbon/human/HH = H
+	if(!HH.client)
+		to_chat(user, span_warning("Target must be a player."))
+		return FALSE
+	if(HAS_TRAIT(HH, TRAIT_CLERGYRADICAL))
+		to_chat(user, span_warning("Radical clergy cannot be used as quest targets."))
+		return FALSE
+	if(_has_quest_target_mark(HH))
+		to_chat(user, span_warning("This target is already marked by a previous quest."))
+		return FALSE
+
+	return TRUE
+
+/obj/item/quest_token/proc/_ensure_target_player(H, user)
+	if(!istype(H, /mob/living/carbon/human))
+		to_chat(user, span_warning("Target must be a person."))
+		return FALSE
 
 	var/mob/living/carbon/human/HH = H
 	if(!HH.client)
@@ -1461,7 +1478,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 
 /atom/movable/screen/alert/status_effect/buff/parish_boon
 	name = "Boon of the Parish"
-	desc = "You accepted a quest willingly and bear a modest blessing."
+	desc = "You accepted a research willingly and bear a modest blessing."
 	icon_state = "buff"
 
 /datum/status_effect/debuff/parish_scorn
@@ -1472,7 +1489,7 @@ var/global/list/Q_WITNESS_EFFECTS = list(
 
 /atom/movable/screen/alert/status_effect/debuff/parish_scorn
 	name = "Scorn of the Parish"
-	desc = "A quest was forced upon you."
+	desc = "A research was forced upon you."
 	icon_state = "debuff"
 
 /datum/status_effect/debuff/quest_lock
