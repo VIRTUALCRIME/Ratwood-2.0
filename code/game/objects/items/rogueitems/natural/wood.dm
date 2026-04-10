@@ -19,6 +19,14 @@
 	var/lumber = /obj/item/grown/log/tree/small //These are solely for lumberjack calculations
 	var/lumber_amount = 1
 	metalizer_result = /obj/item/rogueore/iron
+	var/blessed = FALSE
+
+/obj/item/grown/log/tree/proc/bless_log()
+	if(blessed)
+		return FALSE
+	blessed = TRUE
+	add_atom_colour("#88ffaa", FIXED_COLOUR_PRIORITY)
+	return TRUE
 
 /obj/item/grown/log/tree/Initialize(mapload)
 	. = ..()
@@ -73,6 +81,8 @@
 					sound_played = TRUE
 					to_chat(user, span_warning("Dendor weeps..."))
 					playsound(src,pick('sound/items/gem.ogg'), 100, FALSE)
+		if(blessed && prob(50))
+			new /obj/item/grown/log/tree/small(get_turf(src))
 		if(!skill_level)
 			to_chat(user, span_info("Due to inexperience, I ruin some of the timber..."))
 		user.mind.add_sleep_experience(/datum/skill/labor/lumberjacking, (user.STAINT*0.5))

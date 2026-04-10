@@ -23,6 +23,13 @@
 	var/obj/item/alch/blessedseedpowder/blessed_seed_powder = user.get_active_held_item()
 	if(!istype(blessed_seed_powder))
 		blessed_seed_powder = null
+	// Detect a held bucket or mortar containing holy water for log blessing
+	var/obj/item/reagent_containers/water_container = null
+	if(!blessed_seed_powder)
+		var/obj/item/held = user.get_active_held_item()
+		if(held?.reagents && (istype(held, /obj/item/reagent_containers/glass/bucket) || istype(held, /obj/item/reagent_containers/glass/mortar)))
+			if(held.reagents.get_reagent_amount(/datum/reagent/water/holywater) >= 2)
+				water_container = held
 	for(var/obj/structure/soil/soil in view(4))
 		soil.bless_soil()
 		growed = TRUE
@@ -52,6 +59,20 @@
 				amount_blessed++
 				if(amount_blessed >= 5)
 					break
+	if(amount_blessed < 5 && water_container)
+		for(var/obj/item/grown/log/tree/log in view(4, user))
+			if(log.type != /obj/item/grown/log/tree)
+				continue
+			if(!log.lumber_amount || log.blessed)
+				continue
+			if(water_container.reagents.get_reagent_amount(/datum/reagent/water/holywater) < 2)
+				break
+			log.bless_log()
+			water_container.reagents.remove_reagent(/datum/reagent/water/holywater, 2)
+			growed = TRUE
+			amount_blessed++
+			if(amount_blessed >= 5)
+				break
 	if(growed)
 		visible_message(span_green("[usr] blesses the nearby crops with Dendor's Favour!"))
 	return growed
