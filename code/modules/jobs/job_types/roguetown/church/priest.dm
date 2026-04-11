@@ -195,7 +195,7 @@ GLOBAL_LIST_EMPTY(priest_swap_timers)
 	if(!H || !H.mind || !H.patron)
 		return
 	ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.church_favor += 3000
+	H.church_favor += 2500
 	H.verbs |= /mob/living/carbon/human/proc/change_patron
 	var/miracle_menu_path = text2path("/obj/effect/proc_holder/spell/self/learnmiracle")
 	if(miracle_menu_path && !H.mind.has_spell(miracle_menu_path))

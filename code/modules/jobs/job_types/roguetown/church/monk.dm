@@ -47,7 +47,7 @@
 		return
 
 	ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.church_favor += 2000
+	H.church_favor += 1500
 
 	if(!H.devotion)
 		var/datum/devotion/C = new /datum/devotion(H, H.patron)

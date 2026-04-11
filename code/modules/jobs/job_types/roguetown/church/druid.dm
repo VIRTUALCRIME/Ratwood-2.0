@@ -119,7 +119,7 @@
 	if(!H || !H.mind || !H.patron)
 		return
 	ADD_TRAIT(H, TRAIT_CLERGYRADICAL, "job")
-	H.church_favor += 2000
+	H.church_favor += 1500
 	if(!H.devotion)
 		var/datum/devotion/C = new /datum/devotion(H, H.patron)
 		C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, start_maxed = TRUE)
