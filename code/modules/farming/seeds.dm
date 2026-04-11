@@ -261,7 +261,8 @@
 /obj/item/seeds/treesap
 	name = "tree sapling"
 	desc = "A small, young tree. Plant it in prepared soil and keep it watered; a great tree may follow."
-	icon_state = "seed"
+	icon = 'icons/obj/flora/ausflora.dmi'
+	icon_state = "palebush_2"
 	seed_identity = "tree seeds"
 
 /obj/item/seeds/treesap/attack_turf(turf/T, mob/living/user)
@@ -288,6 +289,18 @@
 		new /obj/structure/soil(T)
 	plant_tree_sapling(T, user)
 
+/obj/item/seeds/treesap/try_plant_seed(mob/living/user, obj/structure/soil/soil)
+	if(user.get_skill_level(/datum/skill/labor/farming) < SKILL_LEVEL_JOURNEYMAN)
+		to_chat(user, span_warning("I don't have the farming knowledge to tend a tree sapling."))
+		return
+	if(soil.plant || soil.has_custom_growth())
+		to_chat(user, span_warning("There is already something growing in \the [soil]!"))
+		return
+	if(locate(/obj/structure/tree_sapling) in get_turf(soil))
+		to_chat(user, span_warning("There's already a sapling growing here."))
+		return
+	plant_tree_sapling(get_turf(soil), user)
+
 /obj/item/seeds/treesap/proc/plant_tree_sapling(turf/T, mob/living/user)
 	new /obj/structure/tree_sapling(T)
 	to_chat(user, span_notice("I carefully plant the tree sapling and pat the soil down."))
@@ -296,6 +309,7 @@
 /obj/item/seeds/treesap/pine
 	name = "pine sapling"
 	desc = "A small, resinous sapling. Plant it in prepared soil and it may grow into a tall pine tree."
+	icon_state = "palebush_3"
 	seed_identity = "pine seeds"
 
 /obj/item/seeds/treesap/pine/plant_tree_sapling(turf/T, mob/living/user)
@@ -306,6 +320,7 @@
 /obj/item/seeds/treesap/sakura
 	name = "sakura sapling"
 	desc = "A small, pink-tinged sapling. Incredibly rare, and originally from distant lands Tend it faithfully and a blooming cherry tree will reward your patience."
+	icon_state = "palebush_1"
 	seed_identity = "sakura seeds"
 
 /obj/item/seeds/treesap/sakura/plant_tree_sapling(turf/T, mob/living/user)
@@ -348,6 +363,20 @@
 	to_chat(user, span_notice("I plant the bush seed and pat down the earth."))
 	qdel(src)
 
+/obj/item/seeds/bush/try_plant_seed(mob/living/user, obj/structure/soil/soil)
+	if(user.get_skill_level(/datum/skill/labor/farming) < SKILL_LEVEL_JOURNEYMAN)
+		to_chat(user, span_warning("I don't have the farming knowledge to tend a bush sapling."))
+		return
+	if(soil.plant || soil.has_custom_growth())
+		to_chat(user, span_warning("There is already something growing in \the [soil]!"))
+		return
+	if(locate(/obj/structure/bush_sapling) in get_turf(soil))
+		to_chat(user, span_warning("There's already a bush sapling growing here."))
+		return
+	new /obj/structure/bush_sapling(get_turf(soil))
+	to_chat(user, span_notice("I plant the bush seed and pat down the earth."))
+	qdel(src)
+
 // -- Flower seeds (Dendor druid content) ----------------------------------
 // Select a flower type in-hand, then plant in dirt/grass/soil.
 // Waters once → blooms into the chosen decorative flower bush after 5 minutes.
@@ -380,22 +409,34 @@
 	if(!flower_sprout_type)
 		to_chat(user, span_warning("I haven't chosen what to grow yet. Click in hand to choose first."))
 		return
-	if(locate(/obj/structure/flower_sprout) in T)
-		to_chat(user, span_warning("There's already a flower sprout growing here."))
+	var/obj/structure/soil/soil = locate(/obj/structure/soil) in T
+	if(soil)
+		try_plant_seed(user, soil)
 		return
 	if(!isopenturf(T))
 		to_chat(user, span_warning("The ground here is not suitable for planting."))
 		return
-	if(!istype(T, /turf/open/floor/rogue/dirt) && !istype(T, /turf/open/floor/rogue/grass) && !locate(/obj/structure/soil) in T)
+	if(!istype(T, /turf/open/floor/rogue/dirt) && !istype(T, /turf/open/floor/rogue/grass))
 		to_chat(user, span_warning("I should plant these in dirt or grass."))
 		return
 	to_chat(user, span_notice("I scatter the seeds into the ground..."))
 	if(!do_after(user, 5 SECONDS, target = src))
 		return
-	if(locate(/obj/structure/flower_sprout) in T)
+	soil = locate(/obj/structure/soil) in T
+	if(!soil)
+		soil = new /obj/structure/soil(T)
+	try_plant_seed(user, soil)
+
+/obj/item/seeds/flower/try_plant_seed(mob/living/user, obj/structure/soil/soil)
+	if(!flower_sprout_type)
+		to_chat(user, span_warning("I haven't chosen what to grow yet. Click in hand to choose first."))
 		return
-	new flower_sprout_type(T)
-	to_chat(user, span_notice("I plant the flower seeds."))
+	if(soil.plant || soil.has_custom_growth())
+		to_chat(user, span_warning("Something is already sprouting here."))
+		return
+	to_chat(user, span_notice("I plant the flower seeds in \the [soil]."))
+	var/obj/structure/soil_seedling/flower/seedling = new(get_turf(soil))
+	seedling.configure_seedling(soil, icon, icon_state, flower_sprout_type, 5 MINUTES)
 	qdel(src)
 
 // -- Mushroom Fae Circle Spores ---------------------------
@@ -431,4 +472,19 @@
 		return
 	new /obj/structure/mushroom_sprout(T)
 	to_chat(user, span_notice("I plant the fae mushroom spores."))
+	qdel(src)
+
+/obj/item/seeds/mushroom_fae/try_plant_seed(mob/living/user, obj/structure/soil/soil)
+	if(soil.blessed_time <= 0)
+		to_chat(user, span_warning("The soil must be blessed for these spores to take root."))
+		return
+	if(soil.plant || soil.has_custom_growth())
+		to_chat(user, span_warning("There is already something growing in \the [soil]!"))
+		return
+	var/turf/T = get_turf(soil)
+	if(locate(/obj/structure/mushroom_sprout) in T || locate(/obj/structure/mushroom_circle) in T)
+		to_chat(user, span_warning("Something is already growing here."))
+		return
+	to_chat(user, span_notice("I carefully press the spores into the blessed soil..."))
+	new /obj/structure/mushroom_sprout(T)
 	qdel(src)

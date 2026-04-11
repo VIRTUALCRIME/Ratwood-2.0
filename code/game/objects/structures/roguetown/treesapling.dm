@@ -30,8 +30,10 @@
 
 	var/stage = TREESAP_STAGE_SAPLING
 	var/growth_progress = 0   // seconds accumulated toward next stage
-	var/water = TREESAP_WATER_MAX
 	var/dead = FALSE
+	var/obj/structure/soil/linked_soil
+	var/soil_water_drain = 1.5 / (1 MINUTES)
+	var/soil_nutrition_drain = 1.0 / (1 MINUTES)
 
 	// What tree to spawn when fully grown
 	var/tree_final_type = /obj/structure/flora/newtree
@@ -48,6 +50,7 @@
 
 /obj/structure/tree_sapling/Initialize(mapload)
 	. = ..()
+	linked_soil = locate(/obj/structure/soil) in get_turf(src)
 	START_PROCESSING(SSprocessing, src)
 
 /obj/structure/tree_sapling/Destroy()
@@ -59,8 +62,12 @@
 		return
 
 	if(stage <= TREESAP_STAGE_SHRUB)
-		if(water > 0)
-			water = max(0, water - TREESAP_WATER_DRAIN * dt)
+		if(!linked_soil || QDELETED(linked_soil))
+			wither_and_die()
+			return
+		if(linked_soil.water > 0 && linked_soil.nutrition > 0)
+			linked_soil.adjust_water(-dt * soil_water_drain)
+			linked_soil.adjust_nutrition(-dt * soil_nutrition_drain)
 			growth_progress += dt
 		else
 			growth_progress -= dt * 2
@@ -97,6 +104,7 @@
 			var/turf/T = get_turf(src)
 			for(var/obj/structure/soil/S in T)
 				qdel(S)
+			linked_soil = null
 			icon = stage3_icon
 			icon_state = stage3_state
 			density = TRUE
@@ -106,8 +114,18 @@
 			spawn_final_tree()
 
 /obj/structure/tree_sapling/proc/spawn_final_tree()
-	new tree_final_type(get_turf(src))
+	var/atom/movable/final_tree = new tree_final_type(get_turf(src))
+	if(final_tree)
+		final_tree.pixel_x = pixel_x
+		final_tree.pixel_y = pixel_y
 	qdel(src)
+
+/obj/structure/tree_sapling/proc/drop_withered_loot()
+	if(prob(20))
+		new /obj/item/grown/log/tree/small(get_turf(src))
+		return
+	new /obj/item/grown/log/tree/stick(get_turf(src))
+	new /obj/item/grown/log/tree/stick(get_turf(src))
 
 /obj/structure/tree_sapling/examine(mob/user)
 	. = ..()
@@ -122,32 +140,33 @@
 		if(TREESAP_STAGE_YOUNG)
 			. += span_notice("A young tree still taking root. It should grow on its own now.")
 	if(stage <= TREESAP_STAGE_SHRUB)
-		. += span_info("Water: [round(water / TREESAP_WATER_MAX * 100)]%")
+		if(linked_soil && !QDELETED(linked_soil))
+			if(linked_soil.water <= 45)
+				. += span_warning("The soil beneath it is thirsty.")
+			else if(linked_soil.water <= 150)
+				. += span_info("The soil beneath it is moist.")
+			else
+				. += span_info("The soil beneath it is wet.")
+			if(linked_soil.nutrition <= 45)
+				. += span_warning("The soil beneath it is hungry.")
+			else if(linked_soil.nutrition <= 150)
+				. += span_info("The soil beneath it is sated.")
+			else
+				. += span_info("The soil beneath it looks fertile.")
 
 /obj/structure/tree_sapling/attackby(obj/item/I, mob/living/user, params)
-	// Watering (stages 1-2 only)
-	if(istype(I, /obj/item/reagent_containers) && stage <= TREESAP_STAGE_SHRUB && !dead)
-		var/obj/item/reagent_containers/RC = I
-		if(water >= TREESAP_WATER_MAX)
-			to_chat(user, span_notice("The sapling is already well-watered."))
+	if(stage <= TREESAP_STAGE_SHRUB && !dead && linked_soil)
+		if(linked_soil.try_handle_watering(I, user, params))
 			return
-		var/water_amt = RC.reagents.get_reagent_amount(/datum/reagent/water)
-		var/holy_amt  = RC.reagents.get_reagent_amount(/datum/reagent/water/holywater)
-		var/total = water_amt + holy_amt
-		if(total < 1)
-			to_chat(user, span_warning("[RC] doesn't have any water in it."))
+		if(linked_soil.try_handle_fertilizing(I, user, params))
 			return
-		RC.reagents.remove_reagent(/datum/reagent/water, water_amt)
-		RC.reagents.remove_reagent(/datum/reagent/water/holywater, holy_amt)
-		// Each unit of liquid water = 10 sapling water points
-		water = min(TREESAP_WATER_MAX, water + total * 10)
-		to_chat(user, span_notice("I water [src]."))
-		return
 
 	// Shovelling out
 	if(istype(I, /obj/item/rogueweapon/shovel))
 		to_chat(user, span_notice("I begin uprooting [src]..."))
 		if(do_after(user, 3 SECONDS, target = src))
+			if(dead)
+				drop_withered_loot()
 			to_chat(user, span_notice("I remove [src]."))
 			qdel(src)
 		return

@@ -95,6 +95,7 @@
 	name = "blessed seed powder"
 	desc = "Luminous seed dust prepared with sanctified water. Dendor's touch lingers within it."
 	icon_state = "seeddust"
+	color = "#FFFFFF"
 	major_pot = null
 	med_pot = null
 	minor_pot = null

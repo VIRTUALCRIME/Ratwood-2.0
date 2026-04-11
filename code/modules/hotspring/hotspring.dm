@@ -252,3 +252,13 @@
 
 	bound_height = 128
 	bound_width = 128
+	var/obj/effect/abstract/particle_holder/cached/petal_effect
+
+/obj/structure/flora/sakura/Initialize(mapload)
+	. = ..()
+	petal_effect = new(src, /particles/sakura, 6)
+	petal_effect.vis_flags &= ~VIS_INHERIT_PLANE
+
+/obj/structure/flora/sakura/Destroy()
+	QDEL_NULL(petal_effect)
+	return ..()

@@ -115,6 +115,12 @@ GLOBAL_LIST_EMPTY(soil_list)
 		return TRUE
 	return FALSE
 
+/obj/structure/soil/proc/has_custom_growth()
+	var/turf/T = get_turf(src)
+	if(!T)
+		return FALSE
+	return locate(/obj/structure/soil_seedling) in T || locate(/obj/structure/tree_sapling) in T || locate(/obj/structure/bush_sapling) in T || locate(/obj/structure/mushroom_sprout) in T || locate(/obj/structure/mushroom_circle) in T
+
 /obj/structure/soil/proc/try_handle_uprooting(obj/item/attacking_item, mob/user, params)
 	if(istype(attacking_item, /obj/item/rogueweapon/shovel))
 		to_chat(user, span_notice("I begin to uproot the crop..."))
@@ -147,19 +153,26 @@ GLOBAL_LIST_EMPTY(soil_list)
 /obj/structure/soil/proc/try_handle_watering(obj/item/attacking_item, mob/user, params)
 	var/water_amount = 0
 	if(istype(attacking_item, /obj/item/reagent_containers))
-		if(water >= MAX_PLANT_WATER * 0.8)
+		var/target_water = (MAX_PLANT_WATER * 0.8) - water
+		if(target_water <= 0)
 			to_chat(user, span_warning("The soil is already wet!"))
 			return TRUE
 		var/obj/item/reagent_containers/container = attacking_item
-		if(container.reagents.has_reagent(/datum/reagent/water, 10))
-			container.reagents.remove_reagent(/datum/reagent/water, 10)
-			water_amount = 150
-		else if(container.reagents.has_reagent(/datum/reagent/water/gross, 10))
-			container.reagents.remove_reagent(/datum/reagent/water/gross, 10)
-			water_amount = 150
-		else
+		var/reagent_units_needed = CEILING(target_water / 15, 1)
+		var/clean_water = min(container.reagents.get_reagent_amount(/datum/reagent/water), reagent_units_needed)
+		var/holy_water = min(container.reagents.get_reagent_amount(/datum/reagent/water/holywater), max(reagent_units_needed - clean_water, 0))
+		var/gross_water = min(container.reagents.get_reagent_amount(/datum/reagent/water/gross), max(reagent_units_needed - clean_water - holy_water, 0))
+		var/total_units = clean_water + holy_water + gross_water
+		if(total_units <= 0)
 			to_chat(user, span_warning("There's no water in \the [container]!"))
 			return TRUE
+		if(clean_water > 0)
+			container.reagents.remove_reagent(/datum/reagent/water, clean_water)
+		if(holy_water > 0)
+			container.reagents.remove_reagent(/datum/reagent/water/holywater, holy_water)
+		if(gross_water > 0)
+			container.reagents.remove_reagent(/datum/reagent/water/gross, gross_water)
+		water_amount = min(target_water, total_units * 15)
 	if(water_amount > 0)
 		var/list/wash = list('sound/foley/waterwash (1).ogg','sound/foley/waterwash (2).ogg')
 		playsound(user, pick_n_take(wash), 100, FALSE)

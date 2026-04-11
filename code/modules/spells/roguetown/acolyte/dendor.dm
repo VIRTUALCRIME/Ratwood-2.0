@@ -1,81 +1,260 @@
 // Druid
 /obj/effect/proc_holder/spell/targeted/blesscrop
 	name = "Bless Crops"
-	desc = "Bless up to five crops around you. Revives dead plants, gives them nutrition and water if low and boosts their growth."
+	desc = "Bless a targeted soil plot or tree. Holy skill increases stored charges. Revives dead plants, gives them nutrition and water if low & boosts their growth. Blessed seed powder can expend all charges to bless up to five nearby planted soils at once."
 	range = 5
+	selection_type = "range"
 	overlay_state = "blesscrop"
 	releasedrain = 30
-	recharge_time = 30 SECONDS
+	charge_type = "charges"
+	recharge_time = 1
 	req_items = list(/obj/item/clothing/neck/roguetown/psicross)
-	max_targets = 0
-	cast_without_targets = TRUE
+	max_targets = 1
+	cast_without_targets = FALSE
 	sound = 'sound/magic/churn.ogg'
 	associated_skill = /datum/skill/magic/holy
 	invocations = list("The Treefather commands thee, be fruitful!")
 	invocation_type = "shout" //can be none, whisper, emote and shout
 	miracle = TRUE
 	devotion_cost = 20
+	var/max_bless_charges = 1
+	var/charge_regen_elapsed = 0
+	var/empty_refill_elapsed = 0
+	var/empty_refill_active = FALSE
+	var/active_sound = 'sound/magic/churn.ogg'
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/update_icon()
+	if(!action)
+		return
+	action.button_icon_state = "[base_icon_state][active]"
+	if(overlay_state)
+		action.overlay_state = overlay_state
+	action.name = name
+	action.UpdateButtonIcon()
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/Click()
+	var/mob/living/user = usr
+	if(!istype(user))
+		return
+	if(!can_cast(user))
+		deactivate(user)
+		return
+	if(active)
+		deactivate(user)
+	else
+		if(active_sound)
+			user.playsound_local(user, active_sound, 100, vary = FALSE)
+		active = TRUE
+		add_ranged_ability(user, span_notice("I ready Dendor's blessing and mark a target to receive it."), TRUE)
+	update_icon()
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/deactivate(mob/living/user)
+	active = FALSE
+	remove_ranged_ability(null)
+	update_icon()
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/InterceptClickOn(mob/living/caller, params, atom/target)
+	. = ..()
+	if(.)
+		return FALSE
+	if(ismob(target))
+		to_chat(caller, span_warning("Bless Crops must be aimed at a tree, long log, or soil plot."))
+		return FALSE
+	if(!can_cast(caller) || !cast_check(FALSE, ranged_ability_user))
+		return FALSE
+	if(perform(list(target), TRUE, user = ranged_ability_user))
+		return TRUE
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/Initialize(mapload)
+	. = ..()
+	charge_counter = 1
+	max_bless_charges = 1
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/proc/get_max_bless_charges(mob/user)
+	if(!user)
+		return max(1, max_bless_charges)
+	return max(1, 1 + user.get_skill_level(associated_skill))
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/proc/sync_bless_charges(mob/user)
+	max_bless_charges = get_max_bless_charges(user)
+	if(!empty_refill_active)
+		charge_counter = clamp(charge_counter, 0, max_bless_charges)
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/proc/start_empty_refill()
+	if(empty_refill_active)
+		return
+	empty_refill_active = TRUE
+	empty_refill_elapsed = 0
+	charge_regen_elapsed = 0
+	charge_counter = 0
+	START_PROCESSING(SSfastprocess, src)
+	if(action)
+		action.UpdateButtonIcon()
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/proc/spend_all_bless_charges()
+	charge_counter = 0
+	start_empty_refill()
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/charge_check(mob/user, silent = FALSE)
+	sync_bless_charges(user)
+	if(empty_refill_active || charge_counter <= 0)
+		if(!empty_refill_active)
+			start_empty_refill()
+		if(!silent)
+			to_chat(user, span_warning("[name] is exhausted and must recover before it can be used again."))
+		return FALSE
+	return TRUE
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/start_recharge()
+	START_PROCESSING(SSfastprocess, src)
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/process()
+	if(empty_refill_active)
+		empty_refill_elapsed += 2
+		if(empty_refill_elapsed >= 30 SECONDS)
+			empty_refill_active = FALSE
+			empty_refill_elapsed = 0
+			charge_regen_elapsed = 0
+			charge_counter = max_bless_charges
+			if(action)
+				action.UpdateButtonIcon()
+			STOP_PROCESSING(SSfastprocess, src)
+		return
+	if(charge_counter < max_bless_charges)
+		charge_regen_elapsed += 2
+		while(charge_regen_elapsed >= 10 SECONDS && charge_counter < max_bless_charges)
+			charge_regen_elapsed -= 10 SECONDS
+			charge_counter++
+		if(action)
+			action.UpdateButtonIcon()
+		if(charge_counter >= max_bless_charges)
+			charge_counter = max_bless_charges
+			STOP_PROCESSING(SSfastprocess, src)
+		return
+	STOP_PROCESSING(SSfastprocess, src)
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/after_cast(list/targets, mob/user = usr)
+	. = ..()
+	sync_bless_charges(user)
+	if(active)
+		add_ranged_ability(user, null, TRUE)
+	if(charge_counter <= 0)
+		start_empty_refill()
+	else
+		empty_refill_active = FALSE
+		empty_refill_elapsed = 0
+		charge_regen_elapsed = 0
+		START_PROCESSING(SSfastprocess, src)
+
+/obj/effect/proc_holder/spell/targeted/blesscrop/revert_cast(mob/user = usr)
+	. = ..()
+	sync_bless_charges(user)
+	if(active)
+		add_ranged_ability(user, null, TRUE)
+	empty_refill_active = FALSE
+	empty_refill_elapsed = 0
+	if(charge_counter < max_bless_charges)
+		START_PROCESSING(SSfastprocess, src)
 
 /obj/effect/proc_holder/spell/targeted/blesscrop/cast(list/targets,mob/user = usr)
 	. = ..()
-	var/growed = FALSE
-	var/amount_blessed = 0
+	var/atom/target_atom = targets?.len ? targets[1] : null
+	var/turf/target_turf = get_turf(target_atom)
+	sync_bless_charges(user)
+	if(!target_turf)
+		target_turf = get_turf(user)
 	var/obj/item/alch/blessedseedpowder/blessed_seed_powder = user.get_active_held_item()
 	if(!istype(blessed_seed_powder))
+		blessed_seed_powder = user.get_inactive_held_item()
+	if(!istype(blessed_seed_powder))
 		blessed_seed_powder = null
-	// Detect a held bucket or mortar containing holy water for log blessing
+	// Detect a held bucket or mortar containing holy water for log blessing.
 	var/obj/item/reagent_containers/water_container = null
-	if(!blessed_seed_powder)
-		var/obj/item/held = user.get_active_held_item()
+	for(var/obj/item/held in list(user.get_active_held_item(), user.get_inactive_held_item()))
 		if(held?.reagents && (istype(held, /obj/item/reagent_containers/glass/bucket) || istype(held, /obj/item/reagent_containers/glass/mortar)))
 			if(held.reagents.get_reagent_amount(/datum/reagent/water/holywater) >= 2)
 				water_container = held
-	for(var/obj/structure/soil/soil in view(4))
-		soil.bless_soil()
-		growed = TRUE
-		amount_blessed++
-		// Blessed only up to 5 crops
-		if(amount_blessed >= 5)
-			break
-	if(amount_blessed < 5)
-		for(var/obj/structure/flora/roguetree/tree in view(4, user))
-			if(blessed_seed_powder && tree.reinvigorate_tree(user))
-				growed = TRUE
-				amount_blessed++
-				if(blessed_seed_powder == user.get_active_held_item())
-					qdel(blessed_seed_powder)
-					blessed_seed_powder = null
-				if(amount_blessed >= 5)
-					break
-			if(tree.bless_tree(user))
-				growed = TRUE
-				amount_blessed++
-				if(amount_blessed >= 5)
-					break
-	if(amount_blessed < 5)
-		for(var/obj/structure/flora/newtree/tree in view(4, user))
-			if(tree.bless_tree(user))
-				growed = TRUE
-				amount_blessed++
-				if(amount_blessed >= 5)
-					break
-	if(amount_blessed < 5 && water_container)
-		for(var/obj/item/grown/log/tree/log in view(4, user))
+				break
+
+	// Targeted long-log blessing: consume blessed seed powder + all holy water in held mortar/bucket,
+	// and bless up to 6 long logs on the targeted tile.
+	if(istype(target_atom, /obj/item/grown/log/tree))
+		if(target_atom.type != /obj/item/grown/log/tree)
+			to_chat(user, span_warning("Only long logs can be blessed by this rite."))
+			return FALSE
+		if(!blessed_seed_powder)
+			to_chat(user, span_warning("I need blessed seed powder in-hand to sanctify logs."))
+			return FALSE
+		if(!water_container)
+			to_chat(user, span_warning("I need a stone mortar or bucket with holy water in-hand to sanctify logs."))
+			return FALSE
+		var/holy_amt = water_container.reagents.get_reagent_amount(/datum/reagent/water/holywater)
+		if(holy_amt < 1)
+			to_chat(user, span_warning("My container has no holy water to fuel the blessing."))
+			return FALSE
+		var/blessed_logs = 0
+		for(var/obj/item/grown/log/tree/log in target_turf)
 			if(log.type != /obj/item/grown/log/tree)
 				continue
-			if(!log.lumber_amount || log.blessed)
+			if(!log.bless_log())
 				continue
-			if(water_container.reagents.get_reagent_amount(/datum/reagent/water/holywater) < 2)
+			blessed_logs++
+			if(blessed_logs >= 6)
 				break
-			log.bless_log()
-			water_container.reagents.remove_reagent(/datum/reagent/water/holywater, 2)
-			growed = TRUE
-			amount_blessed++
-			if(amount_blessed >= 5)
-				break
-	if(growed)
-		visible_message(span_green("[usr] blesses the nearby crops with Dendor's Favour!"))
-	return growed
+		if(blessed_logs <= 0)
+			to_chat(user, span_warning("There are no unblessed long logs here to sanctify."))
+			return FALSE
+		water_container.reagents.remove_reagent(/datum/reagent/water/holywater, holy_amt)
+		qdel(blessed_seed_powder)
+		visible_message(span_green("[usr] sanctifies the long logs with Dendor's favor!"))
+		return TRUE
+
+	// Soil plots are now blessed one-by-one unless blessed seed powder is used to bypass it.
+	var/obj/structure/soil/target_soil = null
+	if(istype(target_atom, /obj/structure/soil))
+		target_soil = target_atom
+	else
+		target_soil = locate(/obj/structure/soil) in target_turf
+	if(target_soil)
+		if(blessed_seed_powder)
+			var/amount_blessed = 0
+			for(var/obj/structure/soil/soil in range(4, user))
+				if(!soil.plant)
+					continue
+				soil.bless_soil()
+				amount_blessed++
+				if(amount_blessed >= 5)
+					break
+			if(amount_blessed <= 0)
+				to_chat(user, span_warning("There are no nearby planted soil plots for the powder to bless."))
+				return FALSE
+			qdel(blessed_seed_powder)
+			spend_all_bless_charges()
+			visible_message(span_green("[usr] scatters blessed seed powder and Dendor's favor washes over nearby crops!"))
+			return TRUE
+		target_soil.bless_soil()
+		visible_message(span_green("[usr] blesses [target_soil] with Dendor's favor!"))
+		return TRUE
+
+	// Non-soil target mode: bless exactly what was targeted.
+	if(istype(target_atom, /obj/structure/flora/roguetree))
+		var/obj/structure/flora/roguetree/tree = target_atom
+		if(blessed_seed_powder && tree.reinvigorate_tree(user))
+			if(blessed_seed_powder == user.get_active_held_item() || blessed_seed_powder == user.get_inactive_held_item())
+				qdel(blessed_seed_powder)
+			visible_message(span_green("[usr] invokes Dendor's favor upon [tree]."))
+			return TRUE
+		if(tree.bless_tree(user))
+			visible_message(span_green("[usr] invokes Dendor's favor upon [tree]."))
+			return TRUE
+	if(istype(target_atom, /obj/structure/flora/newtree))
+		var/obj/structure/flora/newtree/tree = target_atom
+		if(tree.bless_tree(user))
+			visible_message(span_green("[usr] invokes Dendor's favor upon [tree]."))
+			return TRUE
+
+	to_chat(user, span_warning("That target cannot receive this blessing."))
+	return FALSE
 
 //At some point, this spell should Awaken beasts, allowing a ghost to possess them. Not for this PR though.
 /obj/effect/proc_holder/spell/targeted/beasttame
@@ -140,11 +319,12 @@
 		revert_cast()
 		return FALSE
 
-	// 1x3 horizontal line: front, left of user, right of user.
-	var/turf/target_turf = get_step(user, user.dir)
-	var/turf/target_turf_two = get_step(user, turn(user.dir, 90))
-	var/turf/target_turf_three = get_step(user, turn(user.dir, -90))
-	for(var/turf/spawn_turf in list(target_turf, target_turf_two, target_turf_three))
+	// Spawn as a vertical north-south line centered on the tile in front of the caster.
+	var/turf/center_turf = get_step(user, user.dir)
+	var/list/spawn_turfs = list(get_step(center_turf, NORTH), center_turf, get_step(center_turf, SOUTH))
+	for(var/turf/spawn_turf as anything in spawn_turfs)
+		if(!istype(spawn_turf))
+			continue
 		if(!isclosedturf(spawn_turf) && !locate(/obj/structure/glowshroom) in spawn_turf)
 			new /obj/structure/glowshroom(spawn_turf)
 	return TRUE

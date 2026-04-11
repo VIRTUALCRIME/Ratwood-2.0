@@ -144,6 +144,8 @@
 	dir = pick(GLOB.cardinals)
 	SStreesetup.initialize_me |= src
 	build_trees()
+	build_branches()
+	build_leafs()
 	update_icon()
 	if(istype(loc, /turf/open/floor/rogue/grass))
 		var/turf/T = loc

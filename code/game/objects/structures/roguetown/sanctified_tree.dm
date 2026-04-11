@@ -98,6 +98,8 @@
 	var/integrity_bonus = 0
 	/// SSprocessing dt accumulator — recalculates bonus every 60 seconds.
 	var/bonus_check_elapsed = 0
+	/// SSprocessing dt accumulator — restores integrity periodically.
+	var/integrity_regen_elapsed = 0
 
 /obj/structure/flora/roguetree/wise/sanctified/Initialize(mapload)
 	. = ..()
@@ -149,6 +151,11 @@
 	if(bonus_check_elapsed >= 60 SECONDS)
 		bonus_check_elapsed = 0
 		recalculate_integrity_bonus()
+	integrity_regen_elapsed += dt
+	if(integrity_regen_elapsed >= 30 SECONDS)
+		integrity_regen_elapsed = 0
+		if(obj_integrity < max_integrity)
+			obj_integrity = min(obj_integrity + 10, max_integrity)
 	if(!tree_data)
 		return
 	if(tree_data.has_slow_aura)
@@ -199,17 +206,12 @@
 		return
 
 	if(tree_data.active_ritual)
-		// Show progress and offer options for the current ritual.
+		// Show progress and only allow cancellation from the amulet menu.
 		show_ritual_requirements(user, tree_data.active_ritual)
-		var/list/opts = list("Offer an item", "Cancel ritual")
-		var/choice = input(user, "Active ritual: [get_ritual_display_name(tree_data.active_ritual)]", "Sanctified Tree") as null|anything in opts
-		if(isnull(choice) || QDELETED(src) || QDELETED(user))
+		var/choice = alert(user, "[get_ritual_display_name(tree_data.active_ritual)] is active.\n\nOffer items by clicking the tree while holding them.\n\nCancel this ritual?", "Sanctified Tree", "Keep Ritual", "Cancel Ritual")
+		if(choice != "Cancel Ritual" || QDELETED(src) || QDELETED(user))
 			return
-		switch(choice)
-			if("Offer an item")
-				offer_item(user)
-			if("Cancel ritual")
-				cancel_ritual(user)
+		cancel_ritual(user)
 		return
 
 	// No active ritual — show the category picker.
@@ -229,6 +231,8 @@
 	if(!selected)
 		to_chat(user, span_info("That ritual has already been completed on this tree and cannot be repeated."))
 		return
+	if(!confirm_start_ritual(user, selected))
+		return
 	tree_data.active_ritual = selected
 	var/req = get_required_offerings(selected)
 	tree_data.ritual_progress = list()
@@ -236,8 +240,17 @@
 		tree_data.ritual_progress[key] = 0
 	if(selected == "cat1")
 		tree_data.cat1_all_berries = TRUE
-	to_chat(user, span_notice("I begin the [get_ritual_display_name(selected)] ritual. Use the amulet on the tree again to offer items."))
+	to_chat(user, span_notice("I begin the [get_ritual_display_name(selected)] ritual. Offer items by clicking the tree while holding them. Use the amulet only if I need to cancel."))
 	show_ritual_requirements(user, selected)
+
+/obj/structure/flora/roguetree/wise/sanctified/proc/confirm_start_ritual(mob/living/user, category)
+	var/list/req = get_required_offerings(category)
+	var/list/lines = list()
+	for(var/key in req)
+		lines += "- [req[key]]x [get_offering_desc(key)]"
+	var/text = "Begin [get_ritual_display_name(category)]?\n\nRequired offerings:\n[jointext(lines, "\n")]"
+	var/choice = alert(user, text, "Sanctified Tree Bounty", "Begin", "Cancel")
+	return (choice == "Begin")
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/get_ritual_display_name(category)
 	switch(category)
@@ -267,24 +280,24 @@
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/get_offering_desc(key)
 	switch(key)
-		if("food_item") return "any fruit, grain, or vegetable (rotten okay)"
-		if("manabloom_or_manacrystal") return "mana bloom OR crystalized mana"
-		if("runed_or_leyline") return "runed artifact OR leyline shards"
-		if("enchanted_stone_or_boulder") return "enchanted stone (magic power 5+) OR boulder"
-		if("flesh_item") return "sinew, viscera, tail bone, bone, or skull"
-		if("ash") return "ash"
-		if("compost") return "compost"
-		if("zizobane") return "Zizo's bane mushroom (rotten okay)"
-		if("runed_artifact") return "runed artifact"
-		if("druid_armor") return "druid armor"
-		if("volf_head") return "volf head"
-		if("spider_head") return "spider head (any type)"
-		if("tree_seed") return "tree seed"
-		if("blessed_seed_powder") return "blessed seed powder"
-		if("holy_water_container") return "stone mortar or bucket with 30+ drams of holy water"
-		if("lux") return "lux"
-		if("leechtick") return "leech tick"
-		if("bones") return "bones"
+		if("food_item") return "Any fresh / rotten fruit, vegetable, or grain."
+		if("manabloom_or_manacrystal") return "Mana bloom OR crystalized mana."
+		if("runed_or_leyline") return "Runed artifact OR leyline shard."
+		if("enchanted_stone_or_boulder") return "Enchanted stone (magic power 5+) OR boulder."
+		if("flesh_item") return "Sinew, viscera, tail bone, bone, or skull."
+		if("ash") return "Ash"
+		if("compost") return "Compost"
+		if("zizobane") return "Zizo's bane mushroom."
+		if("runed_artifact") return "Runed artifact"
+		if("druid_armor") return "Druid armor"
+		if("volf_head") return "Volf head"
+		if("spider_head") return "Spider head"
+		if("tree_seed") return "Tree seed"
+		if("blessed_seed_powder") return "Blessed seed powder"
+		if("holy_water_container") return "Stone mortar or bucket with 30+ drams of holy water"
+		if("lux") return "Lux"
+		if("leechtick") return "Leech tick"
+		if("bones") return "Bones"
 	return key
 
 /obj/structure/flora/roguetree/wise/sanctified/proc/show_ritual_requirements(mob/living/user, category)
@@ -336,7 +349,7 @@
 			if(!istype(held, /obj/item/reagent_containers/food/snacks))
 				return FALSE
 			var/obj/item/reagent_containers/food/snacks/food = held
-			return (food.foodtype & (FRUIT | VEGETABLES | GRAIN))
+			return istype(held, /obj/item/reagent_containers/food/snacks/grown/berries) || (food.foodtype & (FRUIT | VEGETABLES | GRAIN))
 		if("manabloom_or_manacrystal")
 			return istype(held, /obj/item/reagent_containers/food/snacks/grown/manabloom) || istype(held, /obj/item/magic/manacrystal)
 		if("runed_or_leyline")
@@ -357,7 +370,7 @@
 		if("runed_artifact")
 			return istype(held, /obj/item/magic/artifact)
 		if("druid_armor")
-			return istype(held, /obj/item/clothing/suit/roguetown/armor/leather/druid)
+			return held.type == /obj/item/clothing/suit/roguetown/armor/leather/druid
 		if("volf_head")
 			return istype(held, /obj/item/natural/head/volf)
 		if("spider_head")
@@ -503,7 +516,7 @@
 /obj/structure/flora/roguetree/wise/sanctified/proc/reward_cat3(mob/living/user)
 	var/turf/T = get_turf(user)
 	new /obj/item/seeds/mushroom_fae(T)
-	to_chat(user, span_green("A single packet of mushroom fae spores rises from the roots — the Treefather rewards patience."))
+	to_chat(user, span_green("A single handful of mushroom fae spores rises from the roots — the Treefather rewards patience."))
 
 /// Cat 4 — Treefather's Bulwark: slow aura + integrity boost (once per tree).
 /// Offerings: 5 enchanted stones (magic_power 5+) OR boulders.
@@ -512,7 +525,7 @@
 	tree_data.has_slow_aura = TRUE
 	max_integrity += 100
 	obj_integrity = min(obj_integrity + 100, max_integrity)
-	visible_message(span_green("The bark of [src.name] hardens like ironwood. A silent ward settles over the grove — those who would defile it will find their feet heavy."))
+	visible_message(span_green("The bark of [src.name] hardens like ironwood. A silent ward settles around the tree — those who would defile it will find their feet heavy."))
 
 /// Cat 5 — Living Light: passive healing aura + middle-click manual heal (once per tree).
 /// Offerings: 10 mixed sinew/viscera/tailbone/bone/skull + 10 ash + 10 compost.
@@ -762,6 +775,7 @@
 
 /obj/structure/flora/roguetree/wise/sanctified/examine(mob/user)
 	. = ..()
+	SEND_SOUND(user, sound(null))
 	var/tree_count = 0
 	for(var/obj/structure/flora/newtree/T in range(5, src))
 		if(!T.burnt)
@@ -777,9 +791,18 @@
 	var/mob/living/carbon/human/H = user
 	if(H.patron?.type != /datum/patron/divine/dendor)
 		return
-	. += span_notice("Hold the Dendor amulet against this tree to access the Treefather's bounties.")
+	. += span_notice("Hold the Dendor amulet against this tree to start or cancel a Treefather bounty.")
+	. += span_notice("To offer while a bounty is active, click the tree with the required item in-hand.")
 	if(tree_data?.active_ritual)
-		. += span_notice("Active ritual: [get_ritual_display_name(tree_data.active_ritual)] — use the amulet to continue offering items.")
+		. += span_notice("Active bounty: [get_ritual_display_name(tree_data.active_ritual)]")
+		var/list/req = get_required_offerings(tree_data.active_ritual)
+		for(var/key in req)
+			var/current = tree_data.ritual_progress[key] || 0
+			var/needed = req[key]
+			if(current >= needed)
+				. += span_notice("  [get_offering_desc(key)]: [current]/[needed] (fulfilled)")
+			else
+				. += span_warning("  [get_offering_desc(key)]: [current]/[needed]")
 	if(tree_data?.has_slow_aura)
 		. += span_info("A guardian ward repels those who would defile this grove.")
 	if(tree_data?.has_heal_aura)
@@ -804,6 +827,13 @@
 			return
 		open_ritual_menu(user)
 		return
+
+	// While a ritual is active, offerings are made by clicking the tree with an item in-hand.
+	if(tree_data?.active_ritual && istype(user, /mob/living/carbon/human))
+		var/mob/living/carbon/human/H = user
+		if(H.patron?.type == /datum/patron/divine/dendor)
+			offer_item(user)
+			return
 	return ..()
 
 /obj/structure/flora/roguetree/wise/sanctified/obj_destruction(damage_flag)

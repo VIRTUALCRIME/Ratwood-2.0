@@ -35,40 +35,53 @@ GLOBAL_LIST_EMPTY(mushroom_circles)
 	color = "#FFFFFF"
 	layer = OBJ_LAYER
 
-	var/watered = FALSE
-	var/timerid = null
+	var/obj/structure/soil/linked_soil
+	var/growth_progress = 0
+	var/soil_water_drain = 1.0 / (1 MINUTES)
+	var/soil_nutrition_drain = 0.75 / (1 MINUTES)
+
+/obj/structure/mushroom_sprout/Initialize(mapload)
+	. = ..()
+	linked_soil = locate(/obj/structure/soil) in get_turf(src)
+	START_PROCESSING(SSprocessing, src)
 
 /obj/structure/mushroom_sprout/Destroy()
-	if(timerid)
-		deltimer(timerid)
+	STOP_PROCESSING(SSprocessing, src)
 	return ..()
+
+/obj/structure/mushroom_sprout/process(dt)
+	if(!linked_soil || QDELETED(linked_soil))
+		qdel(src)
+		return
+	if(linked_soil.blessed_time > 0 && linked_soil.water > 0 && linked_soil.nutrition > 0)
+		linked_soil.adjust_water(-dt * soil_water_drain)
+		linked_soil.adjust_nutrition(-dt * soil_nutrition_drain)
+		growth_progress += dt
+	else
+		growth_progress -= dt * 2
+		if(growth_progress <= -60)
+			visible_message(span_warning("[src] withers back into the blessed soil."))
+			qdel(src)
+			return
+	if(growth_progress >= 5 MINUTES)
+		bloom()
 
 /obj/structure/mushroom_sprout/examine(mob/user)
 	. = ..()
-	if(watered)
-		. += span_info("Already watered — it should bloom soon.")
-	else
-		. += span_info("It needs watering to begin growing.")
+	if(linked_soil)
+		if(linked_soil.blessed_time <= 0)
+			. += span_warning("The soil's blessing is fading; the sprout will not endure without it.")
+		if(linked_soil.water <= 45)
+			. += span_warning("The soil beneath it is thirsty.")
+		if(linked_soil.nutrition <= 45)
+			. += span_warning("The soil beneath it is hungry.")
 
 /obj/structure/mushroom_sprout/attackby(obj/item/I, mob/living/user, params)
-	if(!watered && istype(I, /obj/item/reagent_containers))
-		var/obj/item/reagent_containers/RC = I
-		var/water_amt = RC.reagents.get_reagent_amount(/datum/reagent/water)
-		var/holy_amt  = RC.reagents.get_reagent_amount(/datum/reagent/water/holywater)
-		if(water_amt + holy_amt <= 0)
-			to_chat(user, span_warning("[RC] doesn't have any water in it."))
+	if(linked_soil)
+		if(linked_soil.try_handle_watering(I, user, params))
 			return
-		if(water_amt > 0)
-			RC.reagents.remove_reagent(/datum/reagent/water, min(1, water_amt))
-		else
-			RC.reagents.remove_reagent(/datum/reagent/water/holywater, min(1, holy_amt))
-		watered = TRUE
-		to_chat(user, span_notice("I water the sprout. It hums quietly with wild energy."))
-		timerid = addtimer(CALLBACK(src, PROC_REF(bloom)), 5 MINUTES, flags = TIMER_STOPPABLE)
-		return
-	if(watered && istype(I, /obj/item/reagent_containers))
-		to_chat(user, span_info("Already watered; it just needs time."))
-		return
+		if(linked_soil.try_handle_fertilizing(I, user, params))
+			return
 	if(istype(I, /obj/item/rogueweapon/shovel))
 		to_chat(user, span_notice("I begin uprooting [src]..."))
 		if(do_after(user, 2 SECONDS, target = src))
@@ -79,6 +92,8 @@ GLOBAL_LIST_EMPTY(mushroom_circles)
 /obj/structure/mushroom_sprout/proc/bloom()
 	if(QDELETED(src))
 		return
+	if(linked_soil && !QDELETED(linked_soil))
+		qdel(linked_soil)
 	new /obj/structure/mushroom_circle(get_turf(src))
 	qdel(src)
 
