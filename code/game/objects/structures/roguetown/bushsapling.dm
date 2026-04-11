@@ -136,7 +136,8 @@
 		new /obj/item/natural/fibers(get_turf(src))
 		new /obj/item/natural/thorn(get_turf(src))
 		if(looty.len)
-			new (pick(looty))(get_turf(src))
+			var/loot_type = pick(looty)
+			new loot_type(get_turf(src))
 	return ..()
 
 /obj/structure/bush_sapling/Crossed(atom/movable/AM)
