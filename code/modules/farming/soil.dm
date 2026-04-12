@@ -470,14 +470,61 @@ GLOBAL_LIST_EMPTY(soil_list)
 			. += span_info("It's fully matured.")
 			if(can_read_growth_timers && !produce_ready)
 				var/time_until_produce = max(plant.produce_time - produce_time, 0)
-				. += span_info("Next harvest in approximately [DisplayTimeText(time_until_produce)] (at current growth rate).")
+				var/gm = calculate_growth_multiplier()
+				var/adjusted_produce = (gm > 0) ? round(time_until_produce / gm) : time_until_produce
+				. += span_info("Next harvest in approximately [DisplayTimeText(adjusted_produce)] (at current growth rate).")
 		else
 			. += span_info("It has yet to mature.")
 			if(can_read_growth_timers)
 				var/time_until_mature = max(plant.maturation_time - growth_time, 0)
-				. += span_info("Estimated time to maturity: [DisplayTimeText(time_until_mature)].")
+				var/gm = calculate_growth_multiplier()
+				var/adjusted_mature = (gm > 0) ? round(time_until_mature / gm) : time_until_mature
+				. += span_info("Estimated time to maturity: [DisplayTimeText(adjusted_mature)] (at current growth rate).")
 		if(produce_ready)
 			. += span_info("It's ready for harvest.")
+	// Custom-growth structures sharing this soil: tree saplings, bush saplings, flower/herb seedlings.
+	// These don't use the standard soil.plant system, so their status is shown here instead.
+	if(!plant)
+		var/turf/custom_turf = get_turf(src)
+		if(custom_turf)
+			var/obj/structure/tree_sapling/tree = locate() in custom_turf
+			var/obj/structure/bush_sapling/bush = locate() in custom_turf
+			var/obj/structure/soil_seedling/seedling = locate() in custom_turf
+			if(tree)
+				if(tree.dead)
+					. += span_warning("A withered sapling is here. Shovel it out to clear the spot.")
+				else
+					switch(tree.stage)
+						if(TREESAP_STAGE_SAPLING)
+							. += span_info("A young tree sapling is taking root here.")
+						if(TREESAP_STAGE_SHRUB)
+							. += span_info("A small shrub is growing steadily here.")
+					if(can_read_growth_timers && tree.stage <= TREESAP_STAGE_SHRUB)
+						var/gm = get_environmental_growth_multiplier()
+						var/time_rem = max(TREESAP_STAGE_TIME - tree.growth_progress, 0)
+						var/adj = (gm > 0) ? round(time_rem / gm) : time_rem
+						. += span_info("Estimated time to next stage: [DisplayTimeText(adj)] (at current growth rate).")
+			else if(bush)
+				if(bush.dead)
+					. += span_warning("A withered bush sprout is here. Shovel it out to clear the spot.")
+				else
+					switch(bush.stage)
+						if(BUSHSAP_STAGE_SAPLING)
+							. += span_info("A young bush sprout is taking root here.")
+						if(BUSHSAP_STAGE_BUDDING)
+							. += span_info("A bush sprout is growing, still rooted in the soil.")
+					if(can_read_growth_timers && bush.stage < BUSHSAP_STAGE_MATURE)
+						var/gm = get_environmental_growth_multiplier()
+						var/time_rem = max(BUSHSAP_STAGE_TIME - bush.growth_progress, 0)
+						var/adj = (gm > 0) ? round(time_rem / gm) : time_rem
+						. += span_info("Estimated time to next stage: [DisplayTimeText(adj)] (at current growth rate).")
+			else if(seedling)
+				. += span_info("A seedling is germinating here.")
+				if(can_read_growth_timers)
+					var/gm = get_environmental_growth_multiplier()
+					var/time_rem = max(seedling.grow_duration - seedling.growth_progress, 0)
+					var/adj = (gm > 0) ? round(time_rem / gm) : time_rem
+					. += span_info("Estimated time to bloom: [DisplayTimeText(adj)] (at current growth rate).")
 	if(can_read_soil_stats)
 		. += span_info("Water: [round((water / MAX_PLANT_WATER) * 100)]%")
 		. += span_info("Nutrition: [round((nutrition / MAX_PLANT_NUTRITION) * 100)]%")
@@ -511,6 +558,19 @@ GLOBAL_LIST_EMPTY(soil_list)
 		. += span_good("The soil has special fertilizer mixed in.")
 	if(pollination_time > 0)
 		. += span_good("The soil has been pollinated.")
+	// Growth bonus breakdown: visible to expert farmers and those with the seedknow trait.
+	// Also shows the effective growth rate so bonus contributions are clearly visible.
+	if(can_read_growth_timers)
+		var/list/natural_bonuses = get_natural_growth_bonuses()
+		if(natural_bonuses["total"] > 0)
+			var/list/bonus_parts = list()
+			if(natural_bonuses["blessed"] > 0)
+				bonus_parts += "blessed soil ([round(natural_bonuses["blessed"] * 100)]%)"
+			if(natural_bonuses["living_light"] > 0)
+				bonus_parts += "living light ([round(natural_bonuses["living_light"] * 100)]%)"
+			if(natural_bonuses["dendor_rune"] > 0)
+				bonus_parts += "Rune of Dendor ([round(natural_bonuses["dendor_rune"] * 100)]%)"
+			. += span_good("Growth bonus: [round(natural_bonuses["total"] * 100)]% ([english_list(bonus_parts)].)") 
 
 #define BLESSING_WEED_DECAY_RATE 10 / (1 MINUTES)
 #define WEED_GROWTH_RATE 3 / (1 MINUTES)
@@ -574,6 +634,69 @@ GLOBAL_LIST_EMPTY(soil_list)
 	if(blessed_time > 0)
 		adjust_plant_health(dt * PLANT_BLESS_HEAL_RATE)
 
+/// Returns an associative list of additive growth bonuses from blessed soil (+20%), Living Light (+10%),
+/// and a nearby Rune of Dendor (+5%). Keys: "blessed", "living_light", "dendor_rune", "total" (capped at 35%).
+/// Multiple runes do not stack — only one rune's bonus is counted regardless of how many are in range.
+/obj/structure/soil/proc/get_natural_growth_bonuses()
+	var/blessed_bonus = (blessed_time > 0) ? 0.20 : 0.0
+	var/living_light_bonus = 0.0
+	for(var/obj/structure/flora/roguetree/wise/sanctified/tree in range(5, src))
+		if(tree.tree_data?.has_heal_aura)
+			living_light_bonus = 0.10
+			break
+	var/dendor_rune_bonus = 0.0
+	for(var/obj/structure/ritualcircle/dendor in range(5, src))
+		dendor_rune_bonus = 0.05
+		break
+	var/total = min(blessed_bonus + living_light_bonus + dendor_rune_bonus, 0.35)
+	return list("blessed" = blessed_bonus, "living_light" = living_light_bonus, "dendor_rune" = dendor_rune_bonus, "total" = total)
+
+/// Returns the growth-speed multiplier from environmental factors only.
+/// Includes: tilling, fertilization, pollination, world traits, natural aura bonuses, and weed penalties.
+/// Does NOT require a plant — safe to call for tree/bush saplings and seedlings.
+/obj/structure/soil/proc/get_environmental_growth_multiplier()
+	var/gm = 1.0
+	if(tilled_time > 0)
+		gm *= 1.6
+	if(fertilized_time > 0)
+		gm *= 2.0
+	if(pollination_time > 0)
+		gm *= 1.75
+	if(has_world_trait(/datum/world_trait/dendor_fertility))
+		gm *= 2.0
+	if(has_world_trait(/datum/world_trait/fertility))
+		gm *= 1.5
+	if(has_world_trait(/datum/world_trait/dendor_drought))
+		gm *= 0.4
+	var/list/nb = get_natural_growth_bonuses()
+	if(nb["total"] > 0)
+		gm *= (1.0 + nb["total"])
+	if(weeds >= MAX_PLANT_WEEDS * 0.6)
+		gm *= 0.75
+	if(weeds >= MAX_PLANT_WEEDS * 0.3)
+		gm *= 0.75
+	return gm
+
+/// Returns the current effective growth-time multiplier based on active soil/plant conditions.
+/// Returns 0 if growth is currently blocked (no water, underground, produce ready, etc.).
+/obj/structure/soil/proc/calculate_growth_multiplier()
+	if(!plant || plant_dead)
+		return 0
+	var/turf/location = loc
+	if(location && !plant.can_grow_underground && location.can_see_sky == SEE_SKY_NO)
+		return 0
+	if(matured && produce_ready)
+		return 0
+	var/drain_rate = plant.water_drain_rate
+	if(drain_rate > 0 && water <= 0)
+		return 0
+	var/gm = get_environmental_growth_multiplier()
+	if(plant_health <= MAX_PLANT_HEALTH * 0.3)
+		gm *= 0.75
+	if(plant_health <= MAX_PLANT_HEALTH * 0.6)
+		gm *= 0.75
+	return gm
+
 /obj/structure/soil/proc/process_plant_nutrition(dt)
 	var/turf/location = loc
 	if(!plant.can_grow_underground && location.can_see_sky == SEE_SKY_NO)
@@ -590,9 +713,8 @@ GLOBAL_LIST_EMPTY(soil_list)
 	// If soil is tilled, grow faster
 	if(tilled_time > 0)
 		growth_multiplier *= 1.6
-	// Blessed soil gives a modest growth boost; fertilizer remains stronger.
+	// Blessed soil nutriment reduction (growth boost handled in the additive natural bonus block below).
 	if(blessed_time > 0)
-		growth_multiplier *= 1.2
 		nutriment_eat_mutliplier *= 0.8
 	if(fertilized_time > 0)
 		growth_multiplier *= 2.0
@@ -612,11 +734,10 @@ GLOBAL_LIST_EMPTY(soil_list)
 	if(has_world_trait(/datum/world_trait/dendor_drought))
 		growth_multiplier *= 0.4
 		nutriment_eat_mutliplier *= 2
-	// Living Light aura (sanctified tree): 10% growth bonus, stacks with blessed soil.
-	for(var/obj/structure/flora/roguetree/wise/sanctified/tree in range(5, src))
-		if(tree.tree_data?.has_heal_aura)
-			growth_multiplier *= 1.1
-			break
+	// Natural growth bonuses: blessed soil (+20%), Living Light (+10%), Rune of Dendor (+5%) — additive, capped at 35%.
+	var/list/natural_bonuses = get_natural_growth_bonuses()
+	if(natural_bonuses["total"] > 0)
+		growth_multiplier *= (1.0 + natural_bonuses["total"])
 	// If there's too many weeds, they hamper the growth of the plant
 	if(weeds >= MAX_PLANT_WEEDS * 0.3)
 		growth_multiplier *= 0.75

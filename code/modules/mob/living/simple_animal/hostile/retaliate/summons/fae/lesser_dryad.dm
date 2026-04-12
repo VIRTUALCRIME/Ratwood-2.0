@@ -15,10 +15,11 @@
 	aggressive = FALSE
 	inherent_spells = list()
 	base_intents = list(/datum/intent/simple/elementalt2_unarmed/lesser_dryad)
+	d_intent = INTENT_PARRY
 	move_to_delay = 7 // Reasonable companion speed
 	environment_smash = ENVIRONMENT_SMASH_NONE // Does not destroy vines or structures in its path
 	robust_searching = TRUE // Use threshold-based stat checking (needed for stat_attack to work)
-	stat_attack = UNCONSCIOUS // Continues attacking unconscious/paralyzed targets; stops at DEAD
+	stat_attack = SOFT_CRIT // Stops pursuing when target becomes unconscious or paralyzed
 	retreat_health = 0 // Never flee at low health
 	lose_patience_timeout = 0 // Never give up chasing a target
 	/// Cooldown for the special attack (set by the trigger spell).
@@ -36,8 +37,8 @@
 	/// Brief grace period after a follow order so stale owner-attacker refs do not immediately re-aggro.
 	var/ignore_owner_defense_until = 0
 	/// Bark armor: current and max integrity of the protective bark layer.
-	var/bark_integrity = 200
-	var/bark_max_integrity = 200
+	var/bark_integrity = 250
+	var/bark_max_integrity = 250
 	/// Whether the bark is fully broken (no protection until repaired).
 	var/bark_broken = FALSE
 	/// Timer ID for the bark regeneration loop.
@@ -46,11 +47,14 @@
 	var/vine_regen_timer = null
 	/// Timer ID for the blessed frenzy duration.
 	var/frenzy_timer = null
+	/// Movement speed boost level from blessed frenzy: 0 = none, 1 = 25%, 2 = 50% (bloomstone).
+	var/frenzy_boost = 0
 	/// Temp: damage type of the current incoming hit, used by adjustBruteLoss.
 	var/last_attack_dtype = "blunt"
 
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad/lesser/Initialize(mapload, mob/living/carbon/human/owner)
 	. = ..()
+	// Parent dryad sets unarmed to rank 4 (expert) — lesser inherits that directly.
 	faction |= "neutral"
 	if(owner)
 		owner_mob = owner
@@ -58,20 +62,24 @@
 		// Tag with owner faction so minion_order/lesser_dryad can command it.
 		var/faction_tag = "[owner.real_name]_faction"
 		faction |= faction_tag
-	// Start the vine-based self-heal loop — fires every 30 seconds regardless of combat.
-	vine_regen_timer = addtimer(CALLBACK(src, PROC_REF(vine_heal_tick)), 300, TIMER_STOPPABLE)
+	// Start the vine-based self-heal loop — fires every 10 seconds.
+	vine_regen_timer = addtimer(CALLBACK(src, PROC_REF(vine_heal_tick)), 100, TIMER_STOPPABLE)
 
 /// Override vine() to do nothing — lesser dryad does not spread vines passively.
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad/lesser/vine()
 	return
 
-/// Override Move() to apply lesser-specific speeds: slightly faster on vines, normal otherwise.
+/// Override Move() to apply lesser-specific speeds: vine bonus stacks with frenzy speed boost.
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad/lesser/Move(newloc)
 	. = ..()
-	if(isturf(newloc) && contains_vines(newloc))
-		move_to_delay = 5
-	else
-		move_to_delay = 7
+	var/base_delay = (isturf(newloc) && contains_vines(newloc)) ? 5 : 7
+	switch(frenzy_boost)
+		if(2)  // Bloomstone frenzy: 50% faster
+			move_to_delay = max(2, round(base_delay * 0.5))
+		if(1)  // Normal frenzy: 25% faster
+			move_to_delay = max(2, round(base_delay * 0.75))
+		else
+			move_to_delay = base_delay
 
 /// Movement controller for the lesser dryad.
 /// Priority: combat > defend owner > follow > guard tile > idle (stand still).
@@ -212,11 +220,11 @@
 		var/reduction
 		switch(last_attack_dtype)
 			if("slash")
-				reduction = 0.05   // Very weak vs cut — bark splinters against blades
+				reduction = 0.15   // Very weak vs cut — bark splinters against blades
 			if("stab")
-				reduction = 0.25   // Strong vs stab — bark resists puncture
+				reduction = 0.40   // Strong vs stab — bark resists puncture
 			else
-				reduction = 0.15   // Decent vs blunt — absorbs some impact
+				reduction = 0.30   // Decent vs blunt — absorbs some impact
 		var/absorbed = amount * reduction
 		bark_integrity = max(0, bark_integrity - amount)  // Raw incoming damage erodes bark
 		amount = max(0, amount - absorbed)
@@ -232,12 +240,13 @@
 		bark_regen_timer = null
 	bark_regen_timer = addtimer(CALLBACK(src, PROC_REF(bark_regen_tick)), 100, TIMER_STOPPABLE)  // 10 second combat gap
 
-/// Periodic regen tick: restores 25% of max integrity per tick until full.
+/// Periodic regen tick: restores 25% of max integrity per tick (or 50% if standing on vines) until full.
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad/lesser/proc/bark_regen_tick()
 	bark_regen_timer = null
 	if(QDELETED(src) || stat == DEAD)
 		return
-	bark_integrity = min(bark_max_integrity, bark_integrity + round(bark_max_integrity * 0.25))
+	var/regen_pct = (isturf(loc) && contains_vines(loc)) ? 0.50 : 0.25
+	bark_integrity = min(bark_max_integrity, bark_integrity + round(bark_max_integrity * regen_pct))
 	if(bark_integrity >= bark_max_integrity)
 		bark_broken = FALSE
 		return
@@ -251,7 +260,7 @@
 		return
 	if(isturf(loc) && contains_vines(loc) && health < maxHealth)
 		if(!has_status_effect(/datum/status_effect/buff/healing))
-			apply_status_effect(/datum/status_effect/buff/healing, 1.25)
+			apply_status_effect(/datum/status_effect/buff/healing, 1.5)
 		visible_message(span_notice("[src] mends itself in the vines."))
 	vine_regen_timer = addtimer(CALLBACK(src, PROC_REF(vine_heal_tick)), 100, TIMER_STOPPABLE)  // Repeat every 10 s
 
@@ -263,18 +272,46 @@
 		frenzy_timer = null
 	if(bloomstone_boost)
 		melee_cooldown = round(initial(melee_cooldown) * 0.5)
+		frenzy_boost = 2
 		visible_message(span_boldwarning("[src] blazes with the Treefather's fury — its movements become a blur!"))
 	else
 		melee_cooldown = round(initial(melee_cooldown) * 0.75)
+		frenzy_boost = 1
 		visible_message(span_warning("[src] surges with Dendor's blessing, striking faster!"))
 	// Visual: druid-armor-style light radius + Living Light outline.
 	set_light(1, 1, 2, l_color = "#58C86A")
 	add_filter("dryad_frenzy_outline", 2, list("type" = "outline", "color" = "#58C86A", "alpha" = 60, "size" = 1))
 	frenzy_timer = addtimer(CALLBACK(src, PROC_REF(end_frenzy)), 50, TIMER_STOPPABLE)  // 5 seconds
 
-/// Revert melee_cooldown, light, and outline after the frenzy expires.
+/// Revert melee_cooldown, movement speed, light, and outline after the frenzy expires.
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad/lesser/proc/end_frenzy()
 	frenzy_timer = null
 	melee_cooldown = initial(melee_cooldown)
+	frenzy_boost = 0
 	set_light(0)
 	remove_filter("dryad_frenzy_outline")
+
+/// Override the default parry formula so the dryad can actually block attacks.
+/// The standard formula is tuned for players with weapons/bracers; without those items
+/// the chance floors at 5% against any skilled attacker. This replacement uses a
+/// simplified skill comparison that gives the dryad real parry capability.
+/mob/living/simple_animal/hostile/retaliate/rogue/fae/dryad/lesser/attempt_parry(datum/intent/intenty, mob/living/user)
+	// Can only react to attacks from the front.
+	if(!can_see_cone(user))
+		return FALSE
+	// Respect parry cooldown inherited from hostile.dm (setparrytime = 30).
+	if(world.time < last_parry + setparrytime)
+		return FALSE
+	// Some incoming intents cannot be parried (e.g. grab, jump).
+	if(intenty && !intenty.canparry)
+		return FALSE
+	last_parry = world.time
+	// Expert unarmed (rank 4) = 48% base. Each attacker skill level costs 7%.
+	var/prob2defend = get_skill_level(/datum/skill/combat/unarmed) * 12
+	var/attacker_skill = intenty?.masteritem ? user.get_skill_level(intenty.masteritem.associated_skill) \
+											: user.get_skill_level(/datum/skill/combat/unarmed)
+	prob2defend -= (attacker_skill * 7)
+	prob2defend = clamp(prob2defend, 5, 75)
+	if(!prob(prob2defend))
+		return FALSE
+	return do_unarmed_parry(0, user)

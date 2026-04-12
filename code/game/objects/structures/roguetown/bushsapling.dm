@@ -64,7 +64,7 @@
 		if(linked_soil.water > 0 && linked_soil.nutrition > 0)
 			linked_soil.adjust_water(-dt * soil_water_drain)
 			linked_soil.adjust_nutrition(-dt * soil_nutrition_drain)
-			growth_progress += dt
+			growth_progress += dt * linked_soil.get_environmental_growth_multiplier()
 			has_grown = TRUE
 		else if(has_grown)
 			growth_progress -= dt * 2
@@ -147,42 +147,20 @@
 		playsound(src.loc, "plantcross", 50, FALSE, -1)
 
 /obj/structure/bush_sapling/examine(mob/user)
+	// While still rooted in soil (stages 1-2), forward examine to the soil plot — it shows all status/growth info.
+	if(!dead && linked_soil && !QDELETED(linked_soil))
+		return linked_soil.examine(user)
 	. = ..()
 	if(dead)
 		. += span_warning("It has withered and died. Shovel it out to clear the spot.")
 		return
-	switch(stage)
-		if(BUSHSAP_STAGE_SAPLING)
-			. += span_info("A young bush sprout just taking hold.")
-		if(BUSHSAP_STAGE_BUDDING)
-			. += span_info("Growing steadily — it is still rooting in the soil.")
-		if(BUSHSAP_STAGE_MATURE)
-			var/time_to_hedge = max(BUSHSAP_HEDGE_TIME - growth_progress, 0)
-			if(growth_progress >= BUSHSAP_HEDGE_TIME * 0.7)
-				. += span_warning("It is looking overgrown. Shear it soon, or it will become a tall hedge in [DisplayTimeText(time_to_hedge)].")
-			else
-				. += span_notice("A mature bush. Shear it with scissors to keep it manageable, or leave it to grow into a taller hedge in [DisplayTimeText(time_to_hedge)].")
-	// Expert farmers and seed-knowers (druids) can read the estimated time to the next growth stage.
-	if(!dead && stage < BUSHSAP_STAGE_MATURE && isliving(user))
-		var/mob/living/living_user = user
-		if(living_user.get_skill_level(/datum/skill/labor/farming) >= SKILL_LEVEL_EXPERT || HAS_TRAIT(living_user, TRAIT_SEEDKNOW))
-			if(linked_soil && !QDELETED(linked_soil))
-				var/time_remaining = max(BUSHSAP_STAGE_TIME - growth_progress, 0)
-				. += span_info("Estimated time to next stage: [DisplayTimeText(time_remaining)].")
-	if(stage <= BUSHSAP_STAGE_BUDDING)
-		if(linked_soil && !QDELETED(linked_soil))
-			if(linked_soil.water <= 45)
-				. += span_warning("The soil beneath it is thirsty.")
-			else if(linked_soil.water <= 150)
-				. += span_info("The soil beneath it is moist.")
-			else
-				. += span_info("The soil beneath it is wet.")
-			if(linked_soil.nutrition <= 45)
-				. += span_warning("The soil beneath it is hungry.")
-			else if(linked_soil.nutrition <= 150)
-				. += span_info("The soil beneath it is sated.")
-			else
-				. += span_info("The soil beneath it looks fertile.")
+	// Standalone mature bush — soil already removed when it transitioned.
+	if(stage == BUSHSAP_STAGE_MATURE)
+		var/time_to_hedge = max(BUSHSAP_HEDGE_TIME - growth_progress, 0)
+		if(growth_progress >= BUSHSAP_HEDGE_TIME * 0.7)
+			. += span_warning("It is looking overgrown. Shear it soon, or it will become a tall hedge in [DisplayTimeText(time_to_hedge)].")
+		else
+			. += span_notice("A mature bush. Shear it with scissors to keep it manageable, or leave it to grow into a taller hedge in [DisplayTimeText(time_to_hedge)].")
 
 /obj/structure/bush_sapling/attack_hand(mob/user)
 	// Stage-3: pickable like a wild bush

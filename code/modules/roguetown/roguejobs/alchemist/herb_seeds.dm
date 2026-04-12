@@ -107,7 +107,7 @@
 	if(linked_soil.water > 0 && linked_soil.nutrition > 0)
 		linked_soil.adjust_water(-dt * soil_water_drain)
 		linked_soil.adjust_nutrition(-dt * soil_nutrition_drain)
-		growth_progress += dt
+		growth_progress += dt * linked_soil.get_environmental_growth_multiplier()
 	else
 		growth_progress = max(growth_progress - dt * 2, 0)
 	if(stage == 1 && growth_progress >= (grow_duration / 2))
@@ -131,26 +131,10 @@
 	return ..()
 
 /obj/structure/soil_seedling/examine(mob/user)
-	. = ..()
+	// Forward examine to the soil plot — it shows all growth and soil status info.
 	if(linked_soil && !QDELETED(linked_soil))
-		if(linked_soil.water <= 45)
-			. += span_warning("The soil beneath it is thirsty.")
-		else if(linked_soil.water <= 150)
-			. += span_info("The soil beneath it is moist.")
-		else
-			. += span_info("The soil beneath it is wet.")
-		if(linked_soil.nutrition <= 45)
-			. += span_warning("The soil beneath it is hungry.")
-		else if(linked_soil.nutrition <= 150)
-			. += span_info("The soil beneath it is sated.")
-		else
-			. += span_info("The soil beneath it looks fertile.")
-		// Expert farmers and seed-knowers (druids) can read the estimated time until this seedling blooms.
-		if(isliving(user))
-			var/mob/living/living_user = user
-			if(living_user.get_skill_level(/datum/skill/labor/farming) >= SKILL_LEVEL_EXPERT || HAS_TRAIT(living_user, TRAIT_SEEDKNOW))
-				var/time_remaining = max(grow_duration - growth_progress, 0)
-				. += span_info("Estimated time to bloom: [DisplayTimeText(time_remaining)].")
+		return linked_soil.examine(user)
+	. = ..()
 
 /obj/structure/soil_seedling/proc/bloom()
 	if(QDELETED(src) || !ispath(final_type))

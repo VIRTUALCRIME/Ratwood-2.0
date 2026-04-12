@@ -70,7 +70,7 @@
 		if(linked_soil.water > 0 && linked_soil.nutrition > 0)
 			linked_soil.adjust_water(-dt * soil_water_drain)
 			linked_soil.adjust_nutrition(-dt * soil_nutrition_drain)
-			growth_progress += dt
+			growth_progress += dt * linked_soil.get_environmental_growth_multiplier()
 			has_grown = TRUE
 		else if(has_grown)
 			growth_progress -= dt * 2
@@ -145,41 +145,21 @@
 	return ..()
 
 /obj/structure/tree_sapling/examine(mob/user)
+	// While alive and rooted in soil, forward examine to the soil plot — it shows all growth and status info.
+	if(!dead && linked_soil && !QDELETED(linked_soil))
+		return linked_soil.examine(user)
 	. = ..()
 	if(dead)
 		. += span_warning("It has withered and died. Shovel it out to clear the spot.")
 		return
-	switch(stage)
-		if(TREESAP_STAGE_SAPLING)
-			. += span_info("A young seedling just beginning to sprout.")
-		if(TREESAP_STAGE_SHRUB)
-			. += span_info("A small shrub growing steadily.")
-		if(TREESAP_STAGE_YOUNG)
-			. += span_notice("A young tree still taking root. It should grow on its own now.")
-	// Expert farmers and seed-knowers (druids) can read the estimated time to the next growth stage.
-	if(!dead && isliving(user))
-		var/mob/living/living_user = user
-		if(living_user.get_skill_level(/datum/skill/labor/farming) >= SKILL_LEVEL_EXPERT || HAS_TRAIT(living_user, TRAIT_SEEDKNOW))
-			if(stage <= TREESAP_STAGE_SHRUB && linked_soil && !QDELETED(linked_soil))
-				var/time_remaining = max(TREESAP_STAGE_TIME - growth_progress, 0)
-				. += span_info("Estimated time to next stage: [DisplayTimeText(time_remaining)].")
-			else if(stage == TREESAP_STAGE_YOUNG)
+	// Standalone young tree — soil already removed when it transitioned.
+	if(stage == TREESAP_STAGE_YOUNG)
+		. += span_notice("A young tree still taking root. It should grow on its own now.")
+		if(isliving(user))
+			var/mob/living/living_user = user
+			if(living_user.get_skill_level(/datum/skill/labor/farming) >= SKILL_LEVEL_EXPERT || HAS_TRAIT(living_user, TRAIT_SEEDKNOW))
 				var/time_remaining = max(TREESAP_YOUNG_TIME - growth_progress, 0)
 				. += span_info("Estimated time to finish growing: [DisplayTimeText(time_remaining)].")
-	if(stage <= TREESAP_STAGE_SHRUB)
-		if(linked_soil && !QDELETED(linked_soil))
-			if(linked_soil.water <= 45)
-				. += span_warning("The soil beneath it is thirsty.")
-			else if(linked_soil.water <= 150)
-				. += span_info("The soil beneath it is moist.")
-			else
-				. += span_info("The soil beneath it is wet.")
-			if(linked_soil.nutrition <= 45)
-				. += span_warning("The soil beneath it is hungry.")
-			else if(linked_soil.nutrition <= 150)
-				. += span_info("The soil beneath it is sated.")
-			else
-				. += span_info("The soil beneath it looks fertile.")
 
 /obj/structure/tree_sapling/attackby(obj/item/I, mob/living/user, params)
 	if(stage <= TREESAP_STAGE_SHRUB && !dead && linked_soil)
