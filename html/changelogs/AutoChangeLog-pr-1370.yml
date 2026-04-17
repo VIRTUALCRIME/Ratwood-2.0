@@ -1,0 +1,4 @@
+author: "Jamdrawers"
+delete-after: True
+changes:
+  - rscadd: "adds crafting recipes for non-unique desert clothing"
