@@ -483,7 +483,7 @@
 	desc = "An expertly smithed form-fitting steel cuirass that is much lighter and agile. Backed with supple leather and silk, it's not only protective but luxurious to wear."
 	armor = ARMOR_CUIRASS// Experimental.
 	armor_class = ARMOR_CLASS_LIGHT
-	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL //costly to make, low coverage, so it's more durable; compare to Lightweight Brigandine
+	max_integrity = ARMOR_INT_CHEST_LIGHT_MASTER - 15 //costly to make, competes with Light Brigandine. Compare to it and Studded/Hardened Leather.
 	smelt_bar_num = 1
 	icon_state = "fencercuirass"
 	item_state = "fencercuirass"

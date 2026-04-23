@@ -630,10 +630,10 @@
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/half
 
 /datum/anvil_recipe/armor/steel/lightcuirass
-	name = "Fencing Cuirass, Steel (+2 Steel, +1 Cured Leather)"
+	name = "Fencing Cuirass, Steel (+1 Steel, +1 Cured Leather)"
 	req_bar = /obj/item/ingot/steel
 	req_blade = /obj/item/blade/steel_plate
-	additional_items = list(/obj/item/ingot/steel, /obj/item/ingot/steel, /obj/item/natural/hide/cured)
+	additional_items = list(/obj/item/ingot/steel, /obj/item/natural/hide/cured)
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/half/fencer
 
 /datum/anvil_recipe/armor/steel/cuirass/fluted
