@@ -15,10 +15,10 @@
 	allowed_patrons = COURTCHAPLAIN_PATRONS
 	allowed_sexes = list(MALE, FEMALE)
 	outfit = /datum/outfit/job/roguetown/chaplain
-	tutorial = "The time most acolytes put towards reaching deeper into the divine, you spent gladhanding discrete political deals, and studying the land claims and house feuds of the world's noble families. \
-				You may not be as divinely gifted as the average acolyte in the more... showy ways of magic and miracle, but you suffer well with influence and the city lord's ear instead, liasing between church and court as advisor and diplomat. \
-				And is that not the truest form of power? Some call you a scheming manipulator, twisting the Duke's ear towards the will of the Bishop, a spy on their behalf. Others suspect, in hushed tones, that the Duke may come to prefer your sweet whispers to the Prelate's. \
-				Only when swords are drawn might your true loyalties be discovered, between church and court."
+	tutorial = "The time most acolytes put towards reaching deeper into the divine, you spent gladhanding discrete political deals and studying the land claims and house feuds of the world's noble families. \
+		You may not be as divinely gifted as the church's acolytes in the more... direct ways of magic and miracle, but you suffer well with influence and the city lord's ear instead,  liasing between church and court as advisor and diplomat on spiritual matters. \
+		Some call you a scheming manipulator, twisting the Duke's ear towards the will of the Bishop, a spy on their behalf. Others suspect, in hushed tones, that the Duke may come to prefer your sweet whispers to the Prelate's. \
+		Only when swords are drawn might your true loyalties be discovered."
 	display_order = JDO_CHAPLAIN
 	give_bank_account = TRUE
 	min_pq = 5
@@ -151,6 +151,7 @@
 			neck = /obj/item/clothing/neck/roguetown/psicross/eora
 			shoes = /obj/item/clothing/shoes/roguetown/sandals
 			armor = /obj/item/clothing/suit/roguetown/shirt/robe/eora
+			cloak = /obj/item/clothing/cloak/templar/eoran
 		if(/datum/patron/divine/malum)
 			mask = /obj/item/clothing/head/roguetown/roguehood
 			neck = /obj/item/clothing/neck/roguetown/psicross/malum
