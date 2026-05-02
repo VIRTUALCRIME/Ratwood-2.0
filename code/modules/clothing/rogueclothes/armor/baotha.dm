@@ -7,14 +7,14 @@
 	icon_state = "baothachest"
 	item_state = "baothachest"
 	body_parts_covered = CHEST|VITALS|GROIN
-	max_integrity = ARMOR_INT_CHEST_PLATE_STEEL
 	max_integrity = ARMOR_INT_CHEST_PLATE_ANTAG
-	// max_integrity = ARMOR_INT_CHEST_PLATE_ANTAG
 	// peel_threshold = 5	//-Any- weapon will require 5 peel hits to peel coverage off of this armor.
 
-// /obj/item/clothing/suit/roguetown/armor/plate/half/baotha/Initialize(mapload)
-// 	. = ..()
-// 	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+/obj/item/clothing/suit/roguetown/armor/plate/half/baotha/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+	AddComponent(/datum/component/cursed_item, TRAIT_DEPRAVED, "ARMOR")
+	AddComponent(/datum/component/item_equipped_movement_rustle, null)
 
 // /obj/item/clothing/suit/roguetown/armor/plate/half/baotha/dropped(mob/living/carbon/human/user)
 // 	. = ..()
@@ -30,13 +30,13 @@
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/baotha.dmi'
 	icon_state = "baotha_legs"
 	armor = ARMOR_ASCENDANT
-	body_parts_covered = LEGS|FEET|GROIN
+	body_parts_covered = LEGS|GROIN
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_SMASH, BCLASS_PICK)
 
 /obj/item/clothing/under/roguetown/platelegs/baotha/Initialize(mapload)
 	. = ..()
 	AddComponent(/datum/component/cursed_item, TRAIT_DEPRAVED, "ARMOR")
-
+	// AddComponent(/datum/component/item_equipped_movement_rustle, null)
 
 // /obj/item/clothing/under/roguetown/platelegs/baotha/Initialize(mapload)
 // 	. = ..()
@@ -55,8 +55,8 @@
 
 /obj/item/clothing/wrists/roguetown/bracers/baotha
 	name = "baothan bracers"
-	desc = "Gilded bracers that protect the arms and, through powerful Baothan Magic, the hands."
-	body_parts_covered = ARMS|HANDS
+	desc = "Gilded bracers that protect the arms."
+	body_parts_covered = ARMS
 	icon = 'icons/roguetown/clothing/special/baotha.dmi'
 	mob_overlay_icon = 'icons/roguetown/clothing/special/onmob/baotha.dmi'
 	icon_state = "baothabracers"
@@ -123,5 +123,109 @@
 	pants = /obj/item/clothing/under/roguetown/platelegs/baotha
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/baotha
 	head = /obj/item/clothing/head/roguetown/helmet/heavy/baotha
+	belt = /obj/item/storage/belt/rogue/leather/plaquegold/baotha
+	gloves = /obj/item/clothing/gloves/roguetown/chain/baotha
+	shoes = /obj/item/clothing/shoes/roguetown/anklets/baotha
+	neck = /obj/item/clothing/neck/roguetown/gorget/boatha
 	r_hand = /obj/item/rogueweapon/whip/spiderwhip/baotha
 	H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/mending/lesser)
+
+
+/obj/item/storage/belt/rogue/leather/plaquegold/baotha
+	name = "baothan waist-belt"
+	icon = 'icons/roguetown/clothing/neck.dmi'
+	icon_state = "psybracelet"
+	mob_overlay_icon = null
+
+/obj/item/storage/belt/rogue/leather/plaquegold/baotha/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+
+/obj/item/storage/belt/rogue/leather/plaquegold/baotha/dropped(mob/living/carbon/human/user)
+	. = ..()
+	if(QDELETED(src))
+		return
+	qdel(src)
+
+/obj/item/clothing/gloves/roguetown/chain/baotha
+	name = "baothan wristlets"
+	desc = "Powerful baothan magicks protect the exposed flesh beneath."
+	icon = 'icons/roguetown/clothing/feet.dmi'
+	icon_state = "anklets"
+	color = "#9c7373"
+	mob_overlay_icon = null
+	armor = ARMOR_ASCENDANT
+	max_integrity = ARMOR_INT_SIDE_ANTAG
+	equip_delay_self = 0.5 SECONDS
+	unequip_delay_self = 2.5 SECONDS
+
+/obj/item/clothing/gloves/roguetown/chain/baotha/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+
+/obj/item/clothing/gloves/roguetown/chain/baotha/dropped(mob/living/carbon/human/user)
+	. = ..()
+	if(QDELETED(src))
+		return
+	qdel(src)
+
+// /obj/item/clothing/shoes/roguetown/boots/armor/baotha
+// 	name = "baothan anklets"
+// 	desc = "Powerful baothan magicks protect the exposed flesh beneath."
+// 	icon = 'icons/roguetown/clothing/feet.dmi'
+// 	icon_state = "anklets"
+// 	mob_overlay_icon = null
+// 	armor = ARMOR_ASCENDANT
+// 	max_integrity = ARMOR_INT_SIDE_ANTAG
+// 	is_barefoot = TRUE
+
+// /obj/item/clothing/shoes/roguetown/boots/armor/baotha/Initialize(mapload)
+// 	. = ..()
+// 	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+
+// /obj/item/clothing/shoes/roguetown/boots/armor/baotha/dropped(mob/living/carbon/human/user)
+// 	. = ..()
+// 	if(QDELETED(src))
+// 		return
+// 	qdel(src)
+
+/obj/item/clothing/shoes/roguetown/anklets/baotha
+	name = "baothan anklets"
+	desc = "Powerful baothan magicks protect the exposed flesh beneath."
+	color = "#9c7373"
+// 	mob_overlay_icon = null
+	armor = ARMOR_ASCENDANT
+	max_integrity = ARMOR_INT_SIDE_ANTAG
+	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
+	blocksound = PLATEHIT
+	resistance_flags = FIRE_PROOF
+	pickup_sound = 'sound/foley/equip/equip_armor_plate.ogg'
+	equip_sound = 'sound/foley/equip/equip_armor_plate.ogg'
+	anvilrepair = /datum/skill/craft/armorsmithing
+
+/obj/item/clothing/shoes/roguetown/anklets/baotha/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+
+/obj/item/clothing/shoes/roguetown/anklets/baotha/dropped(mob/living/carbon/human/user)
+	. = ..()
+	if(QDELETED(src))
+		return
+	qdel(src)
+
+/obj/item/clothing/neck/roguetown/gorget/boatha
+	name = "blacksteel collar"
+	desc = "Submission to darkness."
+	icon_state = "iwolfcollaralt"
+	armor = ARMOR_ASCENDANT
+	max_integrity = ARMOR_INT_SIDE_ANTAG
+
+/obj/item/clothing/neck/roguetown/gorget/boatha/Initialize(mapload)
+	. = ..()
+	ADD_TRAIT(src, TRAIT_NODROP, CURSED_ITEM_TRAIT)
+
+/obj/item/clothing/neck/roguetown/gorget/boatha/dropped(mob/living/carbon/human/user)
+	. = ..()
+	if(QDELETED(src))
+		return
+	qdel(src)
