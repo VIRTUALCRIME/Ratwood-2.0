@@ -218,8 +218,8 @@
 		/obj/item/ingot/iron = 1,
 		)
 	req_table = TRUE
-	skillcraft = /datum/skill/craft/traps
-	craftdiff = 1
+	skillcraft = /datum/skill/craft/crafting
+	craftdiff = 2
 	verbage_simple = "put together"
 	verbage = "puts together"
 

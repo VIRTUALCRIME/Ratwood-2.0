@@ -649,7 +649,6 @@
 			"Carpentry" = /datum/skill/craft/carpentry,
 			"Masonry" = /datum/skill/craft/masonry,
 			"Engineering" = /datum/skill/craft/engineering,
-			"Traps" = /datum/skill/craft/traps,
 			"Alchemy" = /datum/skill/craft/alchemy,
 			"Tanning" = /datum/skill/craft/tanning,
 			"Cooking" = /datum/skill/craft/cooking,
