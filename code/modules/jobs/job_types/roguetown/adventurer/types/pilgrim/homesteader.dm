@@ -399,7 +399,7 @@
 			/obj/item/natural/worms,
 			/obj/item/natural/worms,
 			/obj/item/rogueweapon/huntingknife/bronze,
-			/obj/item/storage/roguebag/crafted
+			/obj/item/storage/roguebag
 		),
 		"Tailor Set" = list(
 			/obj/item/rogueweapon/huntingknife/scissors,
