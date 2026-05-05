@@ -126,6 +126,7 @@
 	name = "sanctified tree"
 	desc = "A great tree consecrated by the Treefather. Its bark glows with faint light, and the air around it thrums with primal holiness. A nexus of druidic power."
 	examine_plays_music = FALSE
+	pixel_x = -11
 	/// Base max_integrity before nearby-tree bonus.
 	max_integrity = 400
 	/// Disable wise-tree autonomous retaliation. The sanctified tree
