@@ -1,7 +1,7 @@
 //Sprites contributed by VelSlime. Whole thing transferred from Ochre Valley
 
 /mob/living/simple_animal/hostile/retaliate/rogue/ooze_blob
-	icon = 'modular_ochrevalley/icons/roguetown/mob/ooze_blob.dmi'
+	icon = 'modular_ochrevalley/icons/mob/ooze_blob.dmi'
 	name = "ooze"
 	desc = "A strange, amorphous animated blob of ooze."
 	icon_state = "ooze"
@@ -18,7 +18,6 @@
 	botched_butcher_results = list()
 	butcher_results = list()
 	perfect_butcher_results = list()
-	head_butcher = null
 	faction = list("zombie")
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	health = WOLF_HEALTH

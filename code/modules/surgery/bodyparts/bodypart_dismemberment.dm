@@ -430,11 +430,11 @@
 /obj/item/bodypart/l_arm/drop_limb(special)
 	var/mob/living/carbon/C = owner
 	. = ..()
-	if(C && !special)
 	//OV edit
 	if(isooze(C))
 		qdel(src)
 	//OV edit end
+	if(C && !special)
 		if(C.handcuffed)
 			C.handcuffed.forceMove(drop_location())
 			C.handcuffed.dropped(C)
