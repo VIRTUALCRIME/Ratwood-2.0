@@ -252,11 +252,51 @@
 	static_debris = list(/obj/item/grown/log/tree = 1)
 	climb_offset = 14
 	stump_type = FALSE
+	hidingspot = TRUE
+	/// So we can find them with fixed eye search
+	var/mob/living/hiddenguy = null
 
 /obj/structure/flora/roguetree/stump/log/Initialize(mapload)
 	. = ..()
 	icon_state = "log[rand(1,2)]"
 
+/obj/structure/flora/roguetree/stump/log/examine(mob/user)
+	. = ..()
+	. += span_info("Some structures can be used as hiding places. Toggle the 'SNEAK' button on your HUD, then click the structure to hide in it. You can stop hiding by clicking the structure again, or by moving out of it.")
+
+/obj/structure/flora/roguetree/stump/log/attack_hand(mob/user)
+	if(isliving(user))
+		if(user.m_intent == MOVE_INTENT_SNEAK)
+			hideinside(user)
+			return
+
+/obj/structure/flora/roguetree/stump/log/proc/hideinside(mob/living/user)
+	var/sneak_level = user.get_skill_level(/datum/skill/misc/sneaking) || 0
+	var/sneaktime = max(10, 50 - (sneak_level * 10)) // Hard caps at 1 second at Expert and above.
+	if(user.loc == src)
+		unhide(user)
+		return
+	if(occupied)
+		to_chat(user, span_warning("Someone is already hiding inside [src]!"))
+		return
+	if(!do_after(user, sneaktime, src))
+		return
+	user.forceMove(src)
+	occupied = TRUE
+	hiddenguy = user
+	to_chat(user, span_warning("I hide inside [src]!"))
+
+/obj/structure/flora/roguetree/stump/log/proc/unhide(mob/living/user)
+	var/turf/T = get_turf(src)
+	if(!T) return
+	user.forceMove(T)
+	occupied = FALSE
+	hiddenguy = null
+	to_chat(user, span_warning("I come out from inside [src]!"))
+
+/obj/structure/flora/roguetree/stump/log/relaymove(mob/user)
+	if(user.loc == src)
+		unhide(user)
 
 //newbushes
 
@@ -333,6 +373,9 @@
 	climbable = FALSE
 	dir = SOUTH
 	debris = list(/obj/item/natural/fibers = 1, /obj/item/grown/log/tree/stick = 1)
+	hidingspot = TRUE
+	/// So we can find them with fixed eye search
+	var/mob/living/hiddenguy = null
 	var/list/looty = list()
 	var/bushtype
 
@@ -349,6 +392,10 @@
 	loot_replenish()
 	pixel_x += rand(-3,3)
 	return ..()
+
+/obj/structure/flora/roguegrass/bush/examine(mob/user)
+	. = ..()
+	. += span_info("Some structures can be used as hiding places. Toggle the 'SNEAK' button on your HUD, then click the structure to hide in it. You can stop hiding by clicking the structure again, or by moving out of it.")
 
 /obj/structure/flora/roguegrass/bush/proc/loot_replenish()
 	if(bushtype)
@@ -387,6 +434,9 @@
 		var/mob/living/L = user
 		user.changeNext_move(CLICK_CD_INTENTCAP)
 		playsound(src.loc, "plantcross", 50, FALSE, -1)
+		if(user.m_intent == MOVE_INTENT_SNEAK)
+			hideinside(user)
+			return
 		if(do_after(L, SEARCHTIME, target = src))
 			if(!looty.len && (world.time > res_replenish))
 				loot_replenish()
@@ -404,10 +454,41 @@
 				attack_hand(user)
 			if(!looty.len)
 				to_chat(user, span_warning("Picked clean... I should try later."))
+
+/obj/structure/flora/roguegrass/bush/proc/hideinside(mob/living/user)
+	var/sneak_level = user.get_skill_level(/datum/skill/misc/sneaking) || 0
+	var/sneaktime = max(10, 50 - (sneak_level * 10)) // Hard caps at 1 second at Expert and above.
+	if(user.loc == src)
+		unhide(user)
+		return
+	if(occupied)
+		to_chat(user, span_warning("Someone is already hiding in [src]!"))
+		return
+	if(!do_after(user, sneaktime, src))
+		return
+	user.forceMove(src)
+	occupied = TRUE
+	hiddenguy = user
+	to_chat(user, span_warning("I hide in [src]!"))
+
+/obj/structure/flora/roguegrass/bush/proc/unhide(mob/living/user)
+	var/turf/T = get_turf(src)
+	if(!T) return
+	user.forceMove(T)
+	occupied = FALSE
+	hiddenguy = null
+	to_chat(user, span_warning("I come out from [src]!"))
+
+/obj/structure/flora/roguegrass/bush/relaymove(mob/user)
+	if(user.loc == src)
+		unhide(user)
+
 /obj/structure/flora/roguegrass/bush/update_icon()
 	icon_state = "bush[rand(2, 4)]"
 
 /obj/structure/flora/roguegrass/bush/CanAStarPass(ID, travel_dir, caller)
+	if(occupied)
+		return FALSE
 	if(ismovableatom(caller))
 		var/atom/movable/mover = caller
 		if(mover.pass_flags & PASSGRILLE)
@@ -417,6 +498,8 @@
 	return ..()
 
 /obj/structure/flora/roguegrass/bush/CanPass(atom/movable/mover, turf/target)
+	if(occupied)
+		return FALSE
 	if(istype(mover) && (mover.pass_flags & PASSGRILLE))
 		return 1
 	if(get_dir(loc, target) == dir)
