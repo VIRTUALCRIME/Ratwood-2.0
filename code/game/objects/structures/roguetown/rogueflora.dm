@@ -1031,10 +1031,6 @@
 	else
 		icon_state = "bushc[rand(1, 3)]"
 
-/obj/structure/flora/roguegrass/herb/random
-	name = "random herb"
-	desc = "Haha, im in danger."
-
 /obj/structure/flora/roguegrass/bush/jungle/large
 	color = "#a7b5a9"
 	icon = 'icons/obj/flora/largejungleflora.dmi'
