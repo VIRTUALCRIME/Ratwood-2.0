@@ -1527,11 +1527,39 @@
 			return "<span class='love_ludicrous'>[string]</span>"
 
 /datum/sex_controller/proc/try_pelvis_crush(mob/living/carbon/human/target)
-	if(istype(user.rmb_intent, /datum/rmb_intent/strong))
-		if(!target.has_wound(/datum/wound/fracture/groin))
-			if(prob(10))
-				var/obj/item/bodypart/groin = target.get_bodypart(check_zone(BODY_ZONE_PRECISE_GROIN))
-				groin.add_wound(/datum/wound/fracture)
+	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force > SEX_FORCE_MID)
+		if(prob(10) && !target.has_status_effect(/datum/status_effect/quivering))
+			target.apply_status_effect(/datum/status_effect/quivering)
+			target.confused += 25
+			target.OffBalance(30 SECONDS)
+		if(user.client.prefs.extreme_erp && target.client.prefs.extreme_erp)
+			if(!target.has_wound(/datum/wound/fracture/groin))
+				if(prob(10))
+					var/obj/item/bodypart/groin = target.get_bodypart(check_zone(BODY_ZONE_PRECISE_GROIN))
+					groin.add_wound(/datum/wound/fracture)
+		
+/datum/sex_controller/proc/try_jaw_crush(mob/living/carbon/human/target)
+	if(istype(user.rmb_intent, /datum/rmb_intent/strong) && force > SEX_FORCE_MID)
+		if(user.client.prefs.extreme_erp && target.client.prefs.extreme_erp)
+			if(!target.has_wound(/datum/wound/fracture/mouth))
+				if(prob(10))
+					var/obj/item/bodypart/mouth = target.get_bodypart(check_zone(BODY_ZONE_PRECISE_MOUTH))
+					mouth.add_wound(/datum/wound/fracture)
+		if(prob(10) && !target.has_status_effect(/datum/status_effect/jaw_gaped) && !target.has_wound(/datum/wound/fracture/mouth))
+			target.apply_status_effect(/datum/status_effect/jaw_gaped)
+			target.apply_status_effect(/datum/status_effect/debuff/dazed)
+
+/datum/status_effect/quivering
+	id = "quivering"
+	duration = 30 SECONDS
+	status_type = STATUS_EFFECT_UNIQUE
+	alert_type = /atom/movable/screen/alert/status_effect/quivering
+	effectedstats = list("speed" = -2)
+
+/atom/movable/screen/alert/status_effect/quivering
+	name = "Quivering"
+	desc = "I can barely walk..."
+	icon_state = "quivering"
 
 /datum/proc/werewolf_sex_infect_attempt(mob/living/carbon/human/top, mob/living/carbon/human/bottom)
 
