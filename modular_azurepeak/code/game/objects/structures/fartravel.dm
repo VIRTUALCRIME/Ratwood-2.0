@@ -118,31 +118,34 @@
 
 	var/datum/mind/departing_mind = departing_mob.mind
 	var/old_assigned_role = departing_mind?.assigned_role
-	var/datum/job/old_job = old_assigned_role ? SSjob.GetJob(old_assigned_role) : null
-	var/dat = "[ADMIN_LOOKUPFLW(user)] has traveled to Kingsfield via far travel with [departing_mob], previous job [old_assigned_role ? old_assigned_role : departing_mob.job], at [AREACOORD(src)]. Contents despawned along:"
+	var/dat = "[ADMIN_LOOKUPFLW(user)] has traveled to Kingsfield via far travel with [departing_mob], previous job [old_assigned_role ? old_assigned_role : departing_mob.job], at [AREACOORD(src)]."
 
+	// Capture advjob before AssignRole (which changes assigned_role)
+	var/old_advjob = departing_mob.advjob
+
+	// AssignRole internally handles decrementing the old job's current_positions.
+	// Passing latejoin=TRUE bypasses position/ban checks intentionally.
 	if(!SSjob.AssignRole(departing_mob, "Kingsfield Visitor", TRUE))
 		to_chat(departing_mob, span_warning("I cannot find passage to Kingsfield right now."))
 		message_admins(dat + " Failed to assign Kingsfield Visitor.")
 		log_admin(dat + " Failed to assign Kingsfield Visitor.")
 		return
 
-	if(old_job)
-		old_job.current_positions = max(0, old_job.current_positions - 1)
-
-	var/target_job = SSrole_class_handler.get_advclass_by_name(departing_mob.advjob)
+	var/target_job = SSrole_class_handler.get_advclass_by_name(old_advjob)
 	if(target_job)
 		SSrole_class_handler.adjust_class_amount(target_job, -1)
 
+	var/dat_contents = " Contents despawned along:"
 	if(!length(departing_mob.contents))
-		dat += " none."
+		dat_contents += " none."
 	else
 		var/atom/movable/content = departing_mob.contents[1]
-		dat += " [content.name]"
+		dat_contents += " [content.name]"
 		for(var/i in 2 to length(departing_mob.contents))
 			content = departing_mob.contents[i]
-			dat += ", [content.name]"
-		dat += "."
+			dat_contents += ", [content.name]"
+		dat_contents += "."
+	dat += dat_contents
 
 	if(departing_mind)
 		departing_mind.unknow_all_people()
@@ -198,4 +201,12 @@
 
 	message_admins(dat + " Reassigned to Kingsfield Visitor.")
 	log_admin(dat + " Reassigned to Kingsfield Visitor.")
+
+
+// Spawn landmark for Kingsfield Visitor arrivals. Place this in the Kingsfield map where new visitors should appear.
+/obj/effect/landmark/start/kingsfield_visitor
+	name = "Kingsfield Visitor Spawn"
+	icon_state = "arrow"
+	jobspawn_override = list("Kingsfield Visitor")
+	delete_after_roundstart = FALSE
 
