@@ -45,7 +45,6 @@
 		/datum/advclass/mercenary/grenzelhoft/mage,
 	    /datum/advclass/mercenary/gronnheavy,
 		/datum/advclass/mercenary/routier,
-		/datum/advclass/mercenary/rumaclan/seonjang,
 		/datum/advclass/mercenary/rumaclan,
 		/datum/advclass/mercenary/rumaclan/sasu,
 		/datum/advclass/mercenary/steppesman,
