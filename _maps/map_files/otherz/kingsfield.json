@@ -2,5 +2,5 @@
 	"map_name": "Kingsfield",
 	"map_path": "map_files/otherz",
 	"map_file": "kingsfield.dmm",
-	"traits": [{"Name": "kingsfield", "Up": true}, {"Up": true, "Down": true}, {"Down": true}]
+	"traits": [{"Name": "kingsfield", "Up": true}, {"Up": true, "Down": true}, {"Up": true, "Down": true}, {"Down": true}]
 }
