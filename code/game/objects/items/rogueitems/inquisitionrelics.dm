@@ -752,6 +752,12 @@ Inquisitorial armory down here
 			ring.tallowed = TRUE
 			ring.update_icon()
 
+	if(istype(I, /obj/item/seal))
+		if(tallow && heatedup)
+			var/obj/item/seal/seal = I
+			seal.tallowed = TRUE
+			seal.update_icon()
+
 
 /obj/item/inqarticles/tallowpot/update_icon()
 	. = ..()

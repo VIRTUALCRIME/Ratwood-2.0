@@ -10,7 +10,7 @@
 	allowed_races = RACES_ALL_KINDS
 	allowed_sexes = list(MALE, FEMALE)
 	tutorial = "You have left your old life and arrived in Kingsfield as a humble visitor."
-	outfit = /datum/outfit/job/roguetown/kingsfield_visitor
+	outfit = /datum/outfit/job/roguetown/kingsfield_visitor/basic
 	display_order = JDO_PILGRIM
 	show_in_credits = FALSE
 	announce_latejoin = FALSE
@@ -19,9 +19,18 @@
 	can_random = FALSE
 	bypass_jobban = TRUE
 	bypass_lastclass = TRUE
+	advclass_cat_rolls = list(CTAG_KINGSFIELD = 20)
+	job_subclasses = list(
+		/datum/advclass/kingsfield_visitor
+	)
+
+/datum/advclass/kingsfield_visitor
+	name = "Kingsfield Visitor"
+	tutorial = "You have left your old life and arrived in Kingsfield as a humble visitor."
+	outfit = /datum/outfit/job/roguetown/kingsfield_visitor/basic
 	category_tags = list(CTAG_KINGSFIELD)
 
-/datum/outfit/job/roguetown/kingsfield_visitor/pre_equip(mob/living/carbon/human/H)
+/datum/outfit/job/roguetown/kingsfield_visitor/basic/pre_equip(mob/living/carbon/human/H)
 	. = ..()
 	if(should_wear_femme_clothes(H))
 		shirt = /obj/item/clothing/suit/roguetown/shirt/dress/silkdress

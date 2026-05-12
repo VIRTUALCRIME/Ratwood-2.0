@@ -69,6 +69,10 @@
 	var/stamps		//The (text for the) stamps on the paper.
 	var/fields = 0	//Amount of user created fields
 	var/list/stamped
+	var/seal_label	//The label of the seal applied to this document (for examine text)
+	var/seal_color = "#8b6914"	//The color used for the seal examine text
+	var/seal_is_official = TRUE	//Official seals are rendered underlined on examine text
+	var/seal_broken = FALSE	//Whether the seal has been broken (opened)
 	var/rigged = 0
 	var/spam_flag = 0
 	var/contact_poison // Reagent ID to transfer on contact
@@ -150,6 +154,14 @@
 
 /obj/item/paper/examine(mob/user)
 	. = ..()
+	if(seal_label)
+		var/seal_style = "color:[seal_color]"
+		if(seal_is_official)
+			seal_style += ";text-decoration:underline"
+		if(seal_broken)
+			. += "<span style='[seal_style]'>It bears a broken wax seal of [seal_label].</span>"
+		else
+			. += "<span style='[seal_style]'>It bears an unbroken wax seal of [seal_label].</span>"
 	if(!mailer)
 		if(info)
 			. += "<a href='?src=[REF(src)];read=1'>Read</a>"
@@ -167,6 +179,8 @@
 		return
 	if(mailer)
 		return
+	if(seal_label && !seal_broken)
+		seal_broken = TRUE
 	if(in_range(user, src) || isobserver(user))
 		user << browse_rsc('html/book.png')
 		var/body_border_css = window_rim_style ? "box-sizing:border-box;[window_rim_style]" : ""
@@ -283,6 +297,10 @@
 /obj/item/paper/proc/clearpaper()
 	info = null
 	stamps = null
+	seal_label = null
+	seal_color = initial(seal_color)
+	seal_is_official = initial(seal_is_official)
+	seal_broken = initial(seal_broken)
 	LAZYCLEARLIST(stamped)
 	cut_overlays()
 	updateinfolinks()
@@ -433,6 +451,53 @@
 			return
 		else
 			to_chat(user, "<span class='warning'>I can't write.</span>")
+			return
+
+	// Sealing logic for seal items
+	if(istype(P, /obj/item/seal))
+		var/obj/item/seal/seal = P
+		if(istype(seal, /obj/item/seal/custom))
+			var/obj/item/seal/custom/custom_seal = seal
+			if(!custom_seal.customized)
+				to_chat(user, span_warning("This custom seal is blank. Use it in-hand first to engrave text and pick a color."))
+				return
+		if(seal.tallowed && info && !seal_label)
+			seal.tallowed = FALSE
+			seal.update_icon()
+			seal_label = seal.seal_label
+			seal_color = seal.seal_color
+			seal_is_official = seal.seal_is_official
+			seal_broken = FALSE
+			user.visible_message(span_notice("[user] presses [seal] onto [src], sealing it with [seal.seal_label]."))
+			return
+		else
+			if(!seal.tallowed)
+				to_chat(user, span_warning("[seal] has no tallow on it. Dip it in a heated tallowpot first."))
+			else if(!info)
+				to_chat(user, span_warning("The [src] has nothing written on it to seal."))
+			else if(seal_label)
+				to_chat(user, span_warning("[src] is already sealed."))
+			return
+
+	// Sealing logic for signet rings
+	if(istype(P, /obj/item/clothing/ring/signet))
+		var/obj/item/clothing/ring/signet/ring = P
+		if(ring.tallowed && info && !seal_label)
+			ring.tallowed = FALSE
+			ring.update_icon()
+			seal_label = "Lord Inquisitor of the Otavan Mission in The Vale"
+			seal_color = "#6b0000"
+			seal_is_official = TRUE
+			seal_broken = FALSE
+			user.visible_message(span_notice("[user] presses [ring] onto [src], sealing it with an inquisitorial seal."))
+			return
+		else
+			if(!ring.tallowed)
+				to_chat(user, span_warning("[ring] has no tallow on it. Dip it in a heated tallowpot first."))
+			else if(!info)
+				to_chat(user, span_warning("The [src] has nothing written on it to seal."))
+			else if(seal_label)
+				to_chat(user, span_warning("[src] is already sealed."))
 			return
 	
 	if(istype(P, /obj/item/paper))
