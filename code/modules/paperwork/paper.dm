@@ -90,6 +90,97 @@
 	var/writer_body
 	/// True when writer_body was derived from existing HTML instead of previously authored raw text.
 	var/writer_body_imported = FALSE
+	/// Append-only draft text used by the tgui writer panel input box.
+	var/writer_draft = ""
+	/// Optional font override selected in the tgui writer panel.
+	var/writer_font = "default"
+	/// Whether this document has been signed via the writer panel.
+	var/writer_signed = FALSE
+
+/obj/item/paper/proc/get_writer_tool(mob/living/carbon/human/user)
+	if(!user)
+		return null
+	var/obj/item/P = user.get_active_held_item()
+	if(istype(P, /obj/item/natural/thorn) || istype(P, /obj/item/natural/feather))
+		return P
+	return null
+
+/obj/item/paper/proc/sanitize_writer_font(font_name)
+	if(!istext(font_name))
+		return "default"
+	var/list/allowed_fonts = list(
+		"default",
+		"Times New Roman",
+		"Garamond",
+		"Book Antiqua",
+		"Courier New",
+		"Verdana",
+	)
+	if(!(font_name in allowed_fonts))
+		return "default"
+	return font_name
+
+/obj/item/paper/proc/append_writer_chunk(mob/living/carbon/human/user, sign_after = FALSE)
+	var/obj/item/P = get_writer_tool(user)
+	if(!can_use_writer(user, P))
+		to_chat(user, span_warning("I need a feather or thorn in hand to write."))
+		return FALSE
+
+	var/chunk_input = writer_draft || ""
+	if(sign_after)
+		chunk_input = length(chunk_input) ? "[chunk_input]\n\n%s" : "%s"
+
+	if(!length(chunk_input))
+		to_chat(user, span_warning("I have nothing to add."))
+		return FALSE
+
+	var/chunk_html = parsepencode(chunk_input, P, user, FALSE, sanitize_writer_font(writer_font))
+	if(!chunk_html)
+		to_chat(user, span_warning("I have nothing to add."))
+		return FALSE
+
+	var/new_len = length(info) + length(chunk_html)
+	if(info)
+		new_len += 4 // <br>
+	if(new_len > maxlen)
+		to_chat(user, span_warning("Too long. Try again."))
+		return FALSE
+
+	if(info)
+		info += "<br>[chunk_html]"
+	else
+		info = chunk_html
+
+	writer_draft = ""
+	writer_body = null
+	writer_body_imported = FALSE
+	if(sign_after)
+		writer_signed = TRUE
+
+	updateinfolinks()
+	update_icon_state()
+	playsound(src, 'sound/items/write.ogg', 100, FALSE)
+	if(sign_after)
+		to_chat(user, span_notice("I sign [src]."))
+	else
+		to_chat(user, span_notice("I add writing to [src]."))
+	return TRUE
+
+/obj/item/paper/proc/build_writer_preview(mob/living/carbon/human/user)
+	var/preview = info || ""
+	if(!length(writer_draft))
+		return preview
+
+	var/obj/item/P = get_writer_tool(user)
+	var/saved_fields = fields
+	var/chunk_preview = parsepencode(writer_draft, P, user, FALSE, sanitize_writer_font(writer_font))
+	fields = saved_fields
+	if(!chunk_preview)
+		return preview
+
+	if(length(preview))
+		return "[preview]<br>[chunk_preview]"
+	return chunk_preview
 
 /obj/item/paper/proc/get_writer_body()
 	if(isnull(writer_body))
@@ -137,14 +228,19 @@
 
 /obj/item/paper/ui_static_data(mob/user)
 	var/list/data = list()
-	var/body = get_writer_body()
-	data["body"] = body
 	data["maxlen"] = maxlen
+	data["font"] = writer_font
+	data["fonts"] = list("default", "Times New Roman", "Garamond", "Book Antiqua", "Courier New", "Verdana")
 	return data
 
 /obj/item/paper/ui_data(mob/user)
 	var/list/data = list()
-	data["needs_import_confirm"] = writer_body_imported
+	data["draft"] = writer_draft
+	data["font"] = writer_font
+	data["signed"] = writer_signed
+	data["needs_import_confirm"] = FALSE
+	data["preview_html"] = build_writer_preview(user)
+	data["has_existing_text"] = length(info) > 0
 	return data
 
 /obj/item/paper/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
@@ -156,43 +252,22 @@
 		return TRUE
 
 	switch(action)
+		if("update_draft")
+			var/new_draft = params["draft"] || ""
+			writer_draft = copytext(new_draft, 1, maxlen + 1)
+			writer_font = sanitize_writer_font(params["font"])
+			return TRUE
+
 		if("save")
-			var/obj/item/P = user.get_active_held_item()
-			if(!can_use_writer(user, P))
-				to_chat(user, span_warning("I need a feather or thorn in hand to write."))
-				return TRUE
+			append_writer_chunk(user, FALSE)
+			return TRUE
 
-			if(writer_body_imported && !text2num(params["force"]))
-				to_chat(user, span_warning("This document came from existing formatted text. Saving now may simplify old formatting. Press Save Anyway to confirm."))
-				return TRUE
-
-			var/new_body = params["body"] || ""
-			new_body = copytext(new_body, 1, maxlen + 1)
-
-			fields = 0
-			var/new_info = parsepencode(new_body, P, user, FALSE)
-			if(!new_info)
-				new_info = ""
-			if(length(new_info) > maxlen)
-				to_chat(user, span_warning("Too long. Try again."))
-				return TRUE
-
-			writer_body = new_body
-			writer_body_imported = FALSE
-			info = new_info
-			updateinfolinks()
-			update_icon_state()
-			playsound(src, 'sound/items/write.ogg', 100, FALSE)
-			to_chat(user, span_notice("I finish writing on [src]."))
+		if("sign")
+			append_writer_chunk(user, TRUE)
 			return TRUE
 
 		if("clear")
-			writer_body = ""
-			writer_body_imported = FALSE
-			info = ""
-			fields = 0
-			updateinfolinks()
-			update_icon_state()
+			writer_draft = ""
 			return TRUE
 
 		if("close")
@@ -426,16 +501,17 @@
 	update_icon_state()
 
 
-/obj/item/paper/proc/parsepencode(t, obj/item/P, mob/user, iscrayon = 0)
+/obj/item/paper/proc/parsepencode(t, obj/item/P, mob/user, iscrayon = 0, custom_font = null)
 	if(length(t) < 1)		//No input means nothing needs to be parsed
 		return
 
 	t = parsemarkdown(t, user, iscrayon)
+	var/pen_font = custom_font || FOUNTAIN_PEN_FONT
 
 	if(istype(P, /obj/item/natural/thorn))
-		t = "<font face=\"[FOUNTAIN_PEN_FONT]\" color=#862f20>[t]</font>"
+		t = "<font face=\"[pen_font]\" color=#862f20>[t]</font>"
 	else if(istype(P, /obj/item/natural/feather))
-		t = "<font face=\"[FOUNTAIN_PEN_FONT]\" color=#14103f>[t]</font>"
+		t = "<font face=\"[pen_font]\" color=#14103f>[t]</font>"
 
 	// Count the fields
 	var/laststart = 1
