@@ -511,6 +511,10 @@
 	if(length(t) < 1)		//No input means nothing needs to be parsed
 		return
 
+	// Writer panel no longer supports large (^text^) or field (%f/%field) tokens.
+	t = replacetext(t, "^", "")
+	t = replacetext(t, regex("%f(?:ield)?(?=\\s|$)", "igm"), "")
+
 	t = parsemarkdown(t, user, iscrayon)
 	var/pen_font = FOUNTAIN_PEN_FONT
 	if(custom_font && custom_font != "default")
@@ -553,9 +557,7 @@
 		|text| : Centers the text.<br>
 		**text** : Makes the text <b>bold</b>.<br>
 		*text* : Makes the text <i>italic</i>.<br>
-		^text^ : Increases the <font size = \"4\">size</font> of the text.<br>
 		%s : Inserts a signature of your name in a foolproof way.<br>
-		%f : Inserts an invisible field which lets you start type from there. Useful for forms.<br>
 		((text)) : Decreases the <font size = \"1\">size</font> of the text.<br>
 		* item : An unordered list item.<br>
 		&nbsp;&nbsp;* item: An unordered list child item.<br>
@@ -674,7 +676,7 @@
 			seal_is_official = seal.seal_is_official
 			seal_broken = FALSE
 			update_icon()
-			user.visible_message(span_notice("[user] presses [seal] onto [src], sealing it with [seal.seal_label]."))
+			user.visible_message(span_notice("[user] seals [src] with [seal]."))
 			return
 		else
 			if(!seal.tallowed)
@@ -696,7 +698,7 @@
 			seal_is_official = ring.seal_is_official
 			seal_broken = FALSE
 			update_icon()
-			user.visible_message(span_notice("[user] presses [ring] onto [src], sealing it with an inquisitorial seal."))
+			user.visible_message(span_notice("[user] seals [src] with [ring]."))
 			return
 		else
 			if(!ring.tallowed)

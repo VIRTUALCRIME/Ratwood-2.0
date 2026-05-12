@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,7 +6,6 @@ import {
   NoticeBox,
   Section,
   Stack,
-  TextArea,
 } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
@@ -29,7 +28,6 @@ export const PaperWriterPanel = () => {
   const {
     draft: initialDraft,
     preview_html,
-    has_existing_text,
     signed,
     font: backendFont,
     standard_font,
@@ -37,9 +35,11 @@ export const PaperWriterPanel = () => {
     maxlen,
     needs_import_confirm,
   } = data;
+
   const [draft, setDraft] = useState(initialDraft || '');
   const [font, setFont] = useState(backendFont || 'default');
   const [colorHex, setColorHex] = useState('862f20');
+  const draftInputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
     setDraft(initialDraft || '');
@@ -59,8 +59,35 @@ export const PaperWriterPanel = () => {
     act('update_draft', { draft, font: nextFont });
   };
 
-  const appendToken = (startToken: string, endToken = '') => {
-    pushDraft(`${draft}${startToken}${endToken}`);
+  const insertToken = (startToken: string, endToken = '') => {
+    const input = draftInputRef.current;
+    if (!input) {
+      pushDraft(`${draft}${startToken}${endToken}`);
+      return;
+    }
+
+    const start = input.selectionStart ?? draft.length;
+    const end = input.selectionEnd ?? draft.length;
+    const selectedText = draft.slice(start, end);
+    const nextDraft =
+      draft.slice(0, start) +
+      startToken +
+      selectedText +
+      endToken +
+      draft.slice(end);
+
+    pushDraft(nextDraft);
+
+    requestAnimationFrame(() => {
+      input.focus();
+      const selectionStart = start + startToken.length;
+      const selectionEnd = selectionStart + selectedText.length;
+      if (selectedText.length > 0) {
+        input.setSelectionRange(selectionStart, selectionEnd);
+      } else {
+        input.setSelectionRange(selectionStart, selectionStart);
+      }
+    });
   };
 
   const sanitizeColorHex = (value: string) => {
@@ -71,7 +98,7 @@ export const PaperWriterPanel = () => {
   const insertColorBlock = (hexValue: string) => {
     const cleanHex = sanitizeColorHex(hexValue);
     setColorHex(cleanHex);
-    appendToken(`-=${cleanHex}colored text=-`);
+    insertToken(`-=${cleanHex}colored text=-`);
   };
 
   const remaining = Math.max(0, maxlen - draft.length);
@@ -84,31 +111,25 @@ export const PaperWriterPanel = () => {
             <Section title="Input (Append New Text)">
               <Stack mb={1} wrap>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('**', '**')}>Bold</Button>
+                  <Button onClick={() => insertToken('**', '**')}>Bold</Button>
                 </Stack.Item>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('*', '*')}>Italics</Button>
+                  <Button onClick={() => insertToken('*', '*')}>Italics</Button>
                 </Stack.Item>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('# ')}>Header</Button>
+                  <Button onClick={() => insertToken('# ')}>Header</Button>
                 </Stack.Item>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('^', '^')}>Large</Button>
+                  <Button onClick={() => insertToken('((', '))')}>Small</Button>
                 </Stack.Item>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('((', '))')}>Small</Button>
+                  <Button onClick={() => insertToken('\n---\n')}>Rule</Button>
                 </Stack.Item>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('\n---\n')}>Rule</Button>
+                  <Button onClick={() => insertToken('\n* item')}>Bullet List</Button>
                 </Stack.Item>
                 <Stack.Item>
-                  <Button onClick={() => appendToken('%f')}>Field</Button>
-                </Stack.Item>
-                <Stack.Item>
-                  <Button onClick={() => appendToken('\n* item')}>Bullet List</Button>
-                </Stack.Item>
-                <Stack.Item>
-                  <Button onClick={() => appendToken('\n1. item')}>Numbered List</Button>
+                  <Button onClick={() => insertToken('\n1. item')}>Numbered List</Button>
                 </Stack.Item>
               </Stack>
 
@@ -152,7 +173,9 @@ export const PaperWriterPanel = () => {
                   >
                     {(fonts || []).map((fontName) => (
                       <option key={fontName} value={fontName}>
-                        {fontName === 'default' ? `Standard (${standard_font || 'legacy pen'})` : fontName}
+                        {fontName === 'default'
+                          ? `Standard (${standard_font || 'legacy pen'})`
+                          : fontName}
                       </option>
                     ))}
                   </select>
@@ -162,11 +185,15 @@ export const PaperWriterPanel = () => {
               <Box mt={1} mb={1} color={remaining < 50 ? 'bad' : 'label'}>
                 Draft characters: {draft.length}/{maxlen}
               </Box>
-              <TextArea
-                height="220px"
-                width="100%"
+              <textarea
+                ref={draftInputRef}
+                style={{
+                  height: '220px',
+                  width: '100%',
+                  resize: 'vertical',
+                }}
                 value={draft}
-                onChange={(value: string) => pushDraft(value)}
+                onChange={(event) => pushDraft(event.target.value)}
                 placeholder="Write text to append under the existing letter..."
               />
             </Section>
@@ -175,8 +202,7 @@ export const PaperWriterPanel = () => {
           <Stack.Item>
             <Section title="Preview (Saved + Current Input)">
               <NoticeBox>
-                Supports existing paper formatting: # headers, **bold**, *italics*, ^size^,
-                %s signature, %f field, and -=RRGGBBtext=- color blocks.
+                No saved content yet. New writing is appended below previous text.
               </NoticeBox>
               {!!needs_import_confirm && (
                 <NoticeBox danger mt={1}>
@@ -184,10 +210,6 @@ export const PaperWriterPanel = () => {
                   formatting details. Use Save Anyway to confirm overwrite.
                 </NoticeBox>
               )}
-              <Box mt={1} mb={1} color="label">
-                {has_existing_text ? 'Existing letter content is immutable.' : 'No saved content yet.'}{' '}
-                New writing is appended below previous text.
-              </Box>
               <Box mt={1} mb={1} color={signed ? 'good' : 'label'}>
                 Signature status: {signed ? 'Signed' : 'Unsigned'}
               </Box>

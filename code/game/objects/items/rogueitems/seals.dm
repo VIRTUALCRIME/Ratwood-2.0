@@ -28,6 +28,10 @@
 	else
 		icon_state = "signet"
 
+/obj/item/seal/examine(mob/user)
+	. = ..()
+	. += "<span style='color:[seal_color]'>It imprints a seal of [seal_label].</span>"
+
 /obj/item/seal/attackby(obj/item/I, mob/living/user, params)
 	if(istype(I, /obj/item/inqarticles/tallowpot))
 		var/obj/item/inqarticles/tallowpot/pot = I
