@@ -13,6 +13,7 @@
 	var/seal_label = "Official Seal"
 	var/seal_color = "#8b6914"
 	var/seal_is_official = TRUE
+	var/cap_uses_color = TRUE
 
 /obj/item/seal/attack_right(mob/user)
 	if(is_blind(user))
@@ -29,8 +30,12 @@
 /obj/item/seal/update_icon()
 	icon_state = "stamp"
 	cut_overlays()
-	var/image/cap = image(icon, icon_state = "stamp_cap")
-	cap.color = seal_color
+	var/image/cap
+	if(cap_uses_color)
+		cap = image(icon, icon_state = "stamp_cap")
+		cap.color = seal_color
+	else
+		cap = image(icon, icon_state = "stamp_plain_cap")
 	add_overlay(cap)
 	if(tallowed)
 		var/image/wax = image(icon, icon_state = "stamp_wax")
@@ -68,6 +73,7 @@
 	seal_label = "Custom Seal"
 	seal_color = "#8b6914"
 	seal_is_official = FALSE
+	cap_uses_color = FALSE
 	var/customized = FALSE
 
 /obj/item/seal/custom/attack_self(mob/user)
@@ -89,8 +95,10 @@
 	seal_label = new_label
 	seal_color = new_color
 	customized = TRUE
+	cap_uses_color = TRUE
 	name = "custom seal"
 	desc = "A personalized wax seal with a unique engraving."
+	update_icon()
 	to_chat(user, span_notice("I engrave [src] and set its wax color."))
 
 /datum/crafting_recipe/roguetown/survival/custom_seal
@@ -115,49 +123,49 @@
 /obj/item/seal/crown
 	name = "crown seal"
 	seal_label = "The Crown of Rotwood Vale"
-	seal_color = "#8b6914"
+	seal_color = "#d4a62f"
 
 // Steward's seal
 /obj/item/seal/steward
 	name = "steward's seal"
 	seal_label = "The Steward of Rotwood Vale"
-	seal_color = "#8b6914"
+	seal_color = "#a07d26"
 
 // Marshal's seal
 /obj/item/seal/marshal
 	name = "marshal's seal"
 	seal_label = "The Marshal's Office"
-	seal_color = "#2c1a0e"
+	seal_color = "#790000"
 
 // Councillor's seal
 /obj/item/seal/councillor
 	name = "councillor's seal"
 	seal_label = "The Royal Council"
-	seal_color = "#1a3a1a"
+	seal_color = "#7e243f"
 
 // Merchant's seal
 /obj/item/seal/merchant
 	name = "merchant's seal"
-	seal_label = "The Rotwood Vale Official Merchant"
-	seal_color = "#c9a84c"
+	seal_label = "The Rotwood Vale Guild Merchant"
+	seal_color = "#11269c"
 
 // Nightmaster/Mistress seal
 /obj/item/seal/nightmaster
 	name = "night seal"
 	seal_label = "The Nightmaster's Authority"
-	seal_color = "#2a2a2a"
+	seal_color = "#5c5c5c"
 
 // Guildmaster's seal
 /obj/item/seal/guildmaster
 	name = "guild master's seal"
 	seal_label = "The Guildmaster of Rotwood Vale"
-	seal_color = "#8b6914"
+	seal_color = "#552600"
 
 // Prelate's seal
 /obj/item/seal/prelate
 	name = "prelate's seal"
 	seal_label = "High Prelate of Rotwood Vale"
-	seal_color = "#d4af37"
+	seal_color = "#f8e7b0"
 
 // Court Magos seal
 /obj/item/seal/court_magos
@@ -169,22 +177,22 @@
 /obj/item/seal/master_warden
 	name = "master warden's seal"
 	seal_label = "Master of the Wardens of Rotwood Vale"
-	seal_color = "#2d5a2d"
+	seal_color = "#0d530d"
 
 // Seneschal's seal
 /obj/item/seal/seneschal
 	name = "seneschal's seal"
 	seal_label = "The Seneschal of The Keep of Rotwood Vale"
-	seal_color = "#8b0000"
+	seal_color = "#5f70a7"
 
 // Hand of the Ruler seal
 /obj/item/seal/hand
 	name = "hand's seal"
 	seal_label = "The Hand of the Crown of Rotwood Vale"
-	seal_color = "#8b6914"
+	seal_color = "#169921"
 
 // Knight Captain's seal
 /obj/item/seal/knight_captain
 	name = "knight captain's seal"
 	seal_label = "The Knight Captain of Rotwood Vale"
-	seal_color = "#1a1a1a"
+	seal_color = "#7e1111"
