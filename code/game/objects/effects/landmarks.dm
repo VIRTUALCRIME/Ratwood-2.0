@@ -470,7 +470,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/landmark)
 	icon_state = "arrow"
 	delete_after_roundstart = FALSE
 
-/obj/effect/landmark/start/lich/Initialize()
+/obj/effect/landmark/start/lich/Initialize(mapload)
 	. = ..()
 	GLOB.lich_starts += loc
 
