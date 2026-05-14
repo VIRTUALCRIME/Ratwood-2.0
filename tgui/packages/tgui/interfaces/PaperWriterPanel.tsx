@@ -14,7 +14,6 @@ type Data = {
   draft: string;
   preview_html: string;
   has_existing_text: boolean;
-  signed: boolean;
   font: string;
   standard_font: string;
   fonts: string[];
@@ -27,7 +26,6 @@ export const PaperWriterPanel = () => {
   const {
     draft: initialDraft,
     preview_html,
-    signed,
     font: backendFont,
     standard_font,
     fonts,
@@ -215,9 +213,6 @@ export const PaperWriterPanel = () => {
                   formatting details. Use Save Anyway to confirm overwrite.
                 </NoticeBox>
               )}
-              <Box mt={1} mb={1} color={signed ? 'good' : 'label'}>
-                Signature status: {signed ? 'Signed' : 'Unsigned'}
-              </Box>
               <Box
                 style={{
                   background: '#fdf6e3',

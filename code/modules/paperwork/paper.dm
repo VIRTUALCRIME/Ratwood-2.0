@@ -241,7 +241,6 @@
 	var/list/data = list()
 	data["draft"] = writer_draft
 	data["font"] = writer_font
-	data["signed"] = writer_signed
 	data["needs_import_confirm"] = FALSE
 	data["preview_html"] = build_writer_preview(user)
 	data["has_existing_text"] = length(info) > 0

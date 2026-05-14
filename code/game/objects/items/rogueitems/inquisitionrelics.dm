@@ -678,7 +678,7 @@ Inquisitorial armory down here
 
 /obj/item/inqarticles/tallowpot
 	name = "tallowpot"
-	desc = "A small metal pot meant for holding waxes or melted tallow. Convenient for coating signet rings and making an imprint. The warmth of a torch, lamptern, or candle should be enough to melt tallow for stamping writs, especially Inquisitorial Tallow."
+	desc = "A small metal pot meant for holding waxes or melted tallow. Convenient for coating signet rings or seals and making an imprint. The warmth of a torch, lamptern, or candle should be enough to melt the contained tallow."
 	icon = 'icons/roguetown/items/misc.dmi'
 	icon_state = "tallowpot"
 	item_state = "tallowpot"
