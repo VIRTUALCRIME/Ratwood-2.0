@@ -95,10 +95,10 @@
 			H.put_in_hands(new /obj/item/rogueweapon/flail/sflail/psyflail/relic(H), TRUE)
 			H.adjust_skillrank_up_to(/datum/skill/combat/whipsflails, 4, TRUE)
 	//Now, for their 'sect'. They can either choose a heavy gambeson and +1SPD, or inquisitor coat and +1STR.
-	var/sect = list("Ancient - Gilbranze, Gambesons & Speed", "New Age - Silver, Overcoats & Strength")
+	var/sect = list("Ancient - Gilbronze, Gambesons & Speed", "New Age - Silver, Overcoats & Strength")
 	var/sect_choice = input(H,"FIND YOUR SECT", "WHAT ARE WE?") as anything in sect
 	switch(sect_choice)
-		if("Ancient - Gilbranze, Gambesons & Speed")
+		if("Ancient - Gilbronze, Gambesons & Speed")
 			H.equip_to_slot_or_del(new /obj/item/clothing/head/roguetown/helmet/arbiter, SLOT_HEAD, TRUE)
 			H.equip_to_slot_or_del(new /obj/item/clothing/gloves/roguetown/otavan/psygloves/arbiter, SLOT_GLOVES, TRUE)
 			H.equip_to_slot_or_del(new /obj/item/clothing/suit/roguetown/armor/gambeson/heavy/inq/arbiter, SLOT_ARMOR, TRUE)
@@ -158,7 +158,7 @@ Here because they're unused elsewhere.
 
 /obj/item/clothing/head/roguetown/helmet/arbiter
 	name = "arbiter mask"
-	desc = "An iconic, gilbranze mask, depicting the visage of Him. Weeping, as He is."
+	desc = "An iconic gilbronze mask, depicting the visage of HIM. Weeping, as HE is."
 	icon_state = "overseermask"
 	item_state = "overseermask"
 	icon = 'icons/roguetown/clothing/special/overseer/overseer.dmi'
@@ -170,11 +170,11 @@ Here because they're unused elsewhere.
 	slot_flags = ITEM_SLOT_HEAD|ITEM_SLOT_MASK
 	sewrepair = TRUE
 	anvilrepair = /datum/skill/craft/armorsmithing
-	smeltresult = /obj/item/ingot/purifiedaalloy
+	smeltresult = /obj/item/ingot/gilbronze
 	var/active_item = FALSE
 
 /obj/item/clothing/head/roguetown/helmet/arbiter/vice
-	desc = "An iconic, silver mask depicting the visage of Him. Weeping, as He is."
+	desc = "An iconic, silver mask depicting the visage of HIM. Weeping, as HE is."
 	icon_state = "viceseermask"
 	item_state = "viceseermask"
 	is_silver = TRUE

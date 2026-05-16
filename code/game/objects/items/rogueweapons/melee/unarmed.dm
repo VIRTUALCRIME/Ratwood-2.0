@@ -264,10 +264,10 @@
 	force = 12
 	max_integrity = 100
 	wdefense = 4
-	smeltresult = /obj/item/ingot/aalloy
+	smeltresult = /obj/item/ingot/aaslag
 	blade_dulling = DULLING_SHAFT_CONJURED
 
-/obj/item/rogueweapon/knuckles/paknuckles
+/obj/item/rogueweapon/knuckles/ancient
 	name = "ancient knuckles"
 	desc = "a set of knuckles made of ancient metals, Aeon's grasp has been lifted from their form."
 	icon_state = "aknuckle"

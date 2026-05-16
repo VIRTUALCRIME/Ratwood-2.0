@@ -2200,7 +2200,7 @@
 /turf/open/floor/rogue/cobble,
 /area/rogue)
 "Js" = (
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/dietroyt)
 "JA" = (

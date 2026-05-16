@@ -627,7 +627,7 @@
 "kJ" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -1164,7 +1164,7 @@
 "un" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -1494,7 +1494,7 @@
 "yp" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -1753,7 +1753,7 @@
 "CR" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -2580,7 +2580,7 @@
 "Qh" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -3155,7 +3155,7 @@
 "XT" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -3235,7 +3235,7 @@
 "YQ" = (
 /obj/structure/mannequin,
 /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,

@@ -23,14 +23,15 @@
 	icon_state = "acgloves"
 	max_integrity = ARMOR_INT_SIDE_DECREPIT
 	color = "#bb9696"
-	// smeltresult = /obj/item/ingot/aaslag
+	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
-/obj/item/clothing/gloves/roguetown/chain/paalloy
+/obj/item/clothing/gloves/roguetown/chain/aalloy/ancient
 	name = "ancient chain gauntlets"
-	desc = "Polished gilbranze rings, delicately daisy-chained together into mittens. The filament is ruptured, and it will never heal; Zizo's ascension made sure of that. By the hands of Her disciples, the final obstacle preventing this world's salvation shall be dismantled - lyfe."
-	icon_state = "acgloves"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze rings, delicately daisy-chained together into mittens. The filament is ruptured, and it will never heal; Zizo's ascension made sure of that. By the hands of Her disciples, the final obstacle preventing this world's salvation shall be dismantled - lyfe."
+	max_integrity = ARMOR_INT_SIDE_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/gloves/roguetown/chain/psydon
 	name = "psydonic chain-wrapped gloves"

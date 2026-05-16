@@ -1296,12 +1296,12 @@ GLOBAL_LIST_EMPTY(loadout_items)
 
 /datum/loadout_item/ancient_gladius
 	name = "Ancient Gladius"
-	path = /obj/item/rogueweapon/sword/short/gladius/pagladius
+	path = /obj/item/rogueweapon/sword/short/gladius/ancient
 	triumph_cost = 4
 
 /datum/loadout_item/ancient_khopesh
 	name = "Ancient Khopesh"
-	path = /obj/item/rogueweapon/sword/sabre/palloy
+	path = /obj/item/rogueweapon/sword/sabre/ancient
 	triumph_cost = 4
 
 // DAGGERS & KNIVES
@@ -1314,7 +1314,7 @@ GLOBAL_LIST_EMPTY(loadout_items)
 // MACES & BLUNT
 /datum/loadout_item/ancient_mace
 	name = "Ancient Mace"
-	path = /obj/item/rogueweapon/mace/goden/steel/paalloy
+	path = /obj/item/rogueweapon/mace/goden/steel/ancient
 	triumph_cost = 4
 
 // POLEARMS & SPEARS
@@ -1338,12 +1338,12 @@ GLOBAL_LIST_EMPTY(loadout_items)
 // ARMOR & CLOTHING
 /datum/loadout_item/ancient_mask
 	name = "Ancient Mask"
-	path = /obj/item/clothing/mask/rogue/facemask/steel/paalloy
+	path = /obj/item/clothing/mask/rogue/facemask/aalloy/ancient
 	triumph_cost = 4
 
 /datum/loadout_item/ancient_kilt
 	name = "Ancient Kilt"
-	path = /obj/item/clothing/under/roguetown/chainlegs/kilt/paalloy
+	path = /obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient
 	triumph_cost = 4
 
 //─────────────────────────────────────────────────────────────

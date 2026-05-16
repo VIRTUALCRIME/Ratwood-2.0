@@ -382,9 +382,9 @@
 	resistance_flags = FLAMMABLE //...It's made of wood.
 	picklvl = 0.7
 
-/obj/item/rogueweapon/huntingknife/idagger/steel/padagger
+/obj/item/rogueweapon/huntingknife/idagger/steel/ancient
 	name = "ancient dagger"
-	desc = "A short blade, forged from polished gilbranze. It is violence that shepherds progress, and it is progress that will free this world from mortality's chains. Zizo, Zizo, Zizo - I call upon thee; bring forth the undying, so that your works may yet be done!"
+	desc = "A short blade, forged from polished gilbronze. It is violence that shepherds progress, and it is progress that will free this world from mortality's chains. Zizo, Zizo, Zizo - I call upon thee; bring forth the undying, so that your works may yet be done!"
 	icon_state = "adagger"
 	smeltresult = /obj/item/ingot/aaslag
 	picklvl = 0.7
@@ -833,9 +833,9 @@
 	sellprice = 2
 	picklvl = 0.9
 
-/obj/item/rogueweapon/huntingknife/throwingknife/steel/palloy
-	name = "ancient alloy tossblade"
-	desc = "A sliver of polished gilbranze, delicately carved into a throwing dagger. A favorite amongst Zizo's undying cabal, and especially amongst Her assassins; what better-a-tool to slip through another's neck? </br>This dagger can be stowed away inside a pair of boots, permitting it to be quickly drawn when needed."
+/obj/item/rogueweapon/huntingknife/throwingknife/steel/ancient
+	name = "ancient tossblade"
+	desc = "A sliver of polished gilbronze, delicately carved into a throwing dagger. A favorite amongst Zizo's undying cabal, and especially amongst Her assassins; what better-a-tool to slip through another's neck? </br>This dagger can be stowed away inside a pair of boots, permitting it to be quickly drawn when needed."
 	icon_state = "throw_knifea"
 	picklvl = 0.6
 

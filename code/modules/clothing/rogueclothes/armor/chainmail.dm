@@ -36,11 +36,12 @@
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
-/obj/item/clothing/suit/roguetown/armor/chainmail/paalloy
+/obj/item/clothing/suit/roguetown/armor/chainmail/aalloy/ancient
 	name = "ancient haubergeon"
-	desc = "Polished gilbranze rings and silk, woven together to form a short maille-atekon. The death of a million brought forth the ascension of Zizo; and if a million more must perish to complete Her works, then let it be done."
-	icon_state = "ancientchain"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze rings and silk, woven together to form a short maille-atekon. The death of a million brought forth the ascension of Zizo; and if a million more must perish to complete Her works, then let it be done."
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 //MEDIUM ARMOR//
 
@@ -73,11 +74,12 @@
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
-/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/paalloy
+/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/aalloy/ancient
 	name = "ancient hauberk"
-	desc = "Polished gilbranze rings and silk, woven together to form a sleeved maille-atekon. To bring the lyfeless back from decrepity, to elevate them to heights once thought unsurmountable; that is the will of Zizo, made manifest."
-	icon_state = "ancienthauberk"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze rings and silk, woven together to form a sleeved maille-atekon. To bring the lyfeless back from decrepity, to elevate them to heights once thought unsurmountable; that is the will of Zizo, made manifest."
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ornate
 	slot_flags = ITEM_SLOT_ARMOR

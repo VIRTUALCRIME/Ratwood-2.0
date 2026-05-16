@@ -143,16 +143,16 @@
 	/obj/item/clothing/ring/emerald,
 	/obj/item/clothing/ring/dragon_ring,
 	/obj/item/ingot/gold,
-	/obj/item/ingot/purifiedaalloy/eahasir)
+	/obj/item/ingot/gilbronze/eahasir)
 
 	// Guaranteed loot pool
 	var/list/guaranteed_loot = list(
-		/obj/item/ingot/purifiedaalloy/eahasir,
-		/obj/item/ingot/purifiedaalloy/eahasir,
-		/obj/item/ingot/purifiedaalloy/eahasir,
-		/obj/item/ingot/purifiedaalloy/eahasir,
-		/obj/item/ingot/purifiedaalloy/eahasir,
-		/obj/item/ingot/purifiedaalloy/eahasir,
+		/obj/item/ingot/gilbronze/eahasir,
+		/obj/item/ingot/gilbronze/eahasir,
+		/obj/item/ingot/gilbronze/eahasir,
+		/obj/item/ingot/gilbronze/eahasir,
+		/obj/item/ingot/gilbronze/eahasir,
+		/obj/item/ingot/gilbronze/eahasir,
 		/obj/item/ingot/gold,
 		/obj/item/ingot/gold,
 		/obj/item/ingot/gold,

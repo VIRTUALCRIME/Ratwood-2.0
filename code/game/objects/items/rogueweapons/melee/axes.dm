@@ -281,9 +281,9 @@
 	smeltresult = /obj/item/ingot/steel
 	wdefense = 3
 
-/obj/item/rogueweapon/stoneaxe/woodcut/steel/paaxe
-	name = "ancient alloy axe"
-	desc = "A hatchet of polished gilbranze. Vheslyn molested the hearts of Man with sin - of greed towards the better offerings, and of lust for His divinity. With a single blow, blood gouted from bone and seeped into the soil; the first murder."
+/obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient
+	name = "ancient axe"
+	desc = "A hatchet of polished gilbronze. Vheslyn molested the hearts of Man with sin - of greed towards the better offerings, and of lust for His divinity. With a single blow, blood gouted from bone and seeped into the soil; the first murder."
 	icon_state = "ahandaxe"
 	smeltresult = /obj/item/ingot/aaslag
 

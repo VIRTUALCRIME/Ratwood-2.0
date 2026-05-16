@@ -599,7 +599,7 @@
 /area/rogue/outdoors/woods/vampire_lair)
 "iQ" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -787,7 +787,7 @@
 /area/rogue/indoors/vampire_manor)
 "mz" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -1181,7 +1181,7 @@
 /area/rogue/indoors/vampire_manor)
 "un" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -1431,7 +1431,7 @@
 /area/rogue/indoors/vampire_manor)
 "yE" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -2030,7 +2030,7 @@
 /area/rogue/outdoors/woods/vampire_lair)
 "HU" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -2110,7 +2110,7 @@
 /area/rogue/indoors/vampire_manor)
 "JN" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,
@@ -2682,7 +2682,7 @@
 /area/rogue/outdoors/woods/vampire_lair)
 "Tk" = (
 /obj/structure/mannequin,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/neck/roguetown/gorget/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/item/clothing/gloves/roguetown/plate/aalloy,

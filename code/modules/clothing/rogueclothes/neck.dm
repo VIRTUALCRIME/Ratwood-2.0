@@ -190,13 +190,7 @@
 /obj/item/clothing/neck/roguetown/chaincoif/ComponentInitialize()
 	AddComponent(/datum/component/adjustable_clothing, NECK, null, null, 'sound/foley/equip/chain_equip.ogg', null, (UPD_HEAD|UPD_MASK|UPD_NECK))	//Chain coif.
 
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy
-	name = "ancient coif"
-	desc = "Polished gilbranze rings, linked together to form a billowing hood. Let it not be a crown of thorns that saves this dying world, but a crown of progress; of fettered metal and stained bone, rejuvenated by Zizo's will to herald Her greatest works yet."
-	icon_state = "achaincoif"
-	smeltresult = /obj/item/ingot/aaslag
-
-/obj/item/clothing/neck/roguetown/chaincoif/iron/aalloy
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy
 	name = "decrepit coif"
 	desc = "Frayed bronze rings, linked together to form a billowing hood. Shrapnel peppers the linkage; arrowheads and speartips, brought along from a battlefield who's history - and legionnaires - have been lost to tyme."
 	icon_state = "achaincoif"
@@ -204,6 +198,13 @@
 	color = "#bb9696"
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
+
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient
+	name = "ancient coif"
+	desc = "Polished gilbronze rings, linked together to form a billowing hood. Let it not be a crown of thorns that saves this dying world, but a crown of progress; of fettered metal and stained bone, rejuvenated by Zizo's will to herald Her greatest works yet."
+	max_integrity = ARMOR_INT_CHEST_MEDIUM_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle
 	name = "chain mantle"
@@ -315,6 +316,12 @@
 	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
 	blocksound = PLATEHIT
 
+/obj/item/clothing/neck/roguetown/gorget/steel
+	name = "steel gorget"
+	smeltresult = /obj/item/ingot/steel
+	max_integrity = ARMOR_INT_SIDE_STEEL
+	icon_state = "sgorget"
+
 /obj/item/clothing/neck/roguetown/gorget/aalloy
 	name = "decrepit gorget"
 	desc = "Frayed bronze plates, shingled together to shroud the neck. Primitive scrapes line the flanks, yet the center seems to've been cored out by a spear's thrust."
@@ -323,6 +330,13 @@
 	color = "#bb9696"
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
+
+/obj/item/clothing/neck/roguetown/gorget/aalloy/ancient
+	name = "ancient gorget"
+	desc = "Polished gilbronze plates, layered atop one-another to guard the neck. The spine; a sacred leyline between spirit and sinew. It must remain unsevered, lest Her blessings be lost."
+	max_integrity = ARMOR_INT_SIDE_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/neck/roguetown/gorget/copper
 	name = "neck protector"
@@ -382,23 +396,10 @@
 	desc = "Nature knows not of mercy."
 	icon_state = "iwolfcollaralt"
 
-/obj/item/clothing/neck/roguetown/gorget/steel
-	name = "steel gorget"
-	smeltresult = /obj/item/ingot/steel
-	max_integrity = ARMOR_INT_SIDE_STEEL
-	icon_state = "sgorget"
-
 /obj/item/clothing/neck/roguetown/gorget/steel/kazengun
 	name = "kazengunite gorget"
 	desc = "A series of interlocking rings of metal set around the throat. Used by the kouken of Kazengun for precisely the same reason as the knights of Psydonia."
 	icon_state = "kazengunneckguard"
-
-/obj/item/clothing/neck/roguetown/gorget/paalloy
-	name = "ancient gorget"
-	desc = "Polished gilbranze plates, layered atop one-another to guard the neck. The spine; a sacred leyline between spirit and sinew. It must remain unsevered, lest Her blessings be lost."
-	icon_state = "ancientgorget"
-	max_integrity = ARMOR_INT_SIDE_STEEL
-	smeltresult = /obj/item/ingot/aaslag
 
 /obj/item/clothing/neck/roguetown/gorget/cursed_collar // minor flavor swap so people know it's a scam shitty knockoff.
 	name = "lesser cursed collar"

@@ -913,9 +913,9 @@
 	anvilrepair = null
 	randomize_blade_int_on_init = TRUE
 
-/obj/item/rogueweapon/sword/short/pashortsword
+/obj/item/rogueweapon/sword/short/ancient
 	name = "ancient shortsword"
-	desc = "A polished sidearm-sword, forged from gilbranze. From after His sacrifice, but before Her ascension; the tithe of a war without reason, waged between squabbling children who hadn't known that the world was about to end."
+	desc = "A polished sidearm-sword, forged from gilbronze. From after His sacrifice, but before Her ascension; the tithe of a war without reason, waged between squabbling children who hadn't known that the world was about to end."
 	icon_state = "ashortsword"
 	sheathe_icon = "ashortsword"
 	smeltresult = /obj/item/ingot/aaslag
@@ -951,9 +951,9 @@
 	anvilrepair = null
 	randomize_blade_int_on_init = TRUE
 
-/obj/item/rogueweapon/sword/short/gladius/pagladius
+/obj/item/rogueweapon/sword/short/gladius/ancient
 	name = "ancient gladius"
-	desc = "A polished shortsword, forged from gilbranze. Favored by Zizo's undying legionnaires, this antiquated tool serves a simple purpose; to spill the innards of unenlightened fools."
+	desc = "A polished shortsword, forged from gilbronze. Favored by Zizo's undying legionnaires, this antiquated tool serves a simple purpose; to spill the innards of unenlightened fools."
 	icon_state = "agladius"
 	smeltresult = /obj/item/ingot/aaslag
 
@@ -1121,7 +1121,7 @@
 	possible_item_intents = list(/datum/intent/sword/cut/sabre, /datum/intent/sword/thrust, /datum/intent/sword/chop/falx, /datum/intent/sword/peel)
 	max_integrity = 200
 
-/obj/item/rogueweapon/sword/sabre/alloy
+/obj/item/rogueweapon/sword/sabre/aalloy
 	name = "decrepit khopesh"
 	desc = "A hooked sword, wrought from frayed bronze. The design is not only baffling, but seems to predate history itself."
 	force = 18
@@ -1133,7 +1133,7 @@
 	anvilrepair = null
 	randomize_blade_int_on_init = TRUE
 
-/obj/item/rogueweapon/sword/sabre/palloy
+/obj/item/rogueweapon/sword/sabre/ancient
 	name = "ancient khopesh"
 	desc = "A polished hook-sword, forged from gilbronze. The Comet Syon's glare once graced this blade; now, it's wielded by those who can't even remember what came before His sacrifice."
 	smeltresult = /obj/item/ingot/aaslag

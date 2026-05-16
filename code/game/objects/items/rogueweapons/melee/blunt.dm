@@ -167,9 +167,9 @@
 	wdefense = 3
 	smelt_bar_num = 2
 
-/obj/item/rogueweapon/mace/steel/palloy
-	name = "ancient alloy mace"
-	desc = "Polished gilbranze, perched atop a reinforced shaft. Break the unenlightened into naught-but-giblets; like a potter's vessels, dashed against the rocks."
+/obj/item/rogueweapon/mace/steel/ancient
+	name = "ancient mace"
+	desc = "Polished gilbronze, perched atop a reinforced shaft. Break the unenlightened into naught-but-giblets; like a potter's vessels, dashed against the rocks."
 	icon_state = "amace"
 	smeltresult = /obj/item/ingot/aaslag
 
@@ -431,9 +431,9 @@
 	smelt_bar_num = 2
 	wdefense_wbonus = 5
 
-/obj/item/rogueweapon/mace/goden/steel/paalloy
+/obj/item/rogueweapon/mace/goden/steel/ancient
 	name = "ancient grand mace"
-	desc = "A twisting polehammer, forged in polished gilbranze. What did you think this was all about? This destruction, this war, this sacrifice; it was all to prepare Man for its true ascension."
+	desc = "A twisting polehammer, forged in polished gilbronze. What did you think this was all about? This destruction, this war, this sacrifice; it was all to prepare Man for its true ascension."
 	icon_state = "ancient_supermace"
 	smeltresult = /obj/item/ingot/aaslag
 
@@ -553,9 +553,9 @@
 				return list("shrink" = 0.4,"sx" = -2,"sy" = -5,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 	return ..()
 
-/obj/item/rogueweapon/mace/warhammer/steel/paalloy
+/obj/item/rogueweapon/mace/warhammer/steel/ancient
 	name = "ancient alloy warhammer"
-	desc = "A macehead of polished gilbranze, spiked and perched atop a reinforced shaft. An elegant weapon from a more civilized age; when Man lived in harmony with one-another, and when 'the undying' was nothing more than a nitemare's thought."
+	desc = "A macehead of polished gilbronze, spiked and perched atop a reinforced shaft. An elegant weapon from a more civilized age; when Man lived in harmony with one-another, and when 'the undying' was nothing more than a nitemare's thought."
 	icon_state = "awarhammer"
 	smeltresult = /obj/item/ingot/aaslag
 

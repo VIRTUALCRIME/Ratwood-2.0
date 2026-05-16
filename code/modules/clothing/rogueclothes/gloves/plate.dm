@@ -35,11 +35,12 @@
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
-/obj/item/clothing/gloves/roguetown/plate/paalloy
+/obj/item/clothing/gloves/roguetown/plate/aalloy/ancient
 	name = "ancient plate gauntlets"
-	desc = "Polished gilbranze mechanisms, meticulously interconnected to shroud splayed hands. 'Mercy' and 'innocence' are concepts paraded by the unenlightened; spill their blood without guilt, so that the world may yet be remade in Her image."
-	icon_state = "agauntlets"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze mechanisms, meticulously interconnected to shroud splayed hands. 'Mercy' and 'innocence' are concepts paraded by the unenlightened; spill their blood without guilt, so that the world may yet be remade in Her image."
+	max_integrity = ARMOR_INT_SIDE_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/gloves/roguetown/plate/graggar
 	name = "vicious gauntlets"

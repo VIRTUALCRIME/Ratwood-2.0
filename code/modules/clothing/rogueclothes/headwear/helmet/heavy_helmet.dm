@@ -46,20 +46,14 @@
 			pic.color = get_detail_color()
 		add_overlay(pic)
 
-/obj/item/clothing/head/roguetown/helmet/heavy/kabuto
-	name = "kabuto"
-	desc = "A Kazengunite helmet of steel plates, gilded in blacksteel and gold trim alike to evoke feelings of nobility and strength. Commonly worn with a mask or mouthguard."
-	flags_inv = HIDEEARS
-	flags_cover = null
-	icon_state = "kazengunheavyhelm"
-
-/obj/item/clothing/head/roguetown/helmet/heavy/paalloy
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient
 	name = "ancient barbute"
-	desc = "Polished gilbranze plates, pounded to form a visored helmet. Zizo commands progress, and progress commands sacrifice; let these sundered legionnaires rise again, to spill the blood of unenlightened fools. A coiled pocket is perched atop the rim, awaiting to be plumed."
-	icon_state = "ancientbarbute"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze plates, pounded to form a visored helmet. Zizo commands progress, and progress commands sacrifice; let these sundered legionnaires rise again, to spill the blood of unenlightened fools. A coiled pocket is perched atop the rim, awaiting to be plumed."
+	max_integrity = ARMOR_INT_HELMET_HEAVY_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
-/obj/item/clothing/head/roguetown/helmet/heavy/paalloy/attackby(obj/item/W, mob/living/user, params)
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient/attackby(obj/item/W, mob/living/user, params)
 	..()
 	if(istype(W, /obj/item/natural/feather) && !detail_tag)
 		var/choice = input(user, "Choose a color.", "Plume") as anything in GLOB.colorlist
@@ -72,6 +66,21 @@
 			var/mob/living/carbon/H = user
 			H.update_inv_head()
 
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient/update_icon()
+	cut_overlays()
+	if(get_detail_tag())
+		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
+		pic.appearance_flags = RESET_COLOR
+		if(get_detail_color())
+			pic.color = get_detail_color()
+		add_overlay(pic)
+
+/obj/item/clothing/head/roguetown/helmet/heavy/kabuto
+	name = "kabuto"
+	desc = "A Kazengunite helmet of steel plates, gilded in blacksteel and gold trim alike to evoke feelings of nobility and strength. Commonly worn with a mask or mouthguard."
+	flags_inv = HIDEEARS
+	flags_cover = null
+	icon_state = "kazengunheavyhelm"
 
 /obj/item/clothing/head/roguetown/helmet/heavy/guard
 	name = "steel savoyard"
@@ -98,11 +107,12 @@
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
-/obj/item/clothing/head/roguetown/helmet/heavy/guard/paalloy
+/obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy/ancient
 	name = "ancient savoyard"
-	desc = "Polished gilbranze plates, molded into a bulwark's greathelm. The Comet Syon's glare has been forever burnt into the alloy; a decayed glimpse into the world that was, before Psydon's slumber and Zizo's awakening."
-	icon_state = "ancientsavoyard"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze plates, molded into a bulwark's greathelm. The Comet Syon's glare has been forever burnt into the alloy; a decayed glimpse into the world that was, before Psydon's slumber and Zizo's awakening."
+	max_integrity = ARMOR_INT_HELMET_HEAVY_STEEL
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/head/roguetown/helmet/heavy/sheriff
 	name = "barred helmet"

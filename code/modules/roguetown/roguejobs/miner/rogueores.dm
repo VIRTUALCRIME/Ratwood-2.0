@@ -272,17 +272,16 @@
 	color = "#bb9696"
 	sellprice = 33
 
-
-/obj/item/ingot/purifiedaalloy
-	name = "ancient alloy"
-	desc = "An ingot of polished gilbranze, teeming with forbidden knowledge. The reflection on its surface isn't yours; it smiles back at you with eternal malice."
+/obj/item/ingot/gilbronze
+	name = "gilbronze ingot"
+	desc = "A timeless alloy of gold and bronze, hence the name gilbronze. The reflection on its surface isn't yours; it smiles back at you with eternal malice."
 	icon_state = "ingotancient"
-	smeltresult = /obj/item/ingot/purifiedaalloy
+	smeltresult = /obj/item/ingot/gilbronze
 	sellprice = 111
 
-/obj/item/ingot/purifiedaalloy/eahasir
+/obj/item/ingot/gilbronze/eahasir
 	name = "EA-Hasir high-quality gold ingot"
-	desc = "Solid wealth in your hand- Hey wait a minute, this isn't gold."
+	desc = "Solid wealth in your hand- Hey, wait a minute, this isn't gold!"
 
 /obj/item/ingot/aaslag
 	name = "glimmering slag"

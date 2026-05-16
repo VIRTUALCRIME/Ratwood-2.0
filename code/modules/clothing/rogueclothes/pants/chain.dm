@@ -102,11 +102,12 @@
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
-/obj/item/clothing/under/roguetown/chainlegs/kilt/paalloy
+/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient
 	name = "ancient chain kilt"
-	desc = "Polished gilbranze rings, linked together with bindings of silk to form a waist's vestment. These undying legionnaires once marched for Vheslyn, and again for Zizo; but now, they are utterly beholden to the whims of their resurrector."
-	icon_state = "achainkilt"
-	smeltresult = /obj/item/ingot/aaslag
+	desc = "Polished gilbronze rings, linked together with bindings of silk to form a waist's vestment. These undying legionnaires once marched for Vheslyn, and again for Zizo; but now, they are utterly beholden to the whims of their resurrector."
+	max_integrity = ARMOR_INT_LEG_STEEL_CHAIN
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/under/roguetown/chainlegs/iron/kilt
 	name = "iron chain kilt"

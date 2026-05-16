@@ -108,7 +108,7 @@
 	name = "Skeleton Footsoldier"
 	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy
 	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy
-	shoes = /obj/item/clothing/shoes/roguetown/boots/aalloy
+	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy
 	if(prob(20))
 		belt = /obj/item/storage/belt/rogue/leather/rope
 		switch(rand(1, 100))
@@ -154,7 +154,7 @@
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/aalloy
 	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy
 	pants = /obj/item/clothing/under/roguetown/tights/sailor
-	shoes = /obj/item/clothing/shoes/roguetown/boots/aalloy
+	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy
 	if(prob(50))
 		r_hand = /obj/item/rogueweapon/huntingknife/idagger/adagger
 	else
@@ -195,8 +195,8 @@
 	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/aalloy
 	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy
-	shoes = /obj/item/clothing/shoes/roguetown/boots/aalloy
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/iron/aalloy
+	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/aalloy
 	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy
 	if(prob(30))
 		switch(rand(1, 100))
@@ -244,11 +244,11 @@
 		shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy
 		wrists = /obj/item/clothing/wrists/roguetown/bracers/aalloy
 		pants = /obj/item/clothing/under/roguetown/platelegs/aalloy
-		shoes = /obj/item/clothing/shoes/roguetown/boots/aalloy
+		shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy
 		neck = /obj/item/clothing/neck/roguetown/psicross/inhumen/aalloy
 		gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy
-		r_hand = /obj/item/rogueweapon/sword/sabre/alloy
-		l_hand = /obj/item/rogueweapon/sword/sabre/alloy
+		r_hand = /obj/item/rogueweapon/sword/sabre/aalloy
+		l_hand = /obj/item/rogueweapon/sword/sabre/aalloy
 	else // Withered Dreadknight
 		H.STASPD = 8
 		cloak = /obj/item/clothing/cloak/tabard/blkknight
@@ -257,7 +257,7 @@
 		shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/aalloy
 		wrists = /obj/item/clothing/wrists/roguetown/bracers/aalloy
 		pants = /obj/item/clothing/under/roguetown/platelegs/aalloy
-		shoes = /obj/item/clothing/shoes/roguetown/boots/aalloy
+		shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy
 		neck = /obj/item/clothing/neck/roguetown/gorget/aalloy
 		gloves = /obj/item/clothing/gloves/roguetown/plate/aalloy
 		if(prob(50))

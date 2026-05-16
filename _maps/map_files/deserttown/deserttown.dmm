@@ -13387,8 +13387,8 @@
 /area/rogue/under/cave)
 "fhQ" = (
 /obj/item/clothing/suit/roguetown/armor/plate/aalloy,
-/obj/item/clothing/shoes/roguetown/boots/aalloy,
-/obj/item/clothing/neck/roguetown/gorget/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
+/obj/item/clothing/shoes/roguetown/boots/armor/aalloy,
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy,
 /obj/structure/mannequin/male,
 /turf/open/floor/rogue/churchrough{
@@ -34337,7 +34337,7 @@
 /turf/open/transparent/openspace,
 /area/rogue/indoors/town/garrison/desert)
 "nQs" = (
-/obj/item/rogueweapon/stoneaxe/woodcut/steel/paaxe{
+/obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient{
 	pixel_x = 1;
 	pixel_y = -8
 	},

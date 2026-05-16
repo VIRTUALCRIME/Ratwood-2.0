@@ -370,6 +370,13 @@
 	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
 
+/obj/item/clothing/mask/rogue/facemask/aalloy/ancient
+	name = "ancient mask"
+	desc = "Polished gilbronze, molded into an intimidating visage. Touch the cheek; it is warm, like flesh. But it is not flesh. Not yet."
+	max_integrity = 200
+	color = "#ffffff"
+	anvilrepair = /datum/skill/craft/armorsmithing
+
 /obj/item/clothing/mask/rogue/facemask/copper
 	name = "copper mask"
 	icon_state = "cmask"
@@ -465,13 +472,6 @@
 	icon_state = "smask"
 	max_integrity = 200
 	smeltresult = /obj/item/ingot/steel
-
-/obj/item/clothing/mask/rogue/facemask/steel/paalloy
-	name = "ancient mask"
-	desc = "Polished gilbranze, molded into an intimidating visage. Touch the cheek; it is warm, like flesh. But it is not flesh. Not yet."
-	icon_state = "ancientmask"
-	smeltresult = /obj/item/ingot/aaslag
-
 
 /obj/item/clothing/mask/rogue/facemask/steel/hound
 	name = "steel hound mask"

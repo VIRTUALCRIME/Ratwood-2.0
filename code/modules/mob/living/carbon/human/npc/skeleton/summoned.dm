@@ -21,8 +21,8 @@
 	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/aalloy
 	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy
-	shoes = /obj/item/clothing/shoes/roguetown/boots/aalloy
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/iron/aalloy
+	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/aalloy
 	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy
 	if(prob(33))
 		l_hand = /obj/item/rogueweapon/spear/aalloy

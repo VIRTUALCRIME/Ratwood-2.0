@@ -437,9 +437,9 @@
 	anvilrepair = null
 	randomize_blade_int_on_init = TRUE
 
-/obj/item/rogueweapon/spear/paalloy
+/obj/item/rogueweapon/spear/ancient
 	name = "ancient spear"
-	desc = "A gnarled staff, tipped with polished gilbranze. Your breathing hilts, and your knuckles tighten around the staff; you see what is yet to come, yet your mind refuses to retain it. To know what fate this dying world has - it would drive any man inzane."
+	desc = "A gnarled staff, tipped with polished gilbronze. Your breathing hilts, and your knuckles tighten around the staff; you see what is yet to come, yet your mind refuses to retain it. To know what fate this dying world has - it would drive any man inzane."
 	smeltresult = /obj/item/ingot/aaslag
 	icon_state = "ancient_spear"
 
@@ -823,12 +823,11 @@
 	anvilrepair = null
 	randomize_blade_int_on_init = TRUE
 
-/obj/item/rogueweapon/halberd/bardiche/paalloy
+/obj/item/rogueweapon/halberd/bardiche/ancient
 	name = "ancient bardiche"
-	desc = "A terrifying poleaxe, forged from polished gilbranze. When Her ascension came, these weapons - bereft of their wielders - sunk deep into the earth. Shadowed hands cradled the blades over the centuries, and would eventually create its steel-tipped successor; the glaive."
+	desc = "A terrifying poleaxe, forged from polished gilbronze. When Her ascension came, these weapons - bereft of their wielders - sunk deep into the earth. Shadowed hands cradled the blades over the centuries, and would eventually create its steel-tipped successor; the glaive."
 	icon_state = "ancient_bardiche"
 	smeltresult = /obj/item/ingot/aaslag
-
 
 /obj/item/rogueweapon/halberd/bardiche/scythe
 	name = "summer scythe"
@@ -1052,7 +1051,7 @@
 	randomize_blade_int_on_init = TRUE
 
 
-/obj/item/rogueweapon/greatsword/paalloy
+/obj/item/rogueweapon/greatsword/ancient
 	name = "ancient greatsword"
 	desc = "A massive blade, forged from polished gilbronze. Your kind will discover your true nature, in wrath and ruin. You will take to the stars and burn them out, one by one. Only when the last star turns to dust, will you finally realize that She was trying to save you from Man's greatest foe; oblivion."
 	icon_state = "ancient_gsw"

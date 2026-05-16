@@ -261,7 +261,7 @@
 			/obj/item/ingot/steelholy,
 			/obj/item/ingot/silverblessed,
 			/obj/item/ingot/aalloy,
-			/obj/item/ingot/purifiedaalloy,
+			/obj/item/ingot/gilbronze,
 			/obj/item/ingot/aaslag,
 			/obj/item/roguegem,
 			/obj/item/roguegem/green,

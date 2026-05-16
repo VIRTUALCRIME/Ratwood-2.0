@@ -30,11 +30,11 @@
 	projectile_type = /obj/projectile/bullet/reusable/bolt/aalloy
 	color = "#bb9696"
 
-/obj/item/ammo_casing/caseless/rogue/bolt/paalloy
+/obj/item/ammo_casing/caseless/rogue/bolt/ancient
 	name = "ancient bolt"
-	desc = "An ancient bolt, tipped with polished gilbranze. The razor-thin tip resembles a sabot more than an arrowhead; something that most alloys cannot reliably withstand."
+	desc = "An ancient bolt, tipped with polished gilbronze. The razor-thin tip resembles a sabot more than an arrowhead; something that most alloys cannot reliably withstand."
 	icon_state = "ancientbolt"
-	projectile_type = /obj/projectile/bullet/reusable/bolt/paalloy
+	projectile_type = /obj/projectile/bullet/reusable/bolt/ancient
 
 /obj/item/ammo_casing/caseless/rogue/bolt/blunt
 	name = "practice bolt"
@@ -73,10 +73,10 @@
 	armor_penetration = 30
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/bolt/aalloy
 
-/obj/projectile/bullet/reusable/bolt/paalloy
+/obj/projectile/bullet/reusable/bolt/ancient
 	damage = 50
 	armor_penetration = 35
-	ammo_type = /obj/item/ammo_casing/caseless/rogue/bolt/paalloy
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/bolt/ancient
 
 /obj/projectile/bullet/reusable/bolt/blunt
 	damage = 25
@@ -168,11 +168,11 @@
 	to steel-heads on another. Crafted for more well-prepared targets."
 	projectile_type = /obj/projectile/bullet/reusable/arrow/steel
 
-/obj/item/ammo_casing/caseless/rogue/arrow/steel/paalloy
+/obj/item/ammo_casing/caseless/rogue/arrow/steel/ancient
 	name = "ancient bodkin arrow"
-	desc = "An arrow; one end, tipped with a sharpened rod of polished gilbranze - the other, inlaid with feathers. The razor-thin tip resembles a sabot; an alloyed sliver that can punch straight through steel."
+	desc = "An arrow; one end, tipped with a sharpened rod of polished gilbronze - the other, inlaid with feathers. The razor-thin tip resembles a sabot; an alloyed sliver that can punch straight through steel."
 	icon_state = "ancientarrow"
-	projectile_type = /obj/projectile/bullet/reusable/arrow/steel/paalloy
+	projectile_type = /obj/projectile/bullet/reusable/arrow/steel/ancient
 
 /obj/projectile/bullet/reusable/arrow
 	name = "arrow"
@@ -246,10 +246,9 @@
 	speed = 0.6
 	npc_simple_damage_mult = 3
 
-/obj/projectile/bullet/reusable/arrow/steel/paalloy
-	name = "decrepit bodkin arrow"
-	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/steel/paalloy
-	damage = 15
+/obj/projectile/bullet/reusable/arrow/steel/ancient
+	name = "ancient bodkin arrow"
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/arrow/steel/ancient
 	armor_penetration = 25
 
 // POISON AMMO
@@ -629,11 +628,10 @@
 	embedding = list("embedded_pain_multiplier" = 4, "embed_chance" = 45, "embedded_fall_chance" = 10) //Better than steel throwing knife by 10%
 	smeltresult = null // 1 Ingot = 2 Javelins
 
-/obj/item/ammo_casing/caseless/rogue/javelin/steel/paalloy
+/obj/item/ammo_casing/caseless/rogue/javelin/steel/ancient
 	name = "ancient javelin"
-	desc = "A missile of polished gilbranze. Old Syon had drowned beneath His tears, and Her ascension had brought forth this world's end - so that You, with the killing blow, could become God."
+	desc = "A missile of polished gilbronze. Old Syon had drowned beneath His tears, and Her ascension had brought forth this world's end - so that You, with the killing blow, could become God."
 	icon_state = "ajavelin"
-	smeltresult = null // 1 Ingots = 2 Javelins
 
 /obj/item/ammo_casing/caseless/rogue/javelin/silver
 	name = "silver javelin"
@@ -701,10 +699,10 @@
 	icon_state = "ancient_sling_bullet"
 	color = "#bb9696"
 
-/obj/item/ammo_casing/caseless/rogue/sling_bullet/paalloy
+/obj/item/ammo_casing/caseless/rogue/sling_bullet/ancient
 	name = "ancient sling bullet"
-	desc = "A pellet of polished gilbranze. The bigger they are, the harder they'll fall; be it Man or God."
-	projectile_type = /obj/projectile/bullet/reusable/sling_bullet/paalloy
+	desc = "A pellet of polished gilbronze. The bigger they are, the harder they'll fall; be it Man or God."
+	projectile_type = /obj/projectile/bullet/reusable/sling_bullet/ancient
 	icon = 'icons/roguetown/weapons/ammo.dmi'
 	icon_state = "ancient_sling_bullet"
 
@@ -788,14 +786,6 @@
 	icon = 'icons/roguetown/weapons/ammo.dmi'
 	icon_state = "musketball_proj"
 
-/obj/projectile/bullet/reusable/sling_bullet/aalloy
-	name = "decrepit sling bullet"
-	damage = 15
-	armor_penetration = 0
-	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/aalloy
-	icon = 'icons/roguetown/weapons/ammo.dmi'
-	icon_state = "musketball_proj"
-
 /obj/projectile/bullet/reusable/sling_bullet/bronze
 	name = "bronze sling bullet"
 	damage = 35
@@ -804,11 +794,19 @@
 	icon = 'icons/roguetown/weapons/ammo.dmi'
 	icon_state = "musketball_proj"
 
-/obj/projectile/bullet/reusable/sling_bullet/paalloy
+/obj/projectile/bullet/reusable/sling_bullet/aalloy
+	name = "decrepit sling bullet"
+	damage = 15
+	armor_penetration = 0
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/aalloy
+	icon = 'icons/roguetown/weapons/ammo.dmi'
+	icon_state = "musketball_proj"
+
+/obj/projectile/bullet/reusable/sling_bullet/ancient
 	name = "ancient sling bullet"
 	damage = 30
 	armor_penetration = 30
-	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/paalloy
+	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/ancient
 	icon = 'icons/roguetown/weapons/ammo.dmi'
 	icon_state = "musketball_proj"
 

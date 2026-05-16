@@ -2528,7 +2528,7 @@
 /turf/open/floor/rogue/metal,
 /area/rogue/under/cave/tribeden)
 "cTh" = (
-/obj/item/rogueweapon/sword/short/gladius/pagladius,
+/obj/item/rogueweapon/sword/short/gladius/ancient,
 /mob/living/carbon/human/species/npc/deadite{
 	faction = list("undead")
 	},
@@ -2663,17 +2663,17 @@
 /area/rogue/outdoors/jungle)
 "dam" = (
 /obj/structure/rack/rogue,
-/obj/item/rogueweapon/spear/paalloy,
-/obj/item/rogueweapon/spear/paalloy,
-/obj/item/rogueweapon/spear/paalloy,
-/obj/item/rogueweapon/spear/paalloy,
-/obj/item/rogueweapon/spear/paalloy,
-/obj/item/rogueweapon/mace/goden/steel/paalloy{
+/obj/item/rogueweapon/spear/ancient,
+/obj/item/rogueweapon/spear/ancient,
+/obj/item/rogueweapon/spear/ancient,
+/obj/item/rogueweapon/spear/ancient,
+/obj/item/rogueweapon/spear/ancient,
+/obj/item/rogueweapon/mace/goden/steel/ancient{
 	pixel_x = -23;
 	pixel_y = -12
 	},
 /obj/structure/rack/rogue/shelf,
-/obj/item/rogueweapon/halberd/bardiche/paalloy{
+/obj/item/rogueweapon/halberd/bardiche/ancient{
 	pixel_x = -19;
 	pixel_y = 11
 	},
@@ -3338,9 +3338,9 @@
 /area/rogue/indoors/vampire_manor)
 "dMq" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/under/roguetown/chainlegs/kilt/paalloy,
-/obj/item/clothing/under/roguetown/chainlegs/kilt/paalloy,
-/obj/item/clothing/under/roguetown/chainlegs/kilt/paalloy,
+/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient,
+/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient,
+/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient,
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/cave/tribeden)
 "dNc" = (
@@ -4322,7 +4322,7 @@
 /turf/open/transparent/openspace,
 /area/rogue/indoors)
 "eUq" = (
-/obj/item/rogueweapon/sword/short/gladius/pagladius,
+/obj/item/rogueweapon/sword/short/gladius/ancient,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cave)
 "eUJ" = (
@@ -6065,14 +6065,14 @@
 /area/rogue/under/town/basement)
 "gFN" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/wrists/roguetown/bracers/paalloy{
+/obj/item/clothing/wrists/roguetown/bracers/aalloy/ancient{
 	pixel_y = 28
 	},
 /obj/structure/rack/rogue/shelf,
-/obj/item/clothing/suit/roguetown/armor/plate/half/paalloy,
-/obj/item/clothing/suit/roguetown/armor/plate/half/paalloy,
-/obj/item/clothing/suit/roguetown/armor/plate/half/paalloy,
-/obj/item/clothing/gloves/roguetown/chain/paalloy{
+/obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient,
+/obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient,
+/obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient,
+/obj/item/clothing/gloves/roguetown/chain/aalloy/ancient{
 	pixel_x = -9;
 	pixel_y = 32
 	},
@@ -6940,20 +6940,20 @@
 /area/rogue/indoors/banditcamp/byos)
 "hFm" = (
 /obj/structure/rack/rogue,
-/obj/item/rogueweapon/stoneaxe/woodcut/steel/paaxe{
+/obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient{
 	pixel_x = 7;
 	pixel_y = -7
 	},
-/obj/item/rogueweapon/stoneaxe/woodcut/steel/paaxe{
+/obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient{
 	pixel_x = 1;
 	pixel_y = -10
 	},
-/obj/item/rogueweapon/mace/steel/palloy{
+/obj/item/rogueweapon/mace/steel/ancient{
 	pixel_x = -3;
 	pixel_y = 0
 	},
-/obj/item/rogueweapon/mace/steel/palloy,
-/obj/item/rogueweapon/mace/steel/palloy{
+/obj/item/rogueweapon/mace/steel/ancient,
+/obj/item/rogueweapon/mace/steel/ancient{
 	pixel_x = -7;
 	pixel_y = 2
 	},
@@ -7491,11 +7491,11 @@
 "ihR" = (
 /obj/structure/rack/rogue,
 /obj/structure/rack/rogue/shelf,
-/obj/item/clothing/neck/roguetown/gorget/paalloy{
+/obj/item/clothing/neck/roguetown/gorget/aalloy/ancient{
 	pixel_x = -8;
 	pixel_y = 31
 	},
-/obj/item/clothing/mask/rogue/facemask/steel/paalloy{
+/obj/item/clothing/mask/rogue/facemask/aalloy/ancient{
 	pixel_x = 5;
 	pixel_y = 31
 	},
@@ -7534,7 +7534,7 @@
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/town/tavern)
 "iiF" = (
-/obj/item/rogueweapon/sword/short/gladius/pagladius,
+/obj/item/rogueweapon/sword/short/gladius/ancient,
 /turf/open/floor/rogue/concrete,
 /area/rogue/under/cave)
 "ijb" = (
@@ -9248,15 +9248,15 @@
 /obj/structure/rack/rogue/shelf/big{
 	pixel_y = 37
 	},
-/obj/item/quiver/paalloy{
+/obj/item/quiver/ancient{
 	pixel_x = -4;
 	pixel_y = 30
 	},
-/obj/item/quiver/paalloy{
+/obj/item/quiver/ancient{
 	pixel_x = 9;
 	pixel_y = 27
 	},
-/obj/item/quiver/paalloy{
+/obj/item/quiver/ancient{
 	pixel_x = 2;
 	pixel_y = 28
 	},
@@ -9266,11 +9266,11 @@
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow,
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow,
 /obj/item/gun/ballistic/revolver/grenadelauncher/bow,
-/obj/item/quiver/paalloy{
+/obj/item/quiver/ancient{
 	pixel_x = 2;
 	pixel_y = 28
 	},
-/obj/item/quiver/paalloy{
+/obj/item/quiver/ancient{
 	pixel_x = 2;
 	pixel_y = 28
 	},
@@ -10374,15 +10374,15 @@
 /obj/item/rogueweapon/huntingknife,
 /obj/item/rogueweapon/huntingknife,
 /obj/item/rogueweapon/huntingknife,
-/obj/item/rogueweapon/huntingknife/idagger/steel/padagger{
+/obj/item/rogueweapon/huntingknife/idagger/steel/ancient{
 	pixel_x = 7;
 	pixel_y = -6
 	},
-/obj/item/rogueweapon/huntingknife/idagger/steel/padagger{
+/obj/item/rogueweapon/huntingknife/idagger/steel/ancient{
 	pixel_x = 11;
 	pixel_y = -9
 	},
-/obj/item/rogueweapon/huntingknife/idagger/steel/padagger{
+/obj/item/rogueweapon/huntingknife/idagger/steel/ancient{
 	pixel_x = 7;
 	pixel_y = -6
 	},
@@ -15180,15 +15180,15 @@
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling,
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling,
 /obj/item/gun/ballistic/revolver/grenadelauncher/sling,
-/obj/item/quiver/sling/paalloy{
+/obj/item/quiver/sling/ancient{
 	pixel_x = 0;
 	pixel_y = 31
 	},
-/obj/item/quiver/sling/paalloy{
+/obj/item/quiver/sling/ancient{
 	pixel_x = 9;
 	pixel_y = 31
 	},
-/obj/item/quiver/sling/paalloy{
+/obj/item/quiver/sling/ancient{
 	pixel_x = -8;
 	pixel_y = 31
 	},
@@ -17864,12 +17864,12 @@
 /area/rogue/indoors/town/tavern)
 "sCr" = (
 /obj/structure/rack/rogue,
-/obj/item/rogueweapon/greatsword/paalloy,
-/obj/item/rogueweapon/sword/sabre/palloy{
+/obj/item/rogueweapon/greatsword/ancient,
+/obj/item/rogueweapon/sword/sabre/ancient{
 	pixel_x = 4;
 	pixel_y = -5
 	},
-/obj/item/rogueweapon/sword/sabre/palloy{
+/obj/item/rogueweapon/sword/sabre/ancient{
 	pixel_x = -6;
 	pixel_y = 7
 	},
@@ -18483,7 +18483,7 @@
 /obj/item/rogueweapon/mace/cudgel/shellrungu,
 /obj/item/rogueweapon/mace/cudgel/shellrungu,
 /obj/item/rogueweapon/mace/cudgel/shellrungu,
-/obj/item/rogueweapon/mace/warhammer/steel/paalloy{
+/obj/item/rogueweapon/mace/warhammer/steel/ancient{
 	pixel_x = 4;
 	pixel_y = -8
 	},
@@ -18554,27 +18554,27 @@
 /area/rogue/under/cave)
 "tgW" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy,
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy,
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy,
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy,
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy,
-/obj/item/clothing/neck/roguetown/chaincoif/paalloy,
-/obj/item/clothing/head/roguetown/helmet/heavy/paalloy{
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
 	pixel_y = 28
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/paalloy{
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
 	pixel_y = 28
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/paalloy{
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
 	pixel_y = 31;
 	pixel_x = -8
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/paalloy{
+/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
 	pixel_y = 30;
 	pixel_x = 8
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/guard/paalloy{
+/obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy/ancient{
 	pixel_x = -1;
 	pixel_y = 34
 	},
@@ -19563,15 +19563,15 @@
 /obj/structure/rack/rogue/shelf/big{
 	pixel_y = 37
 	},
-/obj/item/quiver/javelin/paalloy{
+/obj/item/quiver/javelin/ancient{
 	pixel_x = -6;
 	pixel_y = 32
 	},
-/obj/item/quiver/javelin/paalloy{
+/obj/item/quiver/javelin/ancient{
 	pixel_x = 5;
 	pixel_y = 31
 	},
-/obj/item/quiver/javelin/paalloy{
+/obj/item/quiver/javelin/ancient{
 	pixel_x = 1;
 	pixel_y = 32
 	},
@@ -19581,7 +19581,7 @@
 /obj/item/rogueweapon/shield/wood,
 /obj/item/rogueweapon/shield/wood,
 /obj/item/rogueweapon/shield/wood,
-/obj/item/rogueweapon/shield/tower/metal/palloy,
+/obj/item/rogueweapon/shield/tower/metal/ancient,
 /turf/open/floor/rogue/blocks,
 /area/rogue/under/cave/tribeden)
 "ujT" = (
@@ -21552,7 +21552,7 @@
 	name = "Key of Wrath";
 	desc = "It's eye glares at you intensely."
 	},
-/obj/item/clothing/suit/roguetown/armor/plate/paalloy/artificer,
+/obj/item/clothing/suit/roguetown/armor/plate/aalloy/ancient/artificer,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cave)
 "wqN" = (

@@ -245,7 +245,7 @@
 // ANCIENT
 /obj/item/roguecoin/aalloy
 	name = "psilen"
-	desc = "A coin of polished gilbranze, beheld to a fallen kingdom that hadn't endured the passage of tyme."
+	desc = "A coin of polished gilbronze, beheld to a fallen kingdom that hadn't endured the passage of tyme."
 	icon_state = "a1"
 	sellprice = 3 //Dungeon-specific coinage - valued by historians, collectors, and smelters. 
 	base_type = CTYPE_ANCIENT

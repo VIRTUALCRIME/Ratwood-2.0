@@ -57,7 +57,7 @@
 	name = "decrepit statue"
 	desc = "A statue of wrought bronze, forged to venerate an ancient champion."
 	icon_state = "astatue1"
-	smeltresult = /obj/item/ingot/aalloy
+	smeltresult = /obj/item/ingot/aaslag
 	sellprice = 77
 	color = "#bb9696"
 

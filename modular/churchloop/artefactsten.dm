@@ -4,7 +4,7 @@
 	/obj/item/ingot/steel, \
 	/obj/item/ingot/iron, \
 	/obj/item/ingot/aalloy, \
-	/obj/item/ingot/purifiedaalloy \
+	/obj/item/ingot/gilbronze \
 )
 
 var/global/list/EORA_PARTNERS_BY_ID = list()
@@ -146,7 +146,7 @@ Malum's tool
 			/obj/item/ingot/steel,
 			/obj/item/ingot/iron,
 			/obj/item/ingot/aalloy,
-			/obj/item/ingot/purifiedaalloy
+			/obj/item/ingot/gilbronze
 		)
 		if(!(smeltpath in allowed))
 			to_chat(user, span_warning("[I2] is not suitable for this hammer's smelting."))

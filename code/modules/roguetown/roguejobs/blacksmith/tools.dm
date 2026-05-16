@@ -261,8 +261,7 @@
 	icon_state = "ahammer"
 	force = 12
 	max_integrity = 10
-	smeltresult = /obj/item/ingot/aalloy
-
+	smeltresult = /obj/item/ingot/aaslag
 
 /obj/item/rogueweapon/hammer/copper
 	name = "copper hammer"
