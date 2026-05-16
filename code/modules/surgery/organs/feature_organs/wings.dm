@@ -34,6 +34,10 @@
 	var/datum/sprite_accessory/accessory = SPRITE_ACCESSORY(accessory_type) // In the case of wings we need to get gradient size too
 	var/datum/hair_gradient/gradient = HAIR_GRADIENT(gradient_type)
 	var/icon/gradient_icon = icon(accessory.gradient_icon, gradient.icon_state)
+	if(accessory.pixel_x > 0)
+		gradient_icon.Shift(NORTH, accessory.pixel_x, wrap = TRUE)
+	else if(accessory.pixel_x < 0)
+		gradient_icon.Shift(SOUTH, abs(accessory.pixel_x), wrap = TRUE)
 	var/layered_icon_state = accessory.icon_state
 	var/layer_suffix = accessory.get_layer_suffix(-(standing.layer))
 	if(layer_suffix)
