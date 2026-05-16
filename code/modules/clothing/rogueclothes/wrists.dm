@@ -42,21 +42,18 @@
 	sewrepair = FALSE
 	smeltresult = /obj/item/ingot/steel
 
-/obj/item/clothing/wrists/roguetown/bracers/aalloy
+/obj/item/clothing/wrists/roguetown/bracers/ancient
+	name = "ancient bracers"
+	desc = "Polished gilbranze cuffings, clasped around the wrists. Through ascension, the chains of mortality are broken; and only through death will the spirit be ready to embrace divinity."
+	icon_state = "ancientbracers"
+	smeltresult = /obj/item/ingot/aaslag
+
+/obj/item/clothing/wrists/roguetown/bracers/ancient/decrepit
 	name = "decrepit bracers"
 	desc = "Frayed bronze cuffings, bound across the wrists. Don't bother counting the tallies left behind by their former legionnaires; none of them ever returned from the battlefields."
 	max_integrity = ARMOR_INT_SIDE_DECREPIT
-	icon_state = "ancientbracers"
 	color = "#bb9696"
-	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
-
-/obj/item/clothing/wrists/roguetown/bracers/aalloy/ancient
-	name = "ancient bracers"
-	desc = "Polished gilbronze cuffings, clasped around the wrists. Through ascension, the chains of mortality are broken; and only through death will the spirit be ready to embrace divinity."
-	max_integrity = ARMOR_INT_SIDE_STEEL
-	color = "#ffffff"
-	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/wrists/roguetown/bracers/psythorns
 	name = "psydonic thorns"

@@ -92,22 +92,20 @@
 	sleeved = 'icons/roguetown/clothing/onmob/helpers/sleeves_pants.dmi'
 	alternate_worn_layer = (SHIRT_LAYER)
 
-/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy
-	name = "decrepit chain kilt"
-	desc = "Frayed bronze rings, linked together with bindings of rotting leather to form a waist's drape. The maille jingles with every step, singing the hymn to a cadence once savored by marching legionnaires."
+/obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
+	name = "ancient chain kilt"
+	desc = "Polished gilbranze rings, linked together with bindings of silk to form a waist's vestment. These undying legionnaires once marched for Vheslyn, and again for Zizo; but now, they are utterly beholden to the whims of their resurrector."
 	icon_state = "achainkilt"
 	sleevetype = "achainkilt"
+	smeltresult = /obj/item/ingot/aaslag
+	anvilrepair = /datum/skill/craft/armorsmithing
+
+/obj/item/clothing/under/roguetown/chainlegs/kilt/ancient/decrepit
+	name = "decrepit chain kilt"
+	desc = "Frayed bronze rings, linked together with bindings of rotting leather to form a waist's drape. The maille jingles with every step, singing the hymn to a cadence once savored by marching legionnaires."
 	max_integrity = ARMOR_INT_LEG_DECREPIT_CHAIN
 	color = "#bb9696"
-	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
-
-/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient
-	name = "ancient chain kilt"
-	desc = "Polished gilbronze rings, linked together with bindings of silk to form a waist's vestment. These undying legionnaires once marched for Vheslyn, and again for Zizo; but now, they are utterly beholden to the whims of their resurrector."
-	max_integrity = ARMOR_INT_LEG_STEEL_CHAIN
-	color = "#ffffff"
-	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/under/roguetown/chainlegs/iron/kilt
 	name = "iron chain kilt"

@@ -13,18 +13,13 @@
 	max_integrity = ARMOR_INT_HELMET_HEAVY_STEEL
 	armor_class = ARMOR_CLASS_MEDIUM	//Heavy helmets require at least medium armor training. Stops no-armor training plate-headgear users.
 
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy
-	name = "decrepit barbute"
-	desc = "Frayed bronze plates, pounded into a visored helmet. Scrapes and dents line the curved plating, weathered from centuries of neglect. The remains of a plume's stub hang atop its rim."
-	body_parts_covered = COVERAGE_HEAD
-	max_integrity = ARMOR_INT_HELMET_HEAVY_DECREPIT
-	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient
+	name = "ancient barbute"
+	desc = "Polished gilbranze plates, pounded to form a visored helmet. Zizo commands progress, and progress commands sacrifice; let these sundered legionnaires rise again, to spill the blood of unenlightened fools. A coiled pocket is perched atop the rim, awaiting to be plumed."
 	icon_state = "ancientbarbute"
-	color = "#bb9696"
 	smeltresult = /obj/item/ingot/aaslag
-	anvilrepair = null
 
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/attackby(obj/item/W, mob/living/user, params)
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient/attackby(obj/item/W, mob/living/user, params)
 	..()
 	if(istype(W, /obj/item/natural/feather) && !detail_tag)
 		var/choice = input(user, "Choose a color.", "Plume") as anything in GLOB.colorlist
@@ -37,7 +32,7 @@
 			var/mob/living/carbon/H = user
 			H.update_inv_head()
 
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/update_icon()
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient/update_icon()
 	cut_overlays()
 	if(get_detail_tag())
 		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
@@ -46,14 +41,14 @@
 			pic.color = get_detail_color()
 		add_overlay(pic)
 
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient
-	name = "ancient barbute"
-	desc = "Polished gilbronze plates, pounded to form a visored helmet. Zizo commands progress, and progress commands sacrifice; let these sundered legionnaires rise again, to spill the blood of unenlightened fools. A coiled pocket is perched atop the rim, awaiting to be plumed."
-	max_integrity = ARMOR_INT_HELMET_HEAVY_STEEL
-	color = "#ffffff"
-	anvilrepair = /datum/skill/craft/armorsmithing
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient/decrepit
+	name = "decrepit barbute"
+	desc = "Frayed bronze plates, pounded into a visored helmet. Scrapes and dents line the curved plating, weathered from centuries of neglect. The remains of a plume's stub hang atop its rim."
+	max_integrity = ARMOR_INT_HELMET_HEAVY_DECREPIT
+	color = "#bb9696"
+	anvilrepair = null
 
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient/attackby(obj/item/W, mob/living/user, params)
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient/decrepit/attackby(obj/item/W, mob/living/user, params)
 	..()
 	if(istype(W, /obj/item/natural/feather) && !detail_tag)
 		var/choice = input(user, "Choose a color.", "Plume") as anything in GLOB.colorlist
@@ -66,7 +61,7 @@
 			var/mob/living/carbon/H = user
 			H.update_inv_head()
 
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient/update_icon()
+/obj/item/clothing/head/roguetown/helmet/ancient/decrepit/update_icon()
 	cut_overlays()
 	if(get_detail_tag())
 		var/mutable_appearance/pic = mutable_appearance(icon(icon, "[icon_state][detail_tag]"))
@@ -88,31 +83,26 @@
 	icon_state = "steelsavoyard"
 	emote_environment = 3
 	flags_inv = HIDEEARS|HIDEFACE|HIDEHAIR|HIDESNOUT
-	block2add = FOV_BEHIND
 	smeltresult = /obj/item/ingot/steel
 	smelt_bar_num = 2
+
+/obj/item/clothing/head/roguetown/helmet/heavy/guard/ancient
+	name = "ancient savoyard"
+	desc = "Polished gilbranze plates, molded into a bulwark's greathelm. The Comet Syon's glare has been forever burnt into the alloy; a decayed glimpse into the world that was, before Psydon's slumber and Zizo's awakening."
+	icon_state = "ancientsavoyard"
+	smeltresult = /obj/item/ingot/aaslag
+
+/obj/item/clothing/head/roguetown/helmet/heavy/guard/ancient/decrepit
+	name = "decrepit savoyard"
+	desc = "Frayed bronze plates, molded into a ventilated casket. It reeks of fetid shit, and each breath - labored and strained - is laced with flaked metal."
+	max_integrity = ARMOR_INT_HELMET_HEAVY_DECREPIT
+	color = "#bb9696"
+	anvilrepair = null
 
 /obj/item/clothing/head/roguetown/helmet/heavy/guard/bogman
 	name = "steel bogman's helmet"
 	desc = "A helmet featuring the face of a snarling goblin. Once worn by the Bogmen, now a relic of old Rotwood Vale."
 	icon_state = "guardhelm"
-
-/obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy
-	name = "decrepit savoyard"
-	desc = "Frayed bronze plates, molded into a ventilated casket. It reeks of fetid shit, and each breath - labored and strained - is laced with flaked metal."
-	max_integrity = ARMOR_INT_HELMET_HEAVY_DECREPIT
-	prevent_crits = list(BCLASS_CUT, BCLASS_STAB, BCLASS_CHOP, BCLASS_BLUNT, BCLASS_TWIST)
-	icon_state = "ancientsavoyard"
-	color = "#bb9696"
-	smeltresult = /obj/item/ingot/aaslag
-	anvilrepair = null
-
-/obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy/ancient
-	name = "ancient savoyard"
-	desc = "Polished gilbronze plates, molded into a bulwark's greathelm. The Comet Syon's glare has been forever burnt into the alloy; a decayed glimpse into the world that was, before Psydon's slumber and Zizo's awakening."
-	max_integrity = ARMOR_INT_HELMET_HEAVY_STEEL
-	color = "#ffffff"
-	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/head/roguetown/helmet/heavy/sheriff
 	name = "barred helmet"

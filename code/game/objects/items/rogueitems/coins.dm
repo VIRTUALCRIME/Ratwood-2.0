@@ -243,9 +243,9 @@
 	plural_name = "zennies"
 
 // ANCIENT
-/obj/item/roguecoin/aalloy
+/obj/item/roguecoin/gilbranze
 	name = "psilen"
-	desc = "A coin of polished gilbronze, beheld to a fallen kingdom that hadn't endured the passage of tyme."
+	desc = "A coin of polished gilbranze, beheld to a fallen kingdom that hadn't endured the passage of tyme."
 	icon_state = "a1"
 	sellprice = 3 //Dungeon-specific coinage - valued by historians, collectors, and smelters. 
 	base_type = CTYPE_ANCIENT
@@ -255,7 +255,7 @@
 	. = ..()
 	set_quantity(rand(4,19))
 
-/obj/item/roguecoin/aalloy/pile/Initialize(mapload)
+/obj/item/roguecoin/gilbranze/pile/Initialize(mapload)
 	. = ..()
 	set_quantity(rand(4,19))
 

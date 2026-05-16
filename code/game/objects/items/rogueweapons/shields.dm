@@ -242,22 +242,20 @@
 				return list("shrink" = 0.6,"sx" = 1,"sy" = 4,"nx" = 1,"ny" = 2,"wx" = 3,"wy" = 3,"ex" = 0,"ey" = 2,"nturn" = 0,"sturn" = 0,"wturn" = 0,"eturn" = 0,"nflip" = 8,"sflip" = 0,"wflip" = 0,"eflip" = 0,"northabove" = 1,"southabove" = 0,"eastabove" = 0,"westabove" = 0)
 	return ..()
 
-/obj/item/rogueweapon/shield/tower/metal/alloy
+/obj/item/rogueweapon/shield/tower/metal/ancient
+	name = "ancient shield"
+	desc = "A venerable scutum, plated with polished gilbranze. An undying legionnaire's closest friend; that which rebukes arrow-and-bolt alike with unphasing prejudice. It is a reminder - one of many - that Her progress cannot be stopped."
+	icon_state = "ancientsh"
+	smeltresult = /obj/item/ingot/aaslag
+
+/obj/item/rogueweapon/shield/tower/metal/ancient/decrepit
 	name = "decrepit shield"
 	desc = "A hefty tower shield, wrought from frayed bronze. Looped with dried kelp and reeking of saltwater, you'd assume that this had been fished out from the remains of a long-sunken warship.. alongside its former legionnaire."
 	max_integrity = 120
 	wdefense = 9
-	icon_state = "ancientsh"
 	blade_dulling = DULLING_SHAFT_CONJURED
 	color = "#bb9696"
-	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
-
-/obj/item/rogueweapon/shield/tower/metal/ancient
-	name = "ancient shield"
-	desc = "A venerable scutum, plated with polished gilbronze. An undying legionnaire's closest friend; that which rebukes arrow-and-bolt alike with unphasing prejudice. It is a reminder - one of many - that Her progress cannot be stopped."
-	icon_state = "ancientsh"
-	smeltresult = /obj/item/ingot/aaslag
 
 /obj/item/rogueweapon/shield/tower/metal/psy
 	name = "Covenant"
@@ -437,7 +435,7 @@
 
 /obj/item/rogueweapon/shield/iron/nomad
 	name = "nomad shield"
-	desc = "A slim shield, likely wrought of gilbronze and iron alike. An unholy combination. \
+	desc = "A slim shield, likely wrought of gilbranze and iron alike. An unholy combination. \
 	The work is of another lyfe, not yet seen since the first era."
 	icon_state = "ironsh_nomad"//Temp, but it works.
 	coverage = 40//+10

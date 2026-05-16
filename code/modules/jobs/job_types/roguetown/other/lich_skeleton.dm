@@ -13,7 +13,7 @@ LICH SKELETONS
 /datum/outfit/job/roguetown/greater_skeleton/lich
 	cloak = /obj/item/clothing/cloak/thief_cloak/yoruku
 	belt = /obj/item/storage/belt/rogue/leather/black
-	wrists = /obj/item/clothing/wrists/roguetown/bracers/aalloy/ancient
+	wrists = /obj/item/clothing/wrists/roguetown/bracers/ancient
 	backl = /obj/item/storage/backpack/rogue/satchel
 
 /datum/outfit/job/roguetown/greater_skeleton/lich/pre_equip(mob/living/carbon/human/H)
@@ -55,13 +55,13 @@ LICH SKELETONS
 	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/sewing, 2, TRUE)
 
-	head = /obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient
-	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy/ancient
-	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient
-	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient
-	shoes = /obj/item/clothing/shoes/roguetown/sandals/aalloy/ancient
-	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy/ancient
+	head = /obj/item/clothing/head/roguetown/helmet/heavy/ancient
+	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/ancient
+	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
+	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/ancient
+	shoes = /obj/item/clothing/shoes/roguetown/sandals/ancient
+	gloves = /obj/item/clothing/gloves/roguetown/chain/ancient
 
 	backr = /obj/item/rogueweapon/shield/wood
 	beltl = /obj/item/quiver/javelin/ancient
@@ -121,13 +121,13 @@ LICH SKELETONS
 	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/sewing, 2, TRUE)
 
-	head = /obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient
-	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy/ancient
-	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient
+	head = /obj/item/clothing/head/roguetown/helmet/heavy/ancient
+	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/ancient
+	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/studded
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient
-	shoes = /obj/item/clothing/shoes/roguetown/sandals/aalloy/ancient
-	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy/ancient
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/ancient
+	shoes = /obj/item/clothing/shoes/roguetown/sandals/ancient
+	gloves = /obj/item/clothing/gloves/roguetown/chain/ancient
 
 	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
 	H.adjust_blindness(-3)
@@ -185,13 +185,13 @@ LICH SKELETONS
 	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/sewing, 2, TRUE)
 
-	head = /obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy/ancient
-	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/aalloy/ancient
-	armor = /obj/item/clothing/suit/roguetown/armor/plate/aalloy/ancient
-	pants = /obj/item/clothing/under/roguetown/platelegs/aalloy/ancient
-	neck = /obj/item/clothing/neck/roguetown/gorget/aalloy/ancient
-	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/aalloy/ancient
-	gloves = /obj/item/clothing/gloves/roguetown/plate/aalloy/ancient
+	head = /obj/item/clothing/head/roguetown/helmet/heavy/guard/ancient
+	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ancient
+	armor = /obj/item/clothing/suit/roguetown/armor/plate/ancient
+	pants = /obj/item/clothing/under/roguetown/platelegs/ancient
+	neck = /obj/item/clothing/neck/roguetown/gorget/steel/ancient
+	shoes = /obj/item/clothing/shoes/roguetown/boots/armor/ancient
+	gloves = /obj/item/clothing/gloves/roguetown/plate/ancient
 
 	H.adjust_blindness(-3)
 	var/weapons = list("Greatsword", "Bardiche", "Grand Mace", "Mace + Shield","Spear + Shield", "Warhammer + Shield")
@@ -259,12 +259,12 @@ LICH SKELETONS
 	H.adjust_skillrank(/datum/skill/labor/lumberjacking, 4, TRUE)
 
 	head = /obj/item/clothing/head/roguetown/helmet/kettle/minershelm
-	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/aalloy/ancient
+	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/ancient
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/studded
 	neck = /obj/item/clothing/neck/roguetown/coif
-	shoes = /obj/item/clothing/shoes/roguetown/sandals/aalloy/ancient
+	shoes = /obj/item/clothing/shoes/roguetown/sandals/ancient
 	backl = /obj/item/storage/backpack/rogue/satchel
-	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy/ancient
+	gloves = /obj/item/clothing/gloves/roguetown/chain/ancient
 
 	beltr = /obj/item/rogueweapon/stoneaxe/woodcut
 	beltl = /obj/item/rogueweapon/pick

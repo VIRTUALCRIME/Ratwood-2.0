@@ -177,21 +177,22 @@
 	item_state = "sandals"
 	nudist_approved = TRUE
 
-/obj/item/clothing/shoes/roguetown/sandals/aalloy
+/obj/item/clothing/shoes/roguetown/sandals/ancient
+	name = "ancient armored sandals"
+	desc = "Polished gilbranze platforms, curled about to cradle the feet. Gladiators from an era lost, reborn to serve. These sandals were never meant to march 'pon sands, but to stand tall over the bodies of one's enemies."
+	icon_state = "ancientsandals"
+	max_integrity = 200
+	armor = ARMOR_PLATE
+	anvilrepair = /datum/skill/craft/armorsmithing
+	nudist_approved = TRUE
+
+/obj/item/clothing/shoes/roguetown/sandals/ancient/decrepit
 	name = "decrepit armored sandals"
 	desc = "Frayed bronze platforms, curled about to cradle the feet. The beaches that these sandals once treaded are no more; pearly sands, long since turnt to glass from the Comet Syon's impact."
 	max_integrity = 50
-	icon_state = "ancientsandals"
 	color = "#bb9696"
-	nudist_approved = TRUE
+	anvilrepair = null
 
-/obj/item/clothing/shoes/roguetown/sandals/aalloy/ancient
-	name = "ancient armored sandals"
-	desc = "Polished gilbronze platforms, curled about to cradle the feet. Gladiators from an era lost, reborn to serve. These sandals were never meant to march 'pon sands, but to stand tall over the bodies of one's enemies."
-	max_integrity = 200
-	armor = ARMOR_PLATE
-	color = "#ffffff"
-	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/shoes/roguetown/shalal
 	name = "babouche"
@@ -310,21 +311,18 @@
 	cold_protection = null
 	min_cold_protection_temperature = BODYTEMP_NORMAL_MIN
 
-/obj/item/clothing/shoes/roguetown/boots/armor/aalloy
+/obj/item/clothing/shoes/roguetown/boots/armor/ancient
+	name = "ancient boots"
+	desc = "Polished gilbranze greaves, layered atop one-another to protect the ankles and feet. The marching, metallic stomps of those who yet walk without lyfe heralds destruction wherever it is heard."
+	icon_state = "ancientboots"
+	smeltresult = /obj/item/ingot/aaslag
+
+/obj/item/clothing/shoes/roguetown/boots/armor/ancient/decrepit
 	name = "decrepit boots"
 	desc = "Frayed bronze greaves, shingled atop boots of rotted leather. The toebones of its former legionnaire remain within, rattling about with every step taken."
-	icon_state = "ancientboots"
 	max_integrity = ARMOR_INT_SIDE_DECREPIT
 	color = "#bb9696"
-	smeltresult = /obj/item/ingot/aaslag
 	anvilrepair = null
-
-/obj/item/clothing/shoes/roguetown/boots/armor/aalloy/ancient
-	name = "ancient boots"
-	desc = "Polished gilbronze greaves, layered atop one-another to protect the ankles and feet. The marching, metallic stomps of those who yet walk without lyfe heralds destruction wherever it is heard."
-	max_integrity = ARMOR_INT_SIDE_STEEL
-	color = "#ffffff"
-	anvilrepair = /datum/skill/craft/armorsmithing
 
 /obj/item/clothing/shoes/roguetown/boots/armor/graggar
 	name = "vicious boots"

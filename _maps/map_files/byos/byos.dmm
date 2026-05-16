@@ -1032,8 +1032,8 @@
 	dir = 4
 	},
 /obj/structure/rack/rogue,
-/obj/item/clothing/shoes/roguetown/sandals/aalloy,
-/obj/item/clothing/shoes/roguetown/sandals/aalloy,
+/obj/item/clothing/shoes/roguetown/sandals/ancient/decrepit,
+/obj/item/clothing/shoes/roguetown/sandals/ancient/decrepit,
 /obj/item/clothing/shoes/roguetown/boots/furlinedanklets,
 /obj/item/clothing/shoes/roguetown/boots/furlinedanklets,
 /obj/item/clothing/shoes/roguetown/boots/furlinedanklets,
@@ -1947,7 +1947,7 @@
 /area/rogue/outdoors/town/byos)
 "ckg" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/neck/roguetown/psicross/inhumen/aalloy,
+/obj/item/clothing/neck/roguetown/psicross/inhumen/ancient,
 /turf/open/floor/rogue/concrete,
 /area/rogue/indoors/inq/boat/basement)
 "ckn" = (
@@ -3338,9 +3338,9 @@
 /area/rogue/indoors/vampire_manor)
 "dMq" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient,
-/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient,
-/obj/item/clothing/under/roguetown/chainlegs/kilt/aalloy/ancient,
+/obj/item/clothing/under/roguetown/chainlegs/kilt/ancient,
+/obj/item/clothing/under/roguetown/chainlegs/kilt/ancient,
+/obj/item/clothing/under/roguetown/chainlegs/kilt/ancient,
 /turf/open/floor/rogue/cobble,
 /area/rogue/under/cave/tribeden)
 "dNc" = (
@@ -6065,14 +6065,14 @@
 /area/rogue/under/town/basement)
 "gFN" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/wrists/roguetown/bracers/aalloy/ancient{
+/obj/item/clothing/wrists/roguetown/bracers/ancient{
 	pixel_y = 28
 	},
 /obj/structure/rack/rogue/shelf,
-/obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient,
-/obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient,
-/obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient,
-/obj/item/clothing/gloves/roguetown/chain/aalloy/ancient{
+/obj/item/clothing/suit/roguetown/armor/plate/half/ancient,
+/obj/item/clothing/suit/roguetown/armor/plate/half/ancient,
+/obj/item/clothing/suit/roguetown/armor/plate/half/ancient,
+/obj/item/clothing/gloves/roguetown/chain/ancient{
 	pixel_x = -9;
 	pixel_y = 32
 	},
@@ -7491,11 +7491,11 @@
 "ihR" = (
 /obj/structure/rack/rogue,
 /obj/structure/rack/rogue/shelf,
-/obj/item/clothing/neck/roguetown/gorget/aalloy/ancient{
+/obj/item/clothing/neck/roguetown/gorget/steel/ancient{
 	pixel_x = -8;
 	pixel_y = 31
 	},
-/obj/item/clothing/mask/rogue/facemask/aalloy/ancient{
+/obj/item/clothing/mask/rogue/facemask/ancient{
 	pixel_x = 5;
 	pixel_y = 31
 	},
@@ -18554,27 +18554,27 @@
 /area/rogue/under/cave)
 "tgW" = (
 /obj/structure/rack/rogue,
-/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
-/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
-/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
-/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
-/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
-/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient,
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
+/obj/item/clothing/neck/roguetown/chaincoif/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/ancient,
+/obj/item/clothing/neck/roguetown/chaincoif/ancient,
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient{
 	pixel_y = 28
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient{
 	pixel_y = 28
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient{
 	pixel_y = 31;
 	pixel_x = -8
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/aalloy/ancient{
+/obj/item/clothing/head/roguetown/helmet/heavy/ancient{
 	pixel_y = 30;
 	pixel_x = 8
 	},
-/obj/item/clothing/head/roguetown/helmet/heavy/guard/aalloy/ancient{
+/obj/item/clothing/head/roguetown/helmet/heavy/guard/ancient{
 	pixel_x = -1;
 	pixel_y = 34
 	},
@@ -21552,7 +21552,7 @@
 	name = "Key of Wrath";
 	desc = "It's eye glares at you intensely."
 	},
-/obj/item/clothing/suit/roguetown/armor/plate/aalloy/ancient/artificer,
+/obj/item/clothing/suit/roguetown/armor/plate/ancient/artificer,
 /turf/open/floor/rogue/naturalstone,
 /area/rogue/under/cave)
 "wqN" = (

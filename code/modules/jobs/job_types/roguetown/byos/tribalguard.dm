@@ -159,9 +159,9 @@
 /datum/outfit/job/roguetown/tribalguard/warrior/pre_equip(mob/living/carbon/human/H)
 	..()
 	head = /obj/item/clothing/head/roguetown/helmet/leather/volfhelm
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient
-	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy/ancient
-	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/ancient
+	gloves = /obj/item/clothing/gloves/roguetown/chain/ancient
+	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
 	backpack_contents = list(
@@ -241,9 +241,9 @@
 /datum/outfit/job/roguetown/tribalguard/savage/pre_equip(mob/living/carbon/human/H)
 	..()
 	head = /obj/item/clothing/head/roguetown/helmet/leather/volfhelm
-	neck = /obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient
-	gloves = /obj/item/clothing/gloves/roguetown/chain/aalloy/ancient
-	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/aalloy/ancient
+	neck = /obj/item/clothing/neck/roguetown/chaincoif/ancient
+	gloves = /obj/item/clothing/gloves/roguetown/chain/ancient
+	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 	pants = /obj/item/clothing/under/roguetown/trou/leather
 	belt = /obj/item/storage/belt/rogue/leather/battleskirt/barbarian
 	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient

@@ -264,7 +264,7 @@
 	smeltresult = /obj/item/ingot/silver //Smelting it removes the blessing
 	sellprice = 100
 
-/obj/item/ingot/aalloy
+/obj/item/ingot/decrepit
 	name = "decrepit ingot"
 	desc = "A decrepit slab of wrought bronze, uncomfortably cold to the touch. The gales shift into whispers, when held for long enough; 'progress commands sacrifice'."
 	icon_state = "ingotancient"
@@ -272,14 +272,14 @@
 	color = "#bb9696"
 	sellprice = 33
 
-/obj/item/ingot/gilbronze
-	name = "gilbronze ingot"
-	desc = "A timeless alloy of gold and bronze, hence the name gilbronze. The reflection on its surface isn't yours; it smiles back at you with eternal malice."
+/obj/item/ingot/gilbranze
+	name = "gilbranze ingot"
+	desc = "A timeless alloy of gold and bronze, hence the name gilbranze. The reflection on its surface isn't yours; it smiles back at you with eternal malice."
 	icon_state = "ingotancient"
-	smeltresult = /obj/item/ingot/gilbronze
+	smeltresult = /obj/item/ingot/gilbranze
 	sellprice = 111
 
-/obj/item/ingot/gilbronze/eahasir
+/obj/item/ingot/gilbranze/eahasir
 	name = "EA-Hasir high-quality gold ingot"
 	desc = "Solid wealth in your hand- Hey, wait a minute, this isn't gold!"
 

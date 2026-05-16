@@ -1306,9 +1306,9 @@
 /area/rogue/under/tomb/indoors)
 "uf" = (
 /obj/effect/mapping_helpers/floor_clothing_equipper,
-/obj/item/clothing/gloves/roguetown/plate/aalloy/ancient,
+/obj/item/clothing/gloves/roguetown/plate/ancient,
 /obj/item/clothing/shoes/roguetown/boots/leather/reinforced,
-/obj/item/clothing/under/roguetown/platelegs/aalloy/ancient,
+/obj/item/clothing/under/roguetown/platelegs/ancient,
 /obj/item/clothing/neck/roguetown/chaincoif,
 /obj/item/clothing/ring/quartz,
 /obj/item/clothing/suit/roguetown/armor/plate/half/iron,
@@ -2936,9 +2936,9 @@
 /area/rogue/under/tomb)
 "UU" = (
 /obj/effect/mapping_helpers/floor_clothing_equipper,
-/obj/item/clothing/gloves/roguetown/plate/aalloy/ancient,
+/obj/item/clothing/gloves/roguetown/plate/ancient,
 /obj/item/clothing/shoes/roguetown/boots/leather/reinforced,
-/obj/item/clothing/under/roguetown/platelegs/aalloy/ancient,
+/obj/item/clothing/under/roguetown/platelegs/ancient,
 /obj/item/clothing/neck/roguetown/chaincoif,
 /obj/item/clothing/ring/quartz,
 /obj/item/clothing/suit/roguetown/armor/plate/half/iron,

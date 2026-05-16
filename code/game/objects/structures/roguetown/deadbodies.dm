@@ -290,20 +290,20 @@
 		/obj/item/rogueweapon/halberd/bardiche/ancient                    = 6,
 		/obj/item/rogueweapon/greatsword/ancient                          = 4,
 		/obj/item/rogueweapon/flail/sflail/ancient                        = 6,
-		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/aalloy/ancient = 10,
-		/obj/item/clothing/under/roguetown/platelegs/aalloy/ancient              = 8,
-		/obj/item/clothing/wrists/roguetown/bracers/aalloy/ancient               = 8,
-		/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient               = 8,
+		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ancient/decrepit = 10,
+		/obj/item/clothing/under/roguetown/platelegs/ancient/decrepit             = 8,
+		/obj/item/clothing/wrists/roguetown/bracers/ancient/decrepit             = 8,
+		/obj/item/clothing/neck/roguetown/chaincoif/ancient/decrepit                = 8,
 	)
 	loot_table_lucky = list(
 		/obj/item/rogueweapon/greatsword/ancient                          = 20,
 		/obj/item/rogueweapon/halberd/bardiche/ancient                    = 18,
 		/obj/item/rogueweapon/spear/ancient                               = 15,
 		/obj/item/rogueweapon/flail/sflail/ancient                        = 12,
-		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/aalloy/ancient = 20,
-		/obj/item/clothing/under/roguetown/platelegs/aalloy/ancient              = 15,
-		/obj/item/clothing/wrists/roguetown/bracers/aalloy/ancient               = 15,
-		/obj/item/clothing/neck/roguetown/chaincoif/aalloy/ancient               = 15,
+		/obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/ancient  = 20,
+		/obj/item/clothing/under/roguetown/platelegs/ancient              = 15,
+		/obj/item/clothing/wrists/roguetown/bracers/ancient                = 15,
+		/obj/item/clothing/neck/roguetown/chaincoif/ancient                = 15,
 	)
 
 /obj/structure/deadbody/rogue
