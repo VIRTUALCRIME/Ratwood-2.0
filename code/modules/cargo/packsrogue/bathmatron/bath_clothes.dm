@@ -149,3 +149,12 @@
 	name = "Full Plate Corslet"
 	cost = 80
 	contains = list(/obj/item/clothing/suit/roguetown/armor/plate/full/bikini)
+
+/datum/supply_pack/rogue/bath_clothes/horsey
+	name = "Bit, Blinders & Barding (full set)"
+	cost = 90
+	contains = list(/obj/item/clothing/gloves/roguetown/leather/horsey,
+	/obj/item/clothing/head/roguetown/horsey,
+	/obj/item/clothing/shoes/roguetown/boots/horsey,
+	/obj/item/clothing/mask/rogue/horsey,
+	/obj/item/clothing/suit/roguetown/armor/leather/studded/bikini/horsey)
