@@ -548,7 +548,6 @@
 						head = /obj/item/clothing/head/roguetown/helmet/heavy/knight/fluted
 
 	backl = /obj/item/storage/backpack/rogue/satchel
-	wrists = /obj/item/clothing/neck/roguetown/psicross/silver
 	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	pants = /obj/item/clothing/under/roguetown/tights/puritan
 	cloak = /obj/item/clothing/cloak/cape/puritan
@@ -560,6 +559,14 @@
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/rogueweapon/huntingknife = 1, //Ensures that Exorcists who take the Shovel can still butcher wildlife. Minor oversight on my part.
 		)
+	var/cross = list("The Pantheon Arisen", "The Old God Mourning") 
+	var/cross_choice = input(H, "Whose symbol you bear?", "CHOOSE YOUR TOOL.") as anything in cross
+	switch(cross_choice)
+		if("The Pantheon Arisen")
+			wrists = /obj/item/clothing/neck/roguetown/psicross/silver/undivided
+		if("The Old God Mourning")
+			wrists = /obj/item/clothing/neck/roguetown/psicross/silver
+
 	if(H.age == AGE_OLD)
 		H.change_stat(STATKEY_INT, 1)
 		H.adjust_skillrank(/datum/skill/combat/swords, 1, TRUE)
