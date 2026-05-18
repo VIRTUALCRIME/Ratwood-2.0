@@ -53,7 +53,7 @@
 
 /datum/charflaw/addiction/New()
 	..()
-	time = rand(4 SECONDS, 6 SECONDS)
+	time = rand(6 MINUTES, 60 MINUTES)
 	next_sate = world.time + time
 
 // Clean up addiction effects when vice is removed
@@ -106,7 +106,7 @@
 /datum/charflaw/addiction/alcoholic
 	name = "Alcoholic"
 	desc = "Drinking alcohol is my favorite thing."
-	time = 40 MINUTES
+	time = 90 MINUTES
 	needsate_text = "Time for a drink."
 	stress_event = /datum/stressevent/vice/alcoholic
 	debuff = /datum/status_effect/debuff/addiction/alcoholic
@@ -126,7 +126,7 @@
 /datum/charflaw/addiction/kleptomaniac
 	name = "Thief-borne"
 	desc = "As a child I had to rely on theft to survive. Whether that changed or not, I just can't get over it."
-	time = 30 MINUTES
+	time = 60 MINUTES
 	needsate_text = "I need to STEAL something! I'll die if I don't!"
 	stress_event = /datum/stressevent/vice/kleptomaniac
 	debuff = /datum/status_effect/debuff/addiction/kleptomaniac
@@ -146,7 +146,7 @@
 /datum/charflaw/addiction/junkie
 	name = "Junkie"
 	desc = "I need a REAL high to take the pain of this rotten world away."
-	time = 40 MINUTES
+	time = 90 MINUTES
 	needsate_text = "Time to get really high."
 	stress_event = /datum/stressevent/vice/junkie
 	debuff = /datum/status_effect/debuff/addiction/junkie
@@ -166,7 +166,7 @@
 /datum/charflaw/addiction/smoker
 	name = "Smoker"
 	desc = "I need to smoke something to take the edge off."
-	time = 40 MINUTES
+	time = 90 MINUTES
 	needsate_text = "Time for a flavorful smoke."
 	stress_event = /datum/stressevent/vice/smoker
 	debuff = /datum/status_effect/debuff/addiction/smoker
@@ -186,7 +186,7 @@
 /datum/charflaw/addiction/godfearing
 	name = "Devout Follower"
 	desc = "I need to pray to my Patron in their realm, it will make me and my prayers stronger."
-	time = 40 MINUTES
+	time = 60 MINUTES
 	needsate_text = "Time to pray to my Patron."
 	stress_event = /datum/stressevent/vice/godfearing
 	debuff = /datum/status_effect/debuff/addiction/godfearing
@@ -206,7 +206,7 @@
 /datum/charflaw/addiction/sadist
 	name = "Sadist"
 	desc = "There is no greater pleasure than the suffering of another."
-	time = 40 MINUTES
+	time = 60 MINUTES
 	needsate_text = "I need to hear someone whimper."
 	stress_event = /datum/stressevent/vice/sadist
 	debuff = /datum/status_effect/debuff/addiction/sadist
@@ -226,7 +226,7 @@
 /datum/charflaw/addiction/masochist
 	name = "Masochist"
 	desc = "I love the feeling of pain, so much I can't get enough of it."
-	time = 40 MINUTES
+	time = 60 MINUTES
 	needsate_text = "I need someone to HURT me."
 	stress_event = /datum/stressevent/vice/masochist
 	debuff = /datum/status_effect/debuff/addiction/masochist
