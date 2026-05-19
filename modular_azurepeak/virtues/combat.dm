@@ -176,6 +176,9 @@
 	recipient.dna.species.soundpack_m = new /datum/voicepack/male/rotman() // this shit might not work
 	recipient.dna.species.soundpack_f = new /datum/voicepack/female/rotman()
 	
+	if(alert(recipient, "Do you SOUND like a deadite?", "I believe I do", "Nay") == "MAKE IT SO") // Ask if they wanna sound like a deadite
+
+
 /datum/virtue/combat/dualwielder
 	name = "Dual Wielder"
 	desc = "Whether it was by the Naledi scholars, Etruscan privateers or even the Kazengan senseis. I've been graced with the knowledge of how to wield two weapons at once."
