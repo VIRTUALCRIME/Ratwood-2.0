@@ -31,6 +31,11 @@
 	cost = 25
 	contains = list(/obj/item/clothing/neck/roguetown/bevor/iron)
 
+/datum/supply_pack/rogue/armor_iron/studded_leather_hood
+	name = "Studded Leather Hood"
+	cost = 45
+	contains = list(/obj/item/clothing/head/roguetown/helmet/leather/armorhood/advanced)
+
 /datum/supply_pack/rogue/armor_iron/breastplate_iron
 	name = "Breastplate"
 	cost = 35
