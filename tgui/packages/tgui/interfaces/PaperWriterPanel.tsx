@@ -160,6 +160,9 @@ export const PaperWriterPanel = () => {
                 <Stack.Item>
                   <Button onClick={() => insertToken('\n1. item')}>Numbered List</Button>
                 </Stack.Item>
+                <Stack.Item>
+                  <Button onClick={() => insertToken('%f')}>Field</Button>
+                </Stack.Item>
               </Stack>
 
               <Stack mb={1} wrap align="center">
