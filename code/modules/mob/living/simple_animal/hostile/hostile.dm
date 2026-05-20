@@ -230,23 +230,13 @@ GLOBAL_VAR_INIT(hostile_ai_canattack_newplayer_rejects, 0)
 
 /mob/living/simple_animal/hostile/proc/ListTargets() //Step 1, find out what we can see
 	GLOB.hostile_ai_listtargets_calls++
-	if(!search_objects)
-		. = hearers(vision_range, targets_from) - src //Remove self, so we don't suicide
-		GLOB.hostile_ai_candidates_scanned += length(.)
-		for(var/mob/dead/observer/O in .)
-			. -= O
-			GLOB.hostile_ai_observer_candidates_filtered++
-		for(var/mob/dead/new_player/N in .)
-			. -= N
-			GLOB.hostile_ai_newplayer_candidates_filtered++
-
-		var/static/hostile_machines = typecacheof(list())
-
-		for(var/HM in typecache_filter_list(range(vision_range, targets_from), hostile_machines))
-			if(can_see(targets_from, HM, vision_range))
-				. += HM
+	if(search_objects)
+		. = view(vision_range, targets_from)
 	else
-		. = oview(vision_range, targets_from)
+		. = viewers(vision_range, targets_from) // todo: check if this should be changed back to hearers() like it was before
+		// if you want to make certain non-mobs get targeted, PLEASE make a spatial grid channel for it
+		// do not add any kind of range() or view() or typecache or etc checking here, that is ludicrously expensive
+	. -= src
 
 /mob/living/simple_animal/hostile/proc/FindTarget(list/possible_targets, HasTargetsList = 0)//Step 2, filter down possible targets to things we actually care about
 	. = list()
