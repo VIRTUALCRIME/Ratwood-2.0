@@ -155,6 +155,9 @@
 		return
 	if(!isliving(target) || target == user || target.stat == DEAD)
 		return
+	if(check_rhythm_defense(target, user))
+		clear_prime(user)
+		return COMPONENT_ITEM_NO_ATTACK
 	clear_prime(user)
 	apply_rhythm(target, user)
 	var/mob/living/carbon/human/H = user
@@ -165,6 +168,7 @@
 				H.balloon_alert_to_viewers("Crescendo ready!")
 			else
 				H.balloon_alert_to_viewers("Crescendo [H.inspiration.rhythm_tracker.greater_stacks]/[CRESCENDO_STACKS]")
+	return COMPONENT_ITEM_NO_DEFENSE
 
 /obj/effect/proc_holder/spell/self/rhythm/proc/rhythm_fizzle(mob/living/user)
 	if(!primed)
@@ -183,6 +187,11 @@
 
 /obj/effect/proc_holder/spell/self/rhythm/proc/apply_rhythm(mob/living/target, mob/living/user)
 	return
+
+/obj/effect/proc_holder/spell/self/rhythm/proc/check_rhythm_defense(mob/living/target, mob/living/user)
+	if(rhythm_type == RHYTHM_RESONATING && target.d_intent == INTENT_PARRY)
+		return FALSE
+	return target.checkdefense(user.used_intent, user)
 
 /obj/effect/proc_holder/spell/self/rhythm/resonating
 	name = "Resonating Rhythm"
