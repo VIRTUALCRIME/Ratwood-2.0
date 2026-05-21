@@ -514,12 +514,41 @@
 	flag = "piercing"
 	speed = 1
 
+/obj/projectile/bullet/spider_shroom
+	name = "web glob"
+	damage = 10
+	damage_type = BRUTE
+	icon = 'modular/Mapping/icons/webbing.dmi'
+	icon_state = "webglob"
+	range = 15
+	hitsound = 'sound/combat/hits/hi_arrow2.ogg'
+	embedchance = 0
+	//Will not cause wounds.
+	woundclass = null
+	flag = "piercing"
+	speed = 2
+
 /obj/projectile/bullet/spider/on_hit(target)
 	. = ..()
 	if(ismob(target))
 		var/mob/living/M = target
-		M.apply_status_effect(/datum/status_effect/debuff/exposed)
+		M.apply_status_effect(/datum/status_effect/debuff/vulnerable)
 		M.Immobilize(15)
+	var/turf/T
+	if(isturf(target))
+		T = target
+	else
+		T = get_turf(target)
+	var/web = locate(/obj/structure/spider/stickyweb/mirespider) in T.contents
+	if(!(web in T.contents))
+		new /obj/structure/spider/stickyweb/mirespider(T)
+
+/obj/projectile/bullet/spider_shroom/on_hit(target)
+	. = ..()
+	if(ismob(target))
+		var/mob/living/M = target
+		M.apply_status_effect(/datum/status_effect/debuff/vulnerable)
+		M.apply_status_effect(/datum/status_effect/buff/druqks)
 	var/turf/T
 	if(isturf(target))
 		T = target

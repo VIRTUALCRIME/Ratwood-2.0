@@ -70,6 +70,19 @@
 	passive_generation = 3
 	generation_price = 4
 
+/datum/roguestock/stockpile/clay
+	name = "Clay"
+	desc = "Damp clay gathered for pottery and shaping work."
+	item_type = /obj/item/natural/clay
+	held_items = list(10, 0)
+	payout_price = 1
+	withdraw_price = 1
+	transport_fee = 0
+	export_price = 1
+	importexport_amt = 10
+	stockpile_limit = 50
+	passive_generation = 10
+
 /datum/roguestock/stockpile/iron
 	name = "Raw Iron"
 	desc = "Chunks of iron used for smithing."

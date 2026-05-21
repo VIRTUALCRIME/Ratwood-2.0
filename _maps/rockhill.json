@@ -6,6 +6,8 @@
 	"other_z": [
 		"_maps/map_files/otherz/advspawnrockhill.json",
 		"_maps/map_files/otherz/banditmountain.json",
+		"_maps/map_files/otherz/vl_manor.json",
+		"_maps/map_files/otherz/lichlair.json",
 		"_maps/map_files/otherz/wretchfort.json"
 	],
 	"space_empty_levels": 0,

@@ -182,6 +182,14 @@
 	icon_state = "raw_opal"
 	sellprice = 80
 
+/obj/item/roguegem/chitin
+	name = "beetle chitin plate"
+	desc = "A thick, iridescent plate of chitin shaved from a giant woolly chafer beetle. Prized by underdeep artisans for its durability and natural luster."
+	icon = 'icons/roguetown/gems/gem_shell.dmi'
+	icon_state = "raw_shell"
+	color = "#7B8C5E"
+	sellprice = 15
+
 /obj/item/roguegem/diamond/Initialize(mapload)
 	. = ..()
 	var/static/list/slapcraft_recipe_list = list(/datum/crafting_recipe/gemstaff/diamond_staff,)
@@ -228,7 +236,8 @@
 /obj/item/roguegem/random
 	name = "random gem"
 	desc = "You shouldn't be seeing this."
-	icon_state = null
+	icon = 'icons/roguetown/helpers/spawnerhelpers.dmi'
+	icon_state = "roguegem"
 
 /obj/item/roguegem/random/Initialize(mapload)
 	..()
