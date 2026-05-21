@@ -1,4 +1,0 @@
-author: "Jamdrawers"
-delete-after: True
-changes:
-  - bugfix: "fixes templars getting their buff where they shouldn't, cleans up areatypes"
