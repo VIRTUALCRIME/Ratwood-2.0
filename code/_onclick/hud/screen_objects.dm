@@ -1526,6 +1526,8 @@
 				slot.alpha = 0
 			if(slot.color)
 				slot.color = null
+			if(slot.icon_state)
+				slot.icon_state = null
 	zone_overlay_count = zone_overlay_cursor - 1
 
 /atom/movable/screen/zone_sel/proc/flash_limb(zone, limb_color="#FF0000") //Flashes when an attack hits a limb
