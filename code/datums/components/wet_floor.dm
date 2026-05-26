@@ -9,6 +9,7 @@
 	var/static/mutable_appearance/water_overlay = mutable_appearance('icons/effects/water.dmi', "wet_floor_static")
 	var/static/mutable_appearance/generic_turf_overlay = mutable_appearance('icons/effects/water.dmi', "wet_static")
 	var/current_overlay
+	var/slippery_component_type = /datum/component/slippery
 	var/permanent = FALSE
 	var/last_process = 0
 
@@ -95,7 +96,10 @@
 			qdel(parent.GetComponent(/datum/component/slippery))
 			return
 
-	parent.LoadComponent(/datum/component/slippery, intensity, lube_flags, CALLBACK(src, PROC_REF(AfterSlip)))
+	parent.LoadComponent(slippery_component_type, intensity, lube_flags, CALLBACK(src, PROC_REF(AfterSlip)))
+
+/datum/component/wet_floor/no_run_slip
+	slippery_component_type = /datum/component/slippery/no_run
 
 /datum/component/wet_floor/proc/dry(datum/source, strength = TURF_WET_WATER, immediate = FALSE, duration_decrease = INFINITY)
 	for(var/i in time_left_list)
