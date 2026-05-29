@@ -2365,6 +2365,7 @@
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
 /obj/structure/rack/rogue/shelf/biggest,
+/obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
 /turf/open/floor/rogue/woodturned,
 /area/rogue/indoors/town/garrison/desert)
 "aWv" = (
@@ -2499,6 +2500,9 @@
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
 /turf/open/floor/rogue/deserttile{
 	icon_state = "tiledrab2"
 	},
@@ -8273,7 +8277,9 @@
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
-/obj/item/clothing/head/roguetown/helmet/sallet/zyb,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
 /turf/open/floor/rogue/concrete{
 	icon = 'modular_deserttown/icons/alt/roguefloor.dmi'
 	},
@@ -8591,10 +8597,10 @@
 /area/rogue/indoors/town/desert/warden)
 "dpe" = (
 /obj/structure/rack/rogue,
-/obj/item/rogueweapon/shield/tower/zyb,
-/obj/item/rogueweapon/shield/tower/zyb,
-/obj/item/rogueweapon/shield/iron/zybantine,
-/obj/item/rogueweapon/shield/iron/zybantine,
+/obj/item/rogueweapon/sword/sabre/shamshir,
+/obj/item/rogueweapon/sword/sabre/shamshir,
+/obj/item/rogueweapon/sword/sabre/shamshir,
+/obj/item/rogueweapon/sword/sabre/shamshir,
 /turf/open/floor/rogue/deserttile{
 	icon_state = "tiledrab2"
 	},
@@ -12496,6 +12502,14 @@
 /obj/item/rogueweapon/scabbard/sword,
 /obj/item/rogueweapon/sword/short/falchion,
 /obj/item/rogueweapon/sword/short/falchion,
+/obj/item/rogueweapon/sword/sabre{
+	pixel_x = 9;
+	pixel_y = -5
+	},
+/obj/item/rogueweapon/sword/sabre{
+	pixel_x = 9;
+	pixel_y = -6
+	},
 /turf/open/floor/rogue/woodturned,
 /area/rogue/indoors/town/garrison/desert)
 "eOE" = (
@@ -33077,6 +33091,8 @@
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
 /obj/item/clothing/head/roguetown/helmet/sallet/zyb,
 /obj/structure/rack/rogue/shelf/biggest,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
+/obj/item/clothing/head/roguetown/helmet/sallet/shishak,
 /turf/open/floor/rogue/woodturned,
 /area/rogue/indoors/town/garrison/desert)
 "nqH" = (
@@ -44660,10 +44676,22 @@
 /area/rogue/indoors/town/physician/desert)
 "rVI" = (
 /obj/structure/rack/rogue,
-/obj/item/rogueweapon/huntingknife/idagger/steel,
-/obj/item/rogueweapon/huntingknife/idagger/steel,
-/obj/item/rogueweapon/huntingknife/idagger/steel,
-/obj/item/rogueweapon/huntingknife/idagger/steel,
+/obj/item/rogueweapon/huntingknife/idagger/steel{
+	pixel_x = -3;
+	pixel_y = 43
+	},
+/obj/item/rogueweapon/huntingknife/idagger/steel{
+	pixel_x = 14;
+	pixel_y = 30
+	},
+/obj/item/rogueweapon/huntingknife/idagger/steel{
+	pixel_x = 6;
+	pixel_y = 40
+	},
+/obj/item/rogueweapon/huntingknife/idagger/steel{
+	pixel_x = 9;
+	pixel_y = 35
+	},
 /obj/item/rogueweapon/scabbard/sheath{
 	pixel_y = 32
 	},
@@ -44671,6 +44699,10 @@
 /obj/item/rogueweapon/scabbard/sheath{
 	pixel_y = 32
 	},
+/obj/item/rogueweapon/shield/tower/zyb,
+/obj/item/rogueweapon/shield/tower/zyb,
+/obj/item/rogueweapon/shield/iron/zybantine,
+/obj/item/rogueweapon/shield/iron/zybantine,
 /turf/open/floor/rogue/tile/brownbrick{
 	icon = 'modular_deserttown/icons/alt/roguefloor.dmi'
 	},
@@ -57956,6 +57988,7 @@
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
 /obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
+/obj/item/clothing/neck/roguetown/chaincoif/chainmantle,
 /turf/open/floor/rogue/tile/brownbrick{
 	icon = 'modular_deserttown/icons/alt/roguefloor.dmi'
 	},
@@ -60288,6 +60321,15 @@
 	},
 /turf/open/floor/rogue/ruinedwood/spiral,
 /area/rogue/indoors/town/bath/desert)
+"xZW" = (
+/obj/structure/mineral_door/wood/donjon{
+	dir = 1;
+	locked = 1;
+	lockid = "warden"
+	},
+/obj/structure/drape/desert,
+/turf/open/floor/rogue/sandbrick,
+/area/rogue/outdoors/desertdeep/above)
 "yac" = (
 /obj/item/roguemachine/mastermail,
 /obj/structure/rack/rogue/shelf/big,
@@ -243671,10 +243713,10 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
-kvr
-kvr
+uBv
+uBv
+uBv
+uBv
 eBo
 eBo
 eBo
@@ -243980,10 +244022,10 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
-wPj
-wPj
+uBv
+uBv
+uBv
+uBv
 wPj
 kvr
 kvr
@@ -244291,8 +244333,8 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
+uBv
+uBv
 wPj
 wPj
 wPj
@@ -244603,8 +244645,8 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
+uBv
+uBv
 wPj
 wPj
 wPj
@@ -244915,7 +244957,7 @@ wPj
 wPj
 wPj
 wPj
-wPj
+uBv
 wPj
 wPj
 wPj
@@ -245225,9 +245267,9 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
-wPj
+uBv
+uBv
+uBv
 wPj
 wPj
 wPj
@@ -245535,9 +245577,9 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
-wPj
+uBv
+uBv
+uBv
 wPj
 wPj
 wPj
@@ -245847,8 +245889,8 @@ wPj
 wPj
 wPj
 wPj
-wPj
-wPj
+uBv
+uBv
 wPj
 wPj
 wPj
@@ -246158,8 +246200,8 @@ kvr
 kvr
 kvr
 kvr
-kvr
-kvr
+uBv
+uBv
 kvr
 wPj
 wPj
@@ -246470,8 +246512,8 @@ kvr
 kvr
 kvr
 kvr
-kvr
-kvr
+uBv
+uBv
 kvr
 wPj
 wPj
@@ -246782,8 +246824,8 @@ kvr
 kvr
 kvr
 kvr
-kvr
-kvr
+uBv
+uBv
 kvr
 wPj
 wPj
@@ -247094,8 +247136,8 @@ yki
 yki
 yki
 yki
-yki
-yki
+bAk
+bAk
 kvr
 kvr
 kvr
@@ -350729,7 +350771,7 @@ isT
 isT
 isT
 isT
-isT
+mVA
 mVA
 isT
 isT
@@ -351346,7 +351388,7 @@ mVA
 mVA
 mVA
 mVA
-isT
+mVA
 mVA
 mVA
 isT
@@ -351657,8 +351699,8 @@ mVA
 mVA
 mVA
 mVA
-isT
-isT
+mVA
+mVA
 isT
 isT
 isT
@@ -351967,7 +352009,7 @@ mVA
 mVA
 mVA
 mVA
-isT
+mVA
 mVA
 mVA
 isT
@@ -354471,7 +354513,7 @@ isT
 isT
 isT
 isT
-isT
+mVA
 mVA
 mVA
 mVA
@@ -488873,10 +488915,10 @@ els
 cCI
 ryG
 tud
-pPs
-pPs
-pPs
-pPs
+cpf
+cpf
+cpf
+cpf
 pPs
 pPs
 pPs
@@ -489185,10 +489227,10 @@ els
 els
 ryG
 tud
-pPs
-pPs
-pPs
-pPs
+cpf
+wHE
+wHE
+cpf
 pPs
 xRy
 xRy
@@ -489496,11 +489538,11 @@ tud
 els
 cCI
 els
-tud
-pPs
-pPs
-pPs
-xRy
+els
+xZW
+wHE
+wHE
+cJe
 xRy
 xRy
 xRy
@@ -489809,10 +489851,10 @@ els
 cCI
 tud
 tud
-pPs
-pPs
-pPs
-xRy
+cpf
+wHE
+wHE
+cJe
 xRy
 xRy
 xRy
@@ -490121,10 +490163,10 @@ cCI
 ryG
 tud
 dct
-pPs
-pPs
-xRy
-xRy
+cpf
+cpf
+tGT
+coP
 xRy
 xRy
 xRy
