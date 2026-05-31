@@ -57,16 +57,14 @@
 /obj/projectile/magic/unholy_grasp/proc/ensnare(mob/living/carbon/carbon)
 	if(carbon.legcuffed || carbon.get_num_legs(FALSE) < 2)
 		return
-	var/obj/item/net/unholy_grasp/net = new(get_turf(carbon))
+	var/obj/item/net/net = new(carbon)
 	visible_message(span_danger("\The [src] ensnares [carbon] in vicera!"))
 	to_chat(carbon, span_danger("\The [src] ensnares you!"))
 	carbon.legcuffed = net
-	net.forceMove(carbon)
 	carbon.update_inv_legcuffed()
 	carbon.Knockdown(knockdown)
-	carbon.apply_status_effect(/datum/status_effect/debuff/netted)
+	carbon.apply_status_effect(/datum/status_effect/debuff/netted, 30 SECONDS)
 	playsound(src, 'sound/combat/caught.ogg', 50, TRUE)
-	addtimer(CALLBACK(net, PROC_REF(remove_effect)), 30 SECONDS, TIMER_OVERRIDE|TIMER_UNIQUE)
 
 /obj/item/net/unholy_grasp
 	name = "visceral net"
