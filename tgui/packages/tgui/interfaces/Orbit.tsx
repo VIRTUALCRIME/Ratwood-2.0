@@ -30,6 +30,8 @@ type OrbitData = {
   orbiting_ref?: string;
 };
 
+type OrbitSectionKey = (typeof SECTIONS)[number]['key'];
+
 const SECTIONS = [
   { key: 'alive', title: 'Alive', color: 'blue' },
   { key: 'dead', title: 'Dead', color: 'average' },
@@ -45,6 +47,7 @@ type OrbitTargetIndexed = OrbitTarget & {
   searchKey: string;
   displayName: string;
   tooltip: string;
+  roleLabel: string;
   healthStateColor: string;
   healthTextColor: string;
   roleTextColor?: string;
@@ -55,6 +58,28 @@ type OrbitSection = (typeof SECTIONS)[number] & {
   roleGroups: RoleGroup[];
 };
 
+const UNASSIGNED_ROLE_LABEL = 'Unassigned';
+
+function splitAliveByAntag(items: OrbitTargetIndexed[]) {
+  const minor: OrbitTargetIndexed[] = [];
+  const major: OrbitTargetIndexed[] = [];
+  const normal: OrbitTargetIndexed[] = [];
+
+  items.forEach((item) => {
+    if (item.antag_group === 'minor') {
+      minor.push(item);
+      return;
+    }
+    if (item.antag_group === 'major') {
+      major.push(item);
+      return;
+    }
+    normal.push(item);
+  });
+
+  return { minor, major, normal };
+}
+
 function buildRoleGroupsForSection(
   sectionKey: OrbitSection['key'],
   filtered: OrbitTargetIndexed[],
@@ -63,42 +88,34 @@ function buildRoleGroupsForSection(
     return groupByRoleLabel(filtered);
   }
 
-  const minorAntags: OrbitTargetIndexed[] = [];
-  const majorAntags: OrbitTargetIndexed[] = [];
-  const normalAlive: OrbitTargetIndexed[] = [];
-
-  filtered.forEach((item) => {
-    if (item.antag_group === 'minor') {
-      minorAntags.push(item);
-      return;
-    }
-    if (item.antag_group === 'major') {
-      majorAntags.push(item);
-      return;
-    }
-    normalAlive.push(item);
-  });
+  const { minor, major, normal } = splitAliveByAntag(filtered);
 
   const roleGroups: RoleGroup[] = [];
-  if (minorAntags.length > 0) {
-    roleGroups.push({ label: 'Minor', items: minorAntags });
+  if (minor.length > 0) {
+    roleGroups.push({ label: 'Minor', items: minor });
   }
-  if (majorAntags.length > 0) {
-    roleGroups.push({ label: 'Major', items: majorAntags });
+  if (major.length > 0) {
+    roleGroups.push({ label: 'Major', items: major });
   }
-  roleGroups.push(...groupByRoleLabel(normalAlive));
+  roleGroups.push(...groupByRoleLabel(normal));
 
   return roleGroups;
 }
 
 function groupByRoleLabel(items: OrbitTargetIndexed[]): RoleGroup[] {
-  const grouped = items.reduce((groups, item) => {
+  const grouped = new Map<string, OrbitTargetIndexed[]>();
+
+  items.forEach((item) => {
     const label = getRoleLabel(item);
-    const bucket = groups.get(label) || [];
-    bucket.push(item);
-    groups.set(label, bucket as OrbitTargetIndexed[]);
-    return groups;
-  }, new Map<string, OrbitTargetIndexed[]>());
+    const bucket = grouped.get(label);
+
+    if (bucket) {
+      bucket.push(item);
+      return;
+    }
+
+    grouped.set(label, [item]);
+  });
 
   return [...grouped.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
@@ -110,7 +127,7 @@ function buildSearchKey(item: OrbitTarget) {
 }
 
 function getRoleLabel(item: OrbitTarget) {
-  return item.role || item.job || 'Unassigned';
+  return item.role || item.job || UNASSIGNED_ROLE_LABEL;
 }
 
 function getDisplayName(fullName: string) {
@@ -153,13 +170,14 @@ function getHealthStateColor(healthPercent?: number) {
 }
 
 function buildItemTooltip(displayName: string, item: OrbitTarget) {
-  const roleText = item.role || item.job || 'Unassigned';
+  const roleText = getRoleLabel(item);
   const healthText = `${item.health_percent ?? '?'}%`;
   return `${displayName} | ${roleText} | ${healthText} health`;
 }
 
 function buildIndexedTarget(item: OrbitTarget): OrbitTargetIndexed {
   const displayName = getDisplayName(item.full_name);
+  const roleLabel = getRoleLabel(item);
   const healthStateColor = getHealthStateColor(item.health_percent);
   const roleTextColor = item.selection_color
     ? getTextColorForBackground(item.selection_color)
@@ -170,6 +188,7 @@ function buildIndexedTarget(item: OrbitTarget): OrbitTargetIndexed {
     searchKey: buildSearchKey(item),
     displayName,
     tooltip: buildItemTooltip(displayName, item),
+    roleLabel,
     healthStateColor,
     healthTextColor: getTextColorForBackground(healthStateColor),
     roleTextColor,
@@ -211,7 +230,7 @@ const OrbitTargetButton = memo((props: OrbitTargetButtonProps) => {
         <Stack>
           <Stack.Item>
             {item.displayName}
-            {showRole && !!item.role && ` [${item.role}]`}
+            {showRole && item.roleLabel !== UNASSIGNED_ROLE_LABEL && ` [${item.roleLabel}]`}
           </Stack.Item>
           {!!item.orbiters && (
             <Stack.Item>
@@ -231,16 +250,21 @@ export const Orbit = () => {
   const [query, setQuery] = useState('');
   const [colorMode, setColorMode] = useState<'role' | 'health'>('role');
   const orbitRef = data.orbiting_ref;
+  const isRoleColorMode = colorMode === 'role';
 
   const normalizedQuery = query.trim().toLowerCase();
   const handleOrbit = useCallback((ref: string) => act('orbit', { ref }), [act]);
+  const handleRefresh = useCallback(() => act('refresh'), [act]);
+  const toggleColorMode = useCallback(() => {
+    setColorMode((mode) => (mode === 'role' ? 'health' : 'role'));
+  }, []);
 
   const indexedData = useMemo(() => {
     return SECTIONS.reduce((indexed, section) => {
       const source = (data[section.key] || []) as OrbitTarget[];
       indexed[section.key] = source.map(buildIndexedTarget);
       return indexed;
-    }, {} as Record<(typeof SECTIONS)[number]['key'], OrbitTargetIndexed[]>);
+    }, {} as Record<OrbitSectionKey, OrbitTargetIndexed[]>);
   }, [data]);
 
   const sections = useMemo(() => {
@@ -254,47 +278,18 @@ export const Orbit = () => {
         return builtSections;
       }
 
-      if (section.key === 'ghosts') {
-        builtSections.push({
-          ...section,
-          items: filtered,
-          roleGroups: [],
-        });
-
-        return builtSections;
-      }
-
       builtSections.push({
         ...section,
         items: filtered,
-        roleGroups: buildRoleGroupsForSection(section.key, filtered),
+        roleGroups:
+          section.key === 'ghosts'
+            ? []
+            : buildRoleGroupsForSection(section.key, filtered),
       });
 
       return builtSections;
     }, [] as OrbitSection[]);
   }, [indexedData, normalizedQuery]);
-
-  const renderOrbitTarget = useCallback(
-    (
-      item: OrbitTargetIndexed,
-      sectionColor: string,
-      appliedColorMode: 'role' | 'health',
-      showRole: boolean,
-    ) => {
-      return (
-        <OrbitTargetButton
-          key={item.ref}
-          item={item}
-          selected={orbitRef === item.ref}
-          sectionColor={sectionColor}
-          colorMode={appliedColorMode}
-          showRole={showRole}
-          onOrbit={handleOrbit}
-        />
-      );
-    },
-    [handleOrbit, orbitRef],
-  );
 
   return (
     <Window title="Orbit" width={460} height={560}>
@@ -316,19 +311,19 @@ export const Orbit = () => {
                   />
                 </Stack.Item>
                 <Stack.Item>
-                  <Button icon="sync-alt" onClick={() => act('refresh')} tooltip="Refresh" />
+                  <Button icon="sync-alt" onClick={handleRefresh} tooltip="Refresh" />
                 </Stack.Item>
                 <Stack.Item>
                   <Button
-                    icon={colorMode === 'role' ? 'id-badge' : 'heartbeat'}
-                    onClick={() => setColorMode(colorMode === 'role' ? 'health' : 'role')}
+                    icon={isRoleColorMode ? 'id-badge' : 'heartbeat'}
+                    onClick={toggleColorMode}
                     tooltip={
-                      colorMode === 'role'
+                      isRoleColorMode
                         ? 'Switch to health-state colors'
                         : 'Switch to role colors'
                     }
                   >
-                    {colorMode === 'role' ? 'Role Colors' : 'Health Colors'}
+                    {isRoleColorMode ? 'Role Colors' : 'Health Colors'}
                   </Button>
                 </Stack.Item>
               </Stack>
@@ -345,9 +340,17 @@ export const Orbit = () => {
                 <Collapsible key={section.key} title={`${section.title} - (${section.items.length})`}>
                   {section.key === 'ghosts' ? (
                     <Stack wrap>
-                      {section.items.map((item) =>
-                        renderOrbitTarget(item, section.color, 'role', false),
-                      )}
+                      {section.items.map((item) => (
+                        <OrbitTargetButton
+                          key={item.ref}
+                          item={item}
+                          selected={orbitRef === item.ref}
+                          sectionColor={section.color}
+                          colorMode="role"
+                          showRole={false}
+                          onOrbit={handleOrbit}
+                        />
+                      ))}
                     </Stack>
                   ) : (
                     <Stack vertical>
@@ -357,9 +360,17 @@ export const Orbit = () => {
                             title={`${group.label} - (${group.items.length})`}
                           >
                             <Stack wrap>
-                              {group.items.map((item) =>
-                                renderOrbitTarget(item, section.color, colorMode, true),
-                              )}
+                              {group.items.map((item) => (
+                                <OrbitTargetButton
+                                  key={item.ref}
+                                  item={item}
+                                  selected={orbitRef === item.ref}
+                                  sectionColor={section.color}
+                                  colorMode={colorMode}
+                                  showRole
+                                  onOrbit={handleOrbit}
+                                />
+                              ))}
                             </Stack>
                           </Section>
                         </Stack.Item>
