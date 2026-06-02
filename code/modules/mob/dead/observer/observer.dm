@@ -1288,7 +1288,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 
 	bucket += list(entry)
 
-/datum/orbit_menu/proc/get_role_selection_color(assigned_role, list/role_color_cache)
+/datum/orbit_menu/proc/get_role_selection_color(assigned_role, list/role_color_cache, datum/job/J = null)
 	if(!assigned_role)
 		return null
 
@@ -1298,7 +1298,8 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			return cached_color || null
 
 	var/resolved_color = null
-	var/datum/job/J = SSjob.GetJob(assigned_role)
+	if(!J)
+		J = SSjob.GetJob(assigned_role)
 	if(J)
 		var/department = SSjob.bitflag_to_department(J.department_flag, J.obsfuscated_job)
 		var/list/department_colors = JCOLOR_BY_DEPARTMENT
@@ -1490,14 +1491,14 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(M.mind?.assigned_role)
 			var/assigned_role = M.mind.assigned_role
 			entry["role"] = assigned_role
-			var/selection_color = get_role_selection_color(assigned_role, role_color_cache)
-			if(selection_color)
-				entry["selection_color"] = selection_color
 			var/datum/job/J = SSjob.GetJob(assigned_role)
 			if(J)
 				var/job_department = SSjob.bitflag_to_department(J.department_flag, J.obsfuscated_job)
 				if(job_department)
 					entry["department"] = job_department
+			var/selection_color = get_role_selection_color(assigned_role, role_color_cache, J)
+			if(selection_color)
+				entry["selection_color"] = selection_color
 		if(M.job)
 			entry["job"] = M.job
 		if(isliving(M))

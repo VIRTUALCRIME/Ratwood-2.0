@@ -222,7 +222,7 @@ function groupByRoleLabel(items: OrbitTargetIndexed[]): RoleGroup[] {
 }
 
 function buildSearchKey(item: OrbitTarget) {
-  return `${item.full_name} ${item.job || ''} ${item.role || ''} ${item.antag_role || ''}`.toLowerCase();
+  return `${item.full_name} ${item.job || ''} ${item.role || ''} ${item.department || ''} ${item.antag_role || ''}`.toLowerCase();
 }
 
 function getRoleLabel(item: OrbitTarget) {
