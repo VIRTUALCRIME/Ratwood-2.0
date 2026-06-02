@@ -49,6 +49,7 @@ type OrbitTargetIndexed = OrbitTarget & {
   displayName: string;
   tooltip: string;
   roleLabel: string;
+  roleLabelLower: string;
   healthStateColor: string;
   healthTextColor: string;
   roleTextColor?: string;
@@ -60,20 +61,33 @@ type OrbitSection = (typeof SECTIONS)[number] & {
 };
 
 type AntagTier = 'Minor' | 'Major';
+type AntagGroup = OrbitTarget['antag_group'];
 
 const UNASSIGNED_ROLE_LABEL = 'Unassigned';
+const TRAILING_MASKED_DESCRIPTOR_REGEX = / \[[^\]]+\]$/;
+const TRAILING_DUPLICATE_SUFFIX_REGEX = / \(\d+\)$/;
+const EMPTY_TARGETS: OrbitTarget[] = [];
+
+function mapAntagGroupToTier(antagGroup: AntagGroup): AntagTier | null {
+  if (antagGroup === 'major') {
+    return 'Major';
+  }
+
+  if (antagGroup === 'minor') {
+    return 'Minor';
+  }
+
+  return null;
+}
 
 function getAntagFamilyLabel(item: OrbitTargetIndexed) {
-  const role = item.roleLabel.toLowerCase();
+  const role = item.roleLabelLower;
 
   if (role.includes('necromancer')) {
     return 'Necromancer';
   }
 
-  if (
-    role.includes('vampire') ||
-    role === 'vampire spawn'
-  ) {
+  if (role.includes('vampire')) {
     return 'Vampires';
   }
 
@@ -96,8 +110,9 @@ function getAntagFamilyLabel(item: OrbitTargetIndexed) {
 }
 
 function getAntagTier(item: OrbitTargetIndexed, familyLabel: string | null): AntagTier | null {
-  if (item.antag_group === 'major') {
-    return 'Major';
+  const antagTier = mapAntagGroupToTier(item.antag_group);
+  if (antagTier === 'Major') {
+    return antagTier;
   }
 
   if (familyLabel === 'Necromancer') {
@@ -109,8 +124,8 @@ function getAntagTier(item: OrbitTargetIndexed, familyLabel: string | null): Ant
     return 'Major';
   }
 
-  if (item.antag_group === 'minor') {
-    return 'Minor';
+  if (antagTier === 'Minor') {
+    return antagTier;
   }
 
   return null;
@@ -198,19 +213,10 @@ function groupByRoleLabel(items: OrbitTargetIndexed[]): RoleGroup[] {
   const grouped = new Map<string, OrbitTargetIndexed[]>();
 
   items.forEach((item) => {
-    const bucket = grouped.get(item.roleLabel);
-
-    if (bucket) {
-      bucket.push(item);
-      return;
-    }
-
-    grouped.set(item.roleLabel, [item]);
+    pushGroupedItem(grouped, item.roleLabel, item);
   });
 
-  return [...grouped.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([label, groupedItems]) => ({ label, items: groupedItems }));
+  return groupsFromMap(grouped);
 }
 
 function buildSearchKey(item: OrbitTarget) {
@@ -222,8 +228,19 @@ function getRoleLabel(item: OrbitTarget) {
 }
 
 function getDisplayName(fullName: string) {
-  // Hide server-side duplicate suffixes like " (2)" in button labels.
-  return fullName.replace(/ \(\d+\)$/, '');
+  // Keep main list labels concise: hide masked descriptor and duplicate suffixes.
+  return fullName
+    .replace(TRAILING_MASKED_DESCRIPTOR_REGEX, '')
+    .replace(TRAILING_DUPLICATE_SUFFIX_REGEX, '');
+}
+
+function getTooltipRoleText(item: OrbitTarget) {
+  const baseRoleText = item.role || item.job || UNASSIGNED_ROLE_LABEL;
+  if (!item.antag_role) {
+    return baseRoleText;
+  }
+
+  return `${baseRoleText} | ${item.antag_role}`;
 }
 
 function getTextColorForBackground(hex: string) {
@@ -261,17 +278,17 @@ function getHealthStateColor(healthPercent?: number) {
 }
 
 function buildItemTooltip(
-  displayName: string,
+  fullName: string,
   item: OrbitTarget,
   sectionKey: OrbitSectionKey,
 ) {
   if (sectionKey === 'ghosts') {
-    return displayName;
+    return fullName;
   }
 
-  const roleText = getRoleLabel(item);
+  const roleText = getTooltipRoleText(item);
   const healthText = `${item.health_percent ?? '?'}%`;
-  return `${displayName} | ${roleText} | ${healthText} health`;
+  return `${fullName} | ${roleText} | ${healthText} health`;
 }
 
 function buildIndexedTarget(
@@ -289,8 +306,9 @@ function buildIndexedTarget(
     ...item,
     searchKey: buildSearchKey(item),
     displayName,
-    tooltip: buildItemTooltip(displayName, item, sectionKey),
+    tooltip: buildItemTooltip(item.full_name, item, sectionKey),
     roleLabel,
+    roleLabelLower: roleLabel.toLowerCase(),
     healthStateColor,
     healthTextColor: getTextColorForBackground(healthStateColor),
     roleTextColor,
@@ -353,6 +371,9 @@ export const Orbit = () => {
   const [colorMode, setColorMode] = useState<'role' | 'health'>('role');
   const orbitRef = data.orbiting_ref;
   const isRoleColorMode = colorMode === 'role';
+  const aliveTargets = data.alive || EMPTY_TARGETS;
+  const deadTargets = data.dead || EMPTY_TARGETS;
+  const ghostTargets = data.ghosts || EMPTY_TARGETS;
 
   const normalizedQuery = query.trim().toLowerCase();
   const handleOrbit = useCallback((ref: string) => act('orbit', { ref }), [act]);
@@ -363,13 +384,18 @@ export const Orbit = () => {
 
   const indexedData = useMemo(() => {
     return SECTIONS.reduce((indexed, section) => {
-      const source = (data[section.key] || []) as OrbitTarget[];
+      const source =
+        section.key === 'alive'
+          ? aliveTargets
+          : section.key === 'dead'
+            ? deadTargets
+            : ghostTargets;
       indexed[section.key] = source.map((item) =>
         buildIndexedTarget(item, section.key),
       );
       return indexed;
     }, {} as Record<OrbitSectionKey, OrbitTargetIndexed[]>);
-  }, [data]);
+  }, [aliveTargets, deadTargets, ghostTargets]);
 
   const sections = useMemo(() => {
     return SECTIONS.reduce((builtSections, section) => {

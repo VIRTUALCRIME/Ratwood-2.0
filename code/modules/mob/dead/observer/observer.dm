@@ -1199,6 +1199,10 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 				to_chat(ui.user, span_notice("That target is no longer available."))
 				return TRUE
 
+			if(istype(target, /mob/dead/new_player))
+				to_chat(ui.user, span_notice("You cannot orbit lobby players."))
+				return TRUE
+
 			if(is_hidden_from_ghosts(target, owner))
 				to_chat(ui.user, span_notice("That target is protected from ghost orbit."))
 				return TRUE
@@ -1249,6 +1253,8 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	for(var/mob/M in sortmobs())
 		if(M.client?.holder?.fakekey)
 			continue
+		if(istype(M, /mob/dead/new_player))
+			continue
 		if(is_hidden_from_ghosts(M, user))
 			continue
 
@@ -1257,6 +1263,8 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 			continue
 
 		if(M.stat == DEAD)
+			if(!M.mind && !M.ckey)
+				continue
 			append_serialized_target(data["dead"], M, namecounts_dead, role_color_cache)
 			continue
 
