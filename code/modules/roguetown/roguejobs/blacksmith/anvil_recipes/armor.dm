@@ -137,6 +137,14 @@
 	additional_items = list(/obj/item/ingot/decrepit)
 	created_item = 	/obj/item/clothing/head/roguetown/helmet/heavy/knight/ancient/decrepit
 
+/datum/anvil_recipe/armor/ancient/helmetkettle
+	name = "Kettle Helmet, Ancient"
+	created_item = /obj/item/clothing/head/roguetown/helmet/kettle/ancient
+
+/datum/anvil_recipe/armor/decrepit/helmetkettle
+	name = "Kettle Helmet, Decrepit"
+	created_item = /obj/item/clothing/head/roguetown/helmet/kettle/ancient/decrepit
+
 /datum/anvil_recipe/armor/ancient/mask
 	name = "Mask, Ancient"
 	created_item = /obj/item/clothing/mask/rogue/facemask/ancient

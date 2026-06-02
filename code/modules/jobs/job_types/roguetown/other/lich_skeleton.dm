@@ -12,7 +12,7 @@ LICH SKELETONS
 /datum/outfit/job/roguetown/greater_skeleton/lich
 	belt = /obj/item/storage/belt/rogue/leather/black
 	wrists = /obj/item/clothing/wrists/roguetown/bracers/ancient
-	backl = /obj/item/storage/backpack/rogue/satchel
+	backr = /obj/item/storage/backpack/rogue/satchel
 
 /datum/outfit/job/roguetown/greater_skeleton/lich/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -75,15 +75,15 @@ LICH SKELETONS
 	switch(weapons_choice)
 		if("Gladius")
 			l_hand = /obj/item/rogueweapon/sword/short/gladius/ancient
-			beltr = /obj/item/rogueweapon/scabbard
+			beltl = /obj/item/rogueweapon/scabbard
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 		if("Khopesh")
 			l_hand = /obj/item/rogueweapon/sword/sabre/ancient
-			beltr = /obj/item/rogueweapon/scabbard
+			beltl = /obj/item/rogueweapon/scabbard
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 		if("Shortsword")
 			l_hand = /obj/item/rogueweapon/sword/short/ancient
-			beltr = /obj/item/rogueweapon/scabbard
+			beltl = /obj/item/rogueweapon/scabbard
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 		if("Axe")
 			l_hand = /obj/item/rogueweapon/stoneaxe/woodcut/steel/ancient
@@ -95,11 +95,11 @@ LICH SKELETONS
 	var/sidearms_choice = input(H, "Choose your SIDEARM.", "RAGE AGAINST THE LYVING.") as anything in sidearms
 	switch(sidearms_choice)
 		if("Javelins")
-			beltl = /obj/item/quiver/javelin/ancient
+			beltr = /obj/item/quiver/javelin/ancient
 		if("Net")
-			beltl = /obj/item/net
+			beltr = /obj/item/net
 		if("Dagger")
-			beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
+			beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
 	var/neckwear = list("Coif", "Gorget")
 	var/neckwear_choice = input(H, "Choose your PROTECTION.", "PROTECT THE SACRED LEYLINE.") as anything in neckwear
 	switch(neckwear_choice)
@@ -157,14 +157,14 @@ LICH SKELETONS
 	H.adjust_skillrank(/datum/skill/craft/crafting, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/sewing, 2, TRUE)
 
-	head = /obj/item/clothing/head/roguetown/helmet/heavy/ancient
+	head = /obj/item/clothing/head/roguetown/helmet/kettle/ancient
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/studded
 	shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/ancient
 	pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 	shoes = /obj/item/clothing/shoes/roguetown/sandals/ancient
 	gloves = /obj/item/clothing/gloves/roguetown/chain/ancient
 
-	beltr = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
+	beltl = /obj/item/rogueweapon/huntingknife/idagger/steel/ancient
 
 	backpack_contents = list(
 		/obj/item/storage/belt/rogue/pouch/coins/gilbranze = 1
@@ -176,19 +176,19 @@ LICH SKELETONS
 	switch(weapons_choice)
 		if("Recurve Bow")
 			l_hand = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
-			beltl = /obj/item/quiver/ancient
+			beltr = /obj/item/quiver/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_MASTER, TRUE)
 		if("Yew Longbow")
 			l_hand = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/longbow
-			beltl = /obj/item/quiver/ancient
+			beltr = /obj/item/quiver/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/bows, SKILL_LEVEL_MASTER, TRUE)
 		if("Crossbow")
 			l_hand = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
-			beltl = /obj/item/quiver/bolts/ancient
+			beltr = /obj/item/quiver/boltsancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/crossbows, SKILL_LEVEL_MASTER, TRUE)
 		if("Sling")
 			l_hand = /obj/item/gun/ballistic/revolver/grenadelauncher/sling
-			beltl = /obj/item/quiver/sling/ancient
+			beltr = /obj/item/quiver/sling/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/slings, SKILL_LEVEL_MASTER, TRUE)
 	var/neckwear = list("Coif", "Gorget")
 	var/neckwear_choice = input(H, "Choose your PROTECTION.", "PROTECT THE SACRED LEYLINE.") as anything in neckwear
@@ -260,7 +260,7 @@ LICH SKELETONS
 	switch(weapons_choice)
 		if("Greatsword - +2 STR / +1 SPD / -3 CON")
 			l_hand = /obj/item/rogueweapon/greatsword/ancient
-			backr = /obj/item/rogueweapon/scabbard/gwstrap
+			backl = /obj/item/rogueweapon/scabbard/gwstrap
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 			pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
@@ -270,7 +270,7 @@ LICH SKELETONS
 			ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
 		if("Grand Mace - +2 STR / +1 SPD / -3 CON")
 			l_hand = /obj/item/rogueweapon/mace/goden/steel/ancient
-			backr = /obj/item/rogueweapon/scabbard/gwstrap
+			backl = /obj/item/rogueweapon/scabbard/gwstrap
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 			pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/maces, SKILL_LEVEL_EXPERT, TRUE)
@@ -281,7 +281,7 @@ LICH SKELETONS
 		if("Spear + Shield - +2 PER / +1 STR / -1 CON")
 			l_hand = /obj/item/rogueweapon/spear/ancient
 			r_hand = /obj/item/rogueweapon/shield/gilbranze
-			backr = /obj/item/rogueweapon/scabbard/gwstrap
+			backl = /obj/item/rogueweapon/scabbard/gwstrap
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 			pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
@@ -292,7 +292,7 @@ LICH SKELETONS
 			ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
 		if("Bardiche - +2 PER / +1 STR / -1 CON")
 			l_hand = /obj/item/rogueweapon/halberd/bardiche/ancient
-			backr = /obj/item/rogueweapon/scabbard/gwstrap
+			backl = /obj/item/rogueweapon/scabbard/gwstrap
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/half/ancient
 			pants = /obj/item/clothing/under/roguetown/chainlegs/kilt/ancient
 			H.adjust_skillrank_up_to(/datum/skill/combat/polearms, SKILL_LEVEL_EXPERT, TRUE)
@@ -390,7 +390,7 @@ LICH SKELETONS
 	shoes = /obj/item/clothing/shoes/roguetown/sandals/ancient
 	gloves = /obj/item/clothing/gloves/roguetown/angle
 
-	backr = /obj/item/storage/backpack/rogue/backpack
+	backl = /obj/item/storage/backpack/rogue/backpack
 
 	backpack_contents = list(
 		/obj/item/rogueweapon/hammer/ancient = 1,
@@ -489,7 +489,7 @@ LICH SKELETONS
 	switch(weapon_choice)
 		if("Greatsword")
 			l_hand = /obj/item/rogueweapon/greatsword/ancient
-			backr = /obj/item/rogueweapon/scabbard/gwstrap
+			backl = /obj/item/rogueweapon/scabbard/gwstrap
 			H.adjust_skillrank_up_to(/datum/skill/combat/swords, SKILL_LEVEL_EXPERT, TRUE)
 		if("Flail + Greatshield")
 			l_hand = /obj/item/rogueweapon/flail/sflail/ancient
