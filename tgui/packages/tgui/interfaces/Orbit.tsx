@@ -59,26 +59,81 @@ type OrbitSection = (typeof SECTIONS)[number] & {
   roleGroups: RoleGroup[];
 };
 
+type AntagTier = 'Minor' | 'Major';
+
 const UNASSIGNED_ROLE_LABEL = 'Unassigned';
 
-function splitAliveByAntag(items: OrbitTargetIndexed[]) {
-  const minor: OrbitTargetIndexed[] = [];
-  const major: OrbitTargetIndexed[] = [];
-  const normal: OrbitTargetIndexed[] = [];
+function getAntagFamilyLabel(item: OrbitTargetIndexed) {
+  const role = item.roleLabel.toLowerCase();
 
-  items.forEach((item) => {
-    if (item.antag_group === 'minor') {
-      minor.push(item);
-      return;
-    }
-    if (item.antag_group === 'major') {
-      major.push(item);
-      return;
-    }
-    normal.push(item);
-  });
+  if (role.includes('necromancer')) {
+    return 'Necromancer';
+  }
 
-  return { minor, major, normal };
+  if (
+    role.includes('vampire') ||
+    role === 'vampire spawn'
+  ) {
+    return 'Vampires';
+  }
+
+  if (
+    role.includes('werewolf') ||
+    role.includes('verevolf')
+  ) {
+    return 'Werewolves';
+  }
+
+  if (
+    role === 'lich' ||
+    role.includes('lich') ||
+    role === 'death knight'
+  ) {
+    return 'Lich';
+  }
+
+  return null;
+}
+
+function getAntagTier(item: OrbitTargetIndexed, familyLabel: string | null): AntagTier | null {
+  if (item.antag_group === 'major') {
+    return 'Major';
+  }
+
+  if (familyLabel === 'Necromancer') {
+    return 'Minor';
+  }
+
+  // Display lich summons in the major lich bucket so they stay grouped with liches.
+  if (familyLabel === 'Lich') {
+    return 'Major';
+  }
+
+  if (item.antag_group === 'minor') {
+    return 'Minor';
+  }
+
+  return null;
+}
+
+function pushGroupedItem(
+  grouped: Map<string, OrbitTargetIndexed[]>,
+  label: string,
+  item: OrbitTargetIndexed,
+) {
+  const bucket = grouped.get(label);
+  if (bucket) {
+    bucket.push(item);
+    return;
+  }
+
+  grouped.set(label, [item]);
+}
+
+function groupsFromMap(grouped: Map<string, OrbitTargetIndexed[]>) {
+  return [...grouped.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([label, groupedItems]) => ({ label, items: groupedItems }));
 }
 
 function buildRoleGroupsForSection(
@@ -89,25 +144,51 @@ function buildRoleGroupsForSection(
     return groupByRoleLabel(filtered);
   }
 
-  const { minor, major, normal } = splitAliveByAntag(filtered);
+  const groupedByFamily = new Map<string, OrbitTargetIndexed[]>();
+  const groupedMajor = new Map<string, OrbitTargetIndexed[]>();
+  const groupedMinor = new Map<string, OrbitTargetIndexed[]>();
+  const groupedNormal = new Map<string, OrbitTargetIndexed[]>();
+
+  filtered.forEach((item) => {
+    const familyLabel = getAntagFamilyLabel(item);
+    const tier = getAntagTier(item, familyLabel);
+
+    if (familyLabel && tier) {
+      pushGroupedItem(groupedByFamily, `${tier} - ${familyLabel}`, item);
+      return;
+    }
+
+    if (item.antag_group === 'minor') {
+      pushGroupedItem(groupedMinor, item.roleLabel, item);
+      return;
+    }
+
+    if (item.antag_group === 'major') {
+      pushGroupedItem(groupedMajor, item.roleLabel, item);
+      return;
+    }
+
+    pushGroupedItem(groupedNormal, item.roleLabel, item);
+  });
 
   const roleGroups: RoleGroup[] = [];
-  roleGroups.push(...groupAntagsByType(minor, 'Minor'));
-  roleGroups.push(...groupAntagsByType(major, 'Major'));
-  roleGroups.push(...groupByRoleLabel(normal));
+  roleGroups.push(...groupsFromMap(groupedByFamily));
+  roleGroups.push(...groupAntagsByType(groupedMajor, 'Major'));
+  roleGroups.push(...groupAntagsByType(groupedMinor, 'Minor'));
+  roleGroups.push(...groupsFromMap(groupedNormal));
 
   return roleGroups;
 }
 
 function groupAntagsByType(
-  items: OrbitTargetIndexed[],
-  groupName: 'Minor' | 'Major',
+  groupedItems: Map<string, OrbitTargetIndexed[]>,
+  groupName: AntagTier,
 ): RoleGroup[] {
-  if (items.length === 0) {
+  if (groupedItems.size === 0) {
     return [];
   }
 
-  return groupByRoleLabel(items).map((group) => ({
+  return groupsFromMap(groupedItems).map((group) => ({
     label: `${groupName} - ${group.label}`,
     items: group.items,
   }));
@@ -117,15 +198,14 @@ function groupByRoleLabel(items: OrbitTargetIndexed[]): RoleGroup[] {
   const grouped = new Map<string, OrbitTargetIndexed[]>();
 
   items.forEach((item) => {
-    const label = getRoleLabel(item);
-    const bucket = grouped.get(label);
+    const bucket = grouped.get(item.roleLabel);
 
     if (bucket) {
       bucket.push(item);
       return;
     }
 
-    grouped.set(label, [item]);
+    grouped.set(item.roleLabel, [item]);
   });
 
   return [...grouped.entries()]
