@@ -369,14 +369,14 @@
 	icon_state = "bangs"
 	default_color = "FFFFFF"
 	affected_bodyparts = HEAD
-	
+
 /datum/body_marking/small/bangs
 	icon = 'icons/mob/body_markings/other_markings.dmi'
 	name = "Bangs (Volk)"
 	icon_state = "bangs_s"
 	default_color = "FFFFFF"
 	affected_bodyparts = HEAD
-	
+
 /datum/body_marking/bun
 	icon = 'icons/mob/body_markings/other_markings.dmi'
 	name = "Bun"
@@ -404,3 +404,10 @@
 	icon_state = "hleg"
 	affected_bodyparts = LEG_LEFT | LEG_RIGHT
 	default_color = DEFAULT_SECONDARY
+
+/datum/body_marking/blankface_head
+	icon = 'icons/mob/body_markings/other_markings.dmi'
+	name = "Blank Face"
+	icon_state = "blankface_head"
+	affected_bodyparts = HEAD
+	default_color = DEFAULT_SKIN_OR_PRIMARY
