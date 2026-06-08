@@ -134,6 +134,7 @@
 		/datum/body_marking/diagonal_eyes,
 		/datum/body_marking/wide_eyes,
 		/datum/body_marking/stripes,
+		/datum/body_marking/blankface_head,
 	)
 	descriptor_choices = list(
 		/datum/descriptor_choice/trait,
