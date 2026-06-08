@@ -73,6 +73,7 @@ const ALIVE_NORMAL_GROUP_ORDER = [
   'Noblemen',
   'Courtiers',
   'Garrison',
+  'Church',
   'Inquisition',
   'Yeomen',
   'Peasants',
