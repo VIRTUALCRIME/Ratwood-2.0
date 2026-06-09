@@ -408,6 +408,6 @@
 /datum/body_marking/blankface_head
 	icon = 'icons/mob/body_markings/other_markings.dmi'
 	name = "Blank Face"
-	icon_state = "blankface"
+	icon_state = "blankface_head"
 	affected_bodyparts = HEAD
 	default_color = DEFAULT_PRIMARY
