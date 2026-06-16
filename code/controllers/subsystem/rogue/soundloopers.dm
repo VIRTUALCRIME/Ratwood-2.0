@@ -54,11 +54,10 @@ SUBSYSTEM_DEF(soundloopers)
 		if((istype(PS, /datum/looping_sound/instrument) || istype(PS, /datum/looping_sound/musloop) || istype(PS, /datum/looping_sound/dmusloop)) && !(prefs?.toggles & SOUND_INSTRUMENTS))
 			continue
 
-		var/atom/PS_parent = PS.parent.resolve()
-		if(!PS_parent)
+		if(!PS.parent)
 			continue
 
-		var/turf/parent_turf = get_turf(PS_parent)
+		var/turf/parent_turf = get_turf(PS.parent)
 		var/turf/mob_turf = get_turf(mob)
 		if(get_dist(get_turf(mob),parent_turf) > world.view + PS.extra_range) //Too far away. get_dist shouldn't be too awful for repeated calcs
 			continue
@@ -96,7 +95,7 @@ SUBSYSTEM_DEF(soundloopers)
 					mob.stop_sound_channel(muted_sound.channel)
 			continue
 		
-		var/atom/loop_parent = loop.parent?.resolve()
+		var/atom/loop_parent = loop.parent
 		if(!loop_parent)
 			// Parent is gone — stale entry. Remove it so its old channel number
 			// can't corrupt volume-update packets sent to a recycled channel.
