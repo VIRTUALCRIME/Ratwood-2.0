@@ -98,7 +98,7 @@
 				obj_flags |= string_to_objflag[flag]
 	var/turf/our_turf = get_turf(src)
 	// if the turf is uninitialized it'll just call Entered on us
-	if((our_turf.flags_1 & INITIALIZED_1) && (obj_flags & BLOCK_Z_OUT_DOWN))
+	if(our_turf && (our_turf.flags_1 & INITIALIZED_1) && (obj_flags & BLOCK_Z_OUT_DOWN))
 		our_turf.platform_atom_count++
 
 /obj/Destroy(force=FALSE)
