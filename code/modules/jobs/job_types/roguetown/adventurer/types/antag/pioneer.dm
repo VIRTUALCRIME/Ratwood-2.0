@@ -34,7 +34,7 @@
 		/datum/skill/craft/armorsmithing = SKILL_LEVEL_APPRENTICE,//Repairs, really. But dabbling.
 		/datum/skill/craft/weaponsmithing = SKILL_LEVEL_APPRENTICE,//As above.
 		/datum/skill/craft/sewing = SKILL_LEVEL_APPRENTICE,//Yet again.
-		/datum/skill/craft/smelting = SKILL_LEVEL_APPRENTICE, //He can do basic smithing, but he's never even smelted a bar before?
+		/datum/skill/craft/smelting = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/swimming = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/reading = SKILL_LEVEL_APPRENTICE,
 		/datum/skill/misc/tracking = SKILL_LEVEL_APPRENTICE,
@@ -54,7 +54,7 @@
 	backl = /obj/item/storage/backpack/rogue/backpack
 	backr = /obj/item/rogueweapon/shovel/saperka
 	beltl = /obj/item/storage/detpack
-	beltr = /obj/item/gun/ballistic/firearm/arquebus_pistol //Fusilier and no gun... the dragon has a damned Arquebus and isn't sharing!
+	beltr = /obj/item/flashlight/flare/torch/lantern
 	id = /obj/item/mattcoin
 	backpack_contents = list(
 		/obj/item/restraints/legcuffs/beartrap = 4,
