@@ -84,8 +84,8 @@
 
 /obj/effect/landmark/mapGenerator/rogue/underdarkdesert
 	mapGeneratorType = /datum/mapGenerator/underdarkdesert
-	endTurfX = 255
-	endTurfY = 450
+	endTurfX = 380
+	endTurfY = 310
 	startTurfX = 1
 	startTurfY = 1
 
