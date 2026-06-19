@@ -34,11 +34,19 @@
 	craftdiff = 2
 
 /datum/crafting_recipe/roguetown/arcana/ritechalk
-	name = "ritual chalk"
+	name = "ritual chalk (blessed)"
 	skillcraft = /datum/skill/magic/holy
 	result = /obj/item/ritechalk
 	reqs = list(/obj/item/rogueore/cinnabar = 1,
 				/datum/reagent/water/blessed = 15)
+	craftdiff = 2
+
+/datum/crafting_recipe/roguetown/arcana/ritechalk_unholy
+	name = "ritual chalk (unholy)"
+	skillcraft = /datum/skill/magic/holy
+	result = /obj/item/ritechalk
+	reqs = list(/obj/item/rogueore/cinnabar = 1,
+				/datum/reagent/water/cursed = 15)
 	craftdiff = 2
 
 /datum/crafting_recipe/roguetown/arcana/infernalfeather
