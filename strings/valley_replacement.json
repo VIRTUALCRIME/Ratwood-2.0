@@ -92,7 +92,7 @@
 		"drink": "quaff",
 		"sleep": "slumber",
 		"die": "perish",
-		"dead": "slain",
+		"killed": "slain",
 		"lowtown": "lower settlement",
 		"hungry": "famished",
 		"thirsty": "parched",
@@ -110,8 +110,6 @@
 		"family": "kin",
 		"enemy": "foe",
 		"boss": "master",
-		"horse": "steed",
-		"saiga": "steed",
 		"goodbye": "farewell",
 		"bye": "farewell"
 
