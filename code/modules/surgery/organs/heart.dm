@@ -134,17 +134,18 @@ GLOBAL_VAR_INIT(heart_sound_pool, new /datum/heart_sound_pool)
 			H.stop_sound_channel(CHANNEL_HEARTBEAT)
 			beat = new_beat
 			last_beat_sound = 0
-		//Our oggs are not the same length.
-		var/interval = ((beat == BEAT_SLOW) ? 1200 : 285)
-		if(beat != BEAT_NONE && (last_beat_sound == 0 || world.time > last_beat_sound + interval))
-			last_beat_sound = world.time
-			var/turf/T = get_turf(H)
-			var/datum/heart_sound_pool/pool = get_heart_sounds()
-			switch(beat)
+		var/interval //Our oggs are not the same length.
+		var/sound/heartbeat_sound
+		switch(beat)
 				if(BEAT_SLOW)
-					H.playsound_local(T, pool.slowbeat, 40, FALSE, channel = CHANNEL_HEARTBEAT)
+						interval = 12 SECONDS
+						heartbeat_sound = slowbeat
 				if(BEAT_FAST)
-					H.playsound_local(T, pool.fastbeat, 40, FALSE, channel = CHANNEL_HEARTBEAT)
+						interval = 2.85 SECONDS
+						heartbeat_sound = fastbeat
+		if(heartbeat_sound && (world.time >= last_beat_sound + interval))
+			last_beat_sound = world.time
+			H.playsound_local(null, heartbeat_sound, 40, FALSE, channel = CHANNEL_HEARTBEAT)
 
 	if(organ_flags & ORGAN_FAILING)	//heart broke, stopped beating, death imminent
 		if(owner.stat == CONSCIOUS)
