@@ -34,7 +34,7 @@
 
 /obj/item/mattcoin/examine(mob/user)
 	. = ..()
-	. += span_info("It can be used in hand to give it a disguise. Use it again to return it back to normal.")
+	. += span_notice("It can be used in hand to give it a disguise. Use it again to return it back to normal.")
 
 /obj/item/mattcoin/pickup(mob/living/user)
 	if(!HAS_TRAIT(user, TRAIT_COMMIE))
