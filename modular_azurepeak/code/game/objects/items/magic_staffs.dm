@@ -125,11 +125,9 @@
 	max_integrity = 300 // 100 more integrity than a steel quarterstaff due to it's blacksteel nature. Can't smelt it down though :)
 	sellprice = 160
 
-/obj/item/rogueweapon/woodstaff/diamond/refinedblacksteelstaffroyal
+/obj/item/rogueweapon/woodstaff/diamond/blacksteelstaff/royal
 	name = "refined ducal blacksteel staff"
 	desc = "A mage's staff that has been reinforced with blacksteel rivets and plating. An extravagent gift for a precocious heir that serves as both casting implement and mark of station. Perched atop it is a new beautiful Dorpel that shimmers with magical energies."
-	icon_state = "blacksteelstaff"
-	max_integrity = 300
 	sellprice = 230
 
 /obj/item/rogueweapon/woodstaff/riddle_of_steel
@@ -227,7 +225,7 @@
 
 /datum/crafting_recipe/gemstaff/ducalblacksteelstaffupgrade
 	name = "Refined Ducal Blacksteel Staff"
-	result = /obj/item/rogueweapon/woodstaff/diamond/refinedblacksteelstaffroyal
+	result = /obj/item/rogueweapon/woodstaff/diamond/blacksteelstaff/royal
 	reqs = list(/obj/item/rogueweapon/woodstaff/emerald/blacksteelstaff/royal = 1,
 				/obj/item/roguegem/diamond = 1)
 	craftdiff = 0
