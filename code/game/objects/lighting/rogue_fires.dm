@@ -185,12 +185,7 @@
 	pixel_y = 32
 	cookonme = TRUE
 
-/obj/machinery/light/rogue/campfire/fireplace/crafted/great
-    name = "large fireplace"
-    icon = 'icons/roguetown/misc/fireplace64.dmi'
-    bulb_colour = "#ffa35c"
-	
-/obj/machinery/light/rogue/campfire/fireplace/blue
+/obj/machinery/light/rogue/campfire/fireplace/crafted/blue
 	desc = "A curious cool fire dances upon a bed of mysteriously glowing embers."
 	icon = 'icons/roguetown/misc/wallfireblue.dmi'
 	bulb_colour = "#6e90ff"

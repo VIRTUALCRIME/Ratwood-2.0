@@ -1326,20 +1326,10 @@ datum/crafting_recipe/roguetown/structure/zizo_shrine/gold
 
 /datum/crafting_recipe/roguetown/structure/fireplace/blue
 	name = "Blue fireplace (North)"
-	result = /obj/machinery/light/rogue/campfire/fireplace/blue
+	result = /obj/machinery/light/rogue/campfire/fireplace/crafted/blue
 	reqs = list(/obj/item/grown/log/tree/small = 1,
 				/obj/item/natural/stoneblock = 3,
 				/obj/item/rogueore/copper = 1) //did you know that copper not only can produce green fire but blue too in high concentration?
-
-/datum/crafting_recipe/roguetown/structure/fireplace/large
-	name = "Large fireplace (North, 2 tiles)"
-	result = /obj/machinery/light/rogue/campfire/fireplace/grand
-	reqs = list(/obj/item/grown/log/tree/small = 2,
-				/obj/item/natural/stoneblock = 6)
-	verbage_simple = "build"
-	verbage = "builds"
-	skillcraft = /datum/skill/craft/masonry
-	wallcraft = TRUE
 
 /datum/crafting_recipe/roguetown/structure/mirror
 	name = "mirror (north)"
