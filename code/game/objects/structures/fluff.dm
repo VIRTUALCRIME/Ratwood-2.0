@@ -1379,9 +1379,9 @@
 	chance2hear = 10
 
 /obj/structure/fluff/psycross/crafted/necra
-    name = "necran pantheon cross"
-    icon_state = "cross_necra"
-    max_integrity = 120
+	name = "necran pantheon cross"
+	icon_state = "cross_necra"
+	max_integrity = 120
 
 /obj/structure/fluff/psycross/psycrucifix
 	name = "wooden psydonic crucifix"
