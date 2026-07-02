@@ -160,7 +160,7 @@
 	reqs = list(/obj/item/natural/stone = 3)
 	result = /obj/structure/fluff/psycross/zizocross/stone
 
-datum/crafting_recipe/roguetown/structure/zizo_shrine/gold
+/datum/crafting_recipe/roguetown/structure/zizo_shrine/gold
 	name = "gold inverse cross"
 	reqs = list(/obj/item/ingot/gold = 1,
 				/obj/item/ingot/steel = 2)
