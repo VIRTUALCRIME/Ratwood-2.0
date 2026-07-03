@@ -1,0 +1,4 @@
+author: "wikimody"
+delete-after: True
+changes:
+  - bugfix: "Surgical tool that stepped out of line has been brought by in line by force (cautery intends got shufled)"
