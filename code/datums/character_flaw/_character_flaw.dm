@@ -575,7 +575,6 @@ GLOBAL_LIST_INIT(character_flaws, list(
 		return
 	var/mob/living/carbon/human/H = user
 	REMOVE_TRAIT(H, TRAIT_LOOSE_STRAPS, TRAIT_GENERIC)
-  
 /datum/charflaw/scarred
 	name = "Scarred"
 	desc = "My face bears terrible scars that make identification difficult, but not impossible."
